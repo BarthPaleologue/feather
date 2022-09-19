@@ -46,6 +46,15 @@ int main() {
     };
     triangle.setVertexData(&points);
 
+    Drawable triangle2("triangle2");
+    scene.addDrawable(&triangle2);
+    std::vector<float> points2 = {
+            0.4f, 0.7f, 0.0f,
+            0.2f, 0.7f, 0.0f,
+            0.2f, 0.5f, 0.0f
+    };
+    triangle2.setVertexData(&points2);
+
     glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
     while (!glfwWindowShouldClose(window)) {
