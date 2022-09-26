@@ -3,11 +3,13 @@ project(featherGL)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(SRCS main.cpp utils.cpp Drawable.cpp Material.cpp Vector3.cpp DefaultMaterial.cpp Scene.cpp Triangle.cpp)
-
-set(HEADERS Drawable.h Material.h Vector3.h DefaultMaterial.h Scene.h Triangle.h)
-
-add_executable(featherGL ${SRCS} ${HEADERS})
+file(GLOB SRCS ./*.h ./*.cpp
+        ./core/*.cpp ./core/*.h
+        ./drawables/*.cpp ./drawables/*.h
+        ./materials/*.cpp ./materials/*.h
+        ./utils/*.cpp ./utils/*.h
+        )
+add_executable(featherGL ${SRCS})
 
 file(COPY shaders DESTINATION ${CMAKE_BINARY_DIR})
 

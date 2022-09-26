@@ -6,7 +6,7 @@
 #define FEATHERGL_DRAWABLE_H
 
 #include <vector>
-#include "Material.h"
+#include "../materials/Material.h"
 
 class Drawable {
 public:
@@ -14,7 +14,7 @@ public:
 
     void setMaterial(Material *material);
 
-    void setVertexData(std::vector<GLfloat> *vertices, std::vector<GLfloat> *colors);
+    void setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indices, std::vector<GLfloat> *colors);
 
     void setPosition(glm::vec3 * newPosition);
 
@@ -26,6 +26,7 @@ private:
     const char* _name;
     std::vector<GLfloat> _vertices;
     std::vector<GLfloat> _colors;
+    std::vector<GLint> _indices;
     glm::vec3 _position;
     Material _material;
     GLuint _vao;

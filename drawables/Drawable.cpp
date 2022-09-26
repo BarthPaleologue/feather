@@ -4,23 +4,30 @@
 
 #include "glm/ext.hpp"
 #include "Drawable.h"
-#include "DefaultMaterial.h"
+#include "../materials/DefaultMaterial.h"
 
 Drawable::Drawable(const char* name) : _name(name), _material(DefaultMaterial()), _vao(0), _vbo(0), _position(glm::vec3(0.0f, 0.0f, 0.0f)) {}
 
-void Drawable::setVertexData(std::vector<GLfloat> *vertices, std::vector<GLfloat> *colors) {
+void
+Drawable::setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indices, std::vector<GLfloat> *colors) {
     _vertices = *vertices;
+    _indices = *indices;
     _colors = *colors;
 
     glGenBuffers(1, &_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-    glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(float), _vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(float), _vertices.data(), GL_DYNAMIC_READ);
 
     glGenVertexArrays(1, &_vao);
     glBindVertexArray(_vao);
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    GLuint ibo = 0;
+    glGenBuffers(1, &ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(float), _indices.data(), GL_DYNAMIC_READ);
 
     GLuint colVbo = 0;
     glGenBuffers(1, &colVbo);
@@ -42,7 +49,7 @@ void Drawable::render() {
     _material.setMat4("MVP", &MVP);
 
     glBindVertexArray(_vao);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 0, _indices.size());
 }
 
 void Drawable::setPosition(glm::vec3 *newPosition) {

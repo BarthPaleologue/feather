@@ -4,17 +4,18 @@
 
 #include "Triangle.h"
 
-Triangle::Triangle(const char* name, float x, float y, float z): Drawable(name) {
+Triangle::Triangle(const char *name, float x, float y, float z) : Drawable(name) {
     setPositionFromFloats(x, y, z);
     std::vector<GLfloat> points = {
             0.0f, 0.5f, 0.0f,
             0.5f, -0.5f, 0.0f,
             -0.5f, -0.5f, 0.0f
     };
+    std::vector<GLint> indices = {0, 1, 2};
     std::vector<GLfloat> colors = {
             1.0f, 0.0f, 0.0f,
             0.0f, 1.0f, 0.0f,
             0.0f, 0.0f, 1.0f
     };
-    setVertexData(&points, &colors);
+    setVertexData(&points, &indices, &colors);
 }

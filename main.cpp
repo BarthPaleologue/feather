@@ -1,8 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "Scene.h"
-#include "Triangle.h"
+#include "core/Scene.h"
+#include "drawables/Triangle.h"
 
 
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {

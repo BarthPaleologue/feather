@@ -6,7 +6,7 @@
 #define FEATHERGL_SCENE_H
 
 
-#include "Drawable.h"
+#include "../drawables/Drawable.h"
 
 class Scene {
 public:

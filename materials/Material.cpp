@@ -5,7 +5,7 @@
 #include <iostream>
 #include "glm/ext.hpp"
 #include "Material.h"
-#include "utils.h"
+#include "../utils/utils.h"
 #include "glad/glad.h"
 
 Material::Material(const char* shaderFolder) {
