@@ -2,6 +2,7 @@
 // Created by barth on 19/09/2022.
 //
 
+#include <iostream>
 #include "Material.h"
 #include "utils.h"
 #include "glad/glad.h"
@@ -26,10 +27,26 @@ void Material::compile() {
     const char* vertexShaderCString = _vertexShaderCode.c_str();
     glShaderSource(vs, 1, &vertexShaderCString, nullptr);
     glCompileShader(vs);
+
+    GLint success;
+    GLchar infoLog[512];
+    glGetShaderiv(vs, GL_COMPILE_STATUS, &success);
+    if(!success) {
+        glGetShaderInfoLog(vs, 512, nullptr, infoLog);
+        std::cout << "ERROR in compiling GL_VERTEX_SHADER\n" << infoLog << std::endl;
+    }
+
+
     GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
     const char* fragmentShaderCString = _fragmentShaderCode.c_str();
     glShaderSource(fs, 1, &fragmentShaderCString, nullptr);
     glCompileShader(fs);
+
+    glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
+    if(!success) {
+        glGetShaderInfoLog(fs, 512, nullptr, infoLog);
+        std::cout << "ERROR in compiling GL_FRAGMENT_SHADER\n" << infoLog << std::endl;
+    }
 
     glAttachShader(_program, fs);
     glAttachShader(_program, vs);

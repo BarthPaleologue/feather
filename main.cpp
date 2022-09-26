@@ -2,7 +2,6 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>
-#include "Vector3.h"
 #include "Drawable.h"
 #include "Scene.h"
 
@@ -39,7 +38,7 @@ int main() {
 
     Drawable triangle("triangle");
     scene.addDrawable(&triangle);
-    std::vector<float> points = {
+    std::vector<GLfloat> points = {
             0.0f, 0.5f, 0.0f,
             0.5f, -0.5f, 0.0f,
             -0.5f, -0.5f, 0.0f

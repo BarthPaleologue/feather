@@ -20,7 +20,7 @@ public:
 
 private:
     const char* _name;
-    std::vector<float> _vertices;
+    std::vector<GLfloat> _vertices;
     Material _material;
     GLuint _vao;
     GLuint _vbo;

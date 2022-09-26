@@ -7,7 +7,7 @@
 
 Drawable::Drawable(const char* name) : _name(name), _material(DefaultMaterial()), _vao(0), _vbo(0) {}
 
-void Drawable::setVertexData(std::vector<float> *vertices) {
+void Drawable::setVertexData(std::vector<GLfloat> *vertices) {
     _vertices = *vertices;
 
     glGenBuffers(1, &_vbo);
