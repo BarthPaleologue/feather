@@ -3,18 +3,26 @@
 #include <iostream>
 #include "core/Scene.h"
 #include "drawables/Triangle.h"
+#include "core/Camera.h"
 
 
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
-    if (action == GLFW_PRESS && (key == GLFW_KEY_ESCAPE || key == GLFW_KEY_Q)) {
-        // closes the application if the escape or 'Q' key is pressed
-        glfwSetWindowShouldClose(window, true);
+    if(action == GLFW_PRESS && key == GLFW_KEY_W) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    } else if(action == GLFW_PRESS && key == GLFW_KEY_F) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    } else if(action == GLFW_PRESS && (key == GLFW_KEY_ESCAPE || key == GLFW_KEY_Q)) {
+        glfwSetWindowShouldClose(window, true); // Closes the application if the escape key is pressed
     }
+}
+
+void errorCallback(int error, const char *desc) {
+    std::cout <<  "Error " << error << ": " << desc << std::endl;
 }
 
 
 int main() {
-    if (glfwInit() == GLFW_FALSE) return -1;
+    if (!glfwInit()) return -1;
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -34,6 +42,7 @@ int main() {
     }
 
     Scene scene;
+    Camera camera;
 
     Triangle triangle("triangle", 0.2f, 0.0f, 0.0f);
     scene.addDrawable(&triangle);
@@ -41,6 +50,10 @@ int main() {
     Triangle triangle2("triangle2", -0.2f, 0.3f, 0.0f);
     scene.addDrawable(&triangle2);
 
+    glCullFace(GL_BACK); // Specifies the faces to cull (here the ones pointing away from the camera)
+    glEnable(GL_CULL_FACE); // Enables face culling (based on the orientation defined by the CW/CCW enumeration).
+    glDepthFunc(GL_LESS);   // Specify the depth test for the z-buffer
+    glEnable(GL_DEPTH_TEST);      // Enable the z-buffer test in the rasterization
     glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
     while (!glfwWindowShouldClose(window)) {
