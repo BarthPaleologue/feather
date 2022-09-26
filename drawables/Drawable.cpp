@@ -42,8 +42,11 @@ void Drawable::setMaterial(Material *material) {
     _material = *material;
 }
 
-void Drawable::render() {
+void Drawable::render(Camera* camera) {
     _material.bind();
+
+    const glm::mat4 viewMatrix = camera->computeViewMatrix();
+    const glm::mat4 projMatrix = camera->computeProjectionMatrix();
 
     const glm::mat4 MVP = glm::translate(glm::mat4(1.0f), _position);
     _material.setMat4("MVP", &MVP);

@@ -9,9 +9,9 @@ void Scene::addDrawable(Drawable *drawable) {
     _drawables.push_back(drawable);
 }
 
-void Scene::render() {
+void Scene::render(Camera* camera) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     for (Drawable* &_drawable: _drawables) {
-        _drawable->render();
+        _drawable->render(camera);
     }
 }

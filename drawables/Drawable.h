@@ -7,6 +7,7 @@
 
 #include <vector>
 #include "../materials/Material.h"
+#include "Camera.h"
 
 class Drawable {
 public:
@@ -20,7 +21,7 @@ public:
 
     void setPositionFromFloats(float newX, float newY, float newZ);
 
-    void render();
+    void render(Camera* camera);
 
 private:
     const char* _name;

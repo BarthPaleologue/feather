@@ -42,7 +42,7 @@ int main() {
     }
 
     Scene scene;
-    Camera camera;
+    Camera camera(window);
 
     Triangle triangle("triangle", 0.2f, 0.0f, 0.0f);
     scene.addDrawable(&triangle);
@@ -50,14 +50,14 @@ int main() {
     Triangle triangle2("triangle2", -0.2f, 0.3f, 0.0f);
     scene.addDrawable(&triangle2);
 
-    glCullFace(GL_BACK); // Specifies the faces to cull (here the ones pointing away from the camera)
-    glEnable(GL_CULL_FACE); // Enables face culling (based on the orientation defined by the CW/CCW enumeration).
-    glDepthFunc(GL_LESS);   // Specify the depth test for the z-buffer
-    glEnable(GL_DEPTH_TEST);      // Enable the z-buffer test in the rasterization
+    //glCullFace(GL_BACK); // Specifies the faces to cull (here the ones pointing away from the camera)
+    //glEnable(GL_CULL_FACE); // Enables face culling (based on the orientation defined by the CW/CCW enumeration).
+    //glDepthFunc(GL_LESS);   // Specify the depth test for the z-buffer
+    //glEnable(GL_DEPTH_TEST);      // Enable the z-buffer test in the rasterization
     glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
     while (!glfwWindowShouldClose(window)) {
-        scene.render();
+        scene.render(&camera);
 
         glfwPollEvents();
         glfwSwapBuffers(window);

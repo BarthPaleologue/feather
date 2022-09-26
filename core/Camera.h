@@ -12,6 +12,7 @@
 
 class Camera {
 public:
+    explicit Camera(GLFWwindow* window);
     inline float getFov() const { return _fov; }
     inline void setFoV(const float f) { _fov = f; }
     inline float getAspectRatio() const { return _aspectRatio; }

@@ -7,11 +7,12 @@
 
 
 #include "../drawables/Drawable.h"
+#include "Camera.h"
 
 class Scene {
 public:
     void addDrawable(Drawable *drawable);
-    void render();
+    void render(Camera* camera);
 
 private:
     std::vector<Drawable*> _drawables;
