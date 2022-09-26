@@ -3,6 +3,7 @@ project(featherGL)
 
 set(CMAKE_CXX_STANDARD 17)
 
+include_directories(materials core utils drawables)
 file(GLOB SRCS ./*.h ./*.cpp
         ./core/*.cpp ./core/*.h
         ./drawables/*.cpp ./drawables/*.h
