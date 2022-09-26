@@ -8,12 +8,16 @@
 
 #include <string>
 #include "glad/glad.h"
+#include "glm/ext/matrix_float4x4.hpp"
 
 class Material {
 public:
     explicit Material(const char* shaderFolder);
     void compile();
-    void bind();
+    void bind() const;
+
+    void setMat4(const char* uniformName, const glm::mat4 * matrix) const;
+
 private:
     GLuint _program;
     std::string _vertexShaderCode;

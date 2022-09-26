@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include "glm/ext.hpp"
 #include "Material.h"
 #include "utils.h"
 #include "glad/glad.h"
@@ -53,6 +54,10 @@ void Material::compile() {
     glLinkProgram(_program);
 }
 
-void Material::bind() {
+void Material::bind() const {
     glUseProgram(_program);
+}
+
+void Material::setMat4(const char *uniformName, const glm::mat4 *matrix) const {
+    glUniformMatrix4fv(glGetUniformLocation(_program, uniformName), 1, GL_FALSE, glm::value_ptr(*matrix));
 }

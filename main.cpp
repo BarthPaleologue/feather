@@ -1,9 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include <vector>
-#include "Drawable.h"
 #include "Scene.h"
+#include "Triangle.h"
 
 
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
@@ -36,23 +35,11 @@ int main() {
 
     Scene scene;
 
-    Drawable triangle("triangle");
+    Triangle triangle("triangle", 0.2f, 0.0f, 0.0f);
     scene.addDrawable(&triangle);
-    std::vector<GLfloat> points = {
-            0.0f, 0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            -0.5f, -0.5f, 0.0f
-    };
-    triangle.setVertexData(&points);
 
-    Drawable triangle2("triangle2");
+    Triangle triangle2("triangle2", -0.2f, 0.3f, 0.0f);
     scene.addDrawable(&triangle2);
-    std::vector<float> points2 = {
-            0.4f, 0.7f, 0.0f,
-            0.2f, 0.7f, 0.0f,
-            0.2f, 0.5f, 0.0f
-    };
-    triangle2.setVertexData(&points2);
 
     glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 

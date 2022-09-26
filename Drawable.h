@@ -14,13 +14,19 @@ public:
 
     void setMaterial(Material *material);
 
-    void setVertexData(std::vector<float> *vertices);
+    void setVertexData(std::vector<GLfloat> *vertices, std::vector<GLfloat> *colors);
+
+    void setPosition(glm::vec3 * newPosition);
+
+    void setPositionFromFloats(float newX, float newY, float newZ);
 
     void render();
 
 private:
     const char* _name;
     std::vector<GLfloat> _vertices;
+    std::vector<GLfloat> _colors;
+    glm::vec3 _position;
     Material _material;
     GLuint _vao;
     GLuint _vbo;
