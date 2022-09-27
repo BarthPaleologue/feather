@@ -8,14 +8,15 @@
 
 #include "../drawables/Drawable.h"
 #include "cameras/Camera.h"
+#include "lights/PointLight.h"
 
 class Scene {
 public:
-    void addDrawable(Drawable *drawable);
-    void render(Camera* camera);
+    void addDrawable(Drawable &drawable);
+    void render(Camera &camera, PointLight &light);
 
 private:
-    std::vector<Drawable*> _drawables;
+    std::vector<Drawable> _drawables;
 };
 
 

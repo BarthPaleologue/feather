@@ -7,6 +7,8 @@
 #include "Cube.h"
 #include "cameras/OrbitCamera.h"
 #include "Sphere.h"
+#include "lights/DirectionalLight.h"
+#include "lights/PointLight.h"
 
 #define AZERTY_KEY_Z GLFW_KEY_W
 #define AZERTY_KEY_W GLFW_KEY_Z
@@ -49,13 +51,15 @@ int main() {
 
     Scene scene;
     OrbitCamera camera(window);
+    PointLight light("sun");
+    light.setPosition(glm::vec3(10.0f, 2.0f, -1.0f));
 
     Cube cube("cube", 1, 0.0f, 0.0f, 0.0f);
-    scene.addDrawable(&cube);
+    scene.addDrawable(cube);
 
     Sphere sphere("sphere", 1, 16);
     sphere.setPositionFromFloats(0, 3, 0);
-    scene.addDrawable(&sphere);
+    scene.addDrawable(sphere);
 
     /*Triangle triangle("triangle", 0.2f, 0.0f, 0.0f);
     scene.addDrawable(&triangle);
@@ -71,7 +75,7 @@ int main() {
 
     while (!glfwWindowShouldClose(window)) {
         camera.update();
-        scene.render(&camera);
+        scene.render(camera, light);
 
         glfwPollEvents();
         glfwSwapBuffers(window);

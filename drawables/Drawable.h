@@ -9,6 +9,7 @@
 #include "../materials/Material.h"
 #include "cameras/Camera.h"
 #include "Transform.h"
+#include "lights/PointLight.h"
 
 class Drawable: public Transform {
 public:
@@ -18,7 +19,7 @@ public:
 
     void setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indices, std::vector<GLfloat> *colors);
 
-    void render(Camera* camera);
+    void render(Camera &camera, PointLight &light);
 
 private:
     const char* _name;
