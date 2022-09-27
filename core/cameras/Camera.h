@@ -33,9 +33,7 @@ public:
 
     inline void setPosition(const glm::vec3 &p) { _position = p; }
 
-    virtual inline glm::mat4 computeViewMatrix() {
-        return glm::lookAt(_position, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-    }
+    virtual inline glm::mat4 computeViewMatrix() = 0;
 
     inline glm::mat4 getViewMatrix() { return _viewMatrix; }
 

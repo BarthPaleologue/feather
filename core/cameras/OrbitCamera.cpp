@@ -18,8 +18,8 @@ void OrbitCamera::update() {
     _viewMatrix = computeViewMatrix();
 
     float speed = 0.02f;
-    if (glfwGetKey(_window, GLFW_KEY_UP)) _theta -= speed;
-    if (glfwGetKey(_window, GLFW_KEY_DOWN)) _theta += speed;
+    if (glfwGetKey(_window, GLFW_KEY_UP)) _theta = std::max(_theta - speed, 0.01f);
+    if (glfwGetKey(_window, GLFW_KEY_DOWN)) _theta = std::min(_theta + speed, 3.13f);
     if (glfwGetKey(_window, GLFW_KEY_LEFT)) _phi -= speed;
     if (glfwGetKey(_window, GLFW_KEY_RIGHT)) _phi += speed;
 

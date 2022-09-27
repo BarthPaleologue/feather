@@ -13,11 +13,9 @@ Camera::Camera(GLFWwindow *window) : Transform(), _window(window) {
     setNear(0.1);
     setFar(80.1);
 
-    _viewMatrix = computeViewMatrix();
     _projectionMatrix = computeProjectionMatrix();
 }
 
 void Camera::update() {
-    _viewMatrix = computeViewMatrix();
     _projectionMatrix = computeProjectionMatrix();
 }

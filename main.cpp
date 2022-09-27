@@ -49,14 +49,14 @@ int main() {
     Scene scene;
     OrbitCamera camera(window);
 
-    Cube cube("cube", 1, 0.0f, 0.5f, 1.0f);
+    Cube cube("cube", 1, 0.0f, 0.0f, 0.0f);
     scene.addDrawable(&cube);
 
-    Triangle triangle("triangle", 0.2f, 0.0f, 0.0f);
+    /*Triangle triangle("triangle", 0.2f, 0.0f, 0.0f);
     scene.addDrawable(&triangle);
 
     Triangle triangle2("triangle2", 0.5f, 0.3f, 2.0f);
-    scene.addDrawable(&triangle2);
+    scene.addDrawable(&triangle2);*/
 
     //glCullFace(GL_BACK); // Specifies the faces to cull (here the ones pointing away from the camera)
     //glEnable(GL_CULL_FACE); // Enables face culling (based on the orientation defined by the CW/CCW enumeration).
