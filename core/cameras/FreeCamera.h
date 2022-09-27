@@ -11,6 +11,8 @@ class FreeCamera : public Camera {
 public:
     explicit FreeCamera(GLFWwindow *window);
 
+    glm::mat4 computeViewMatrix() override;
+
     void update() override;
 };
 

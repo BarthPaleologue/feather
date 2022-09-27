@@ -33,14 +33,14 @@ public:
 
     inline void setPosition(const glm::vec3 &p) { _position = p; }
 
-    inline glm::mat4 computeViewMatrix() const {
+    virtual inline glm::mat4 computeViewMatrix() {
         return glm::lookAt(_position, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
     }
 
     inline glm::mat4 getViewMatrix() { return _viewMatrix; }
 
     // Returns the projection matrix stemming from the camera intrinsic parameter.
-    inline glm::mat4 computeProjectionMatrix() const {
+    inline glm::mat4 computeProjectionMatrix() {
         return glm::perspective(glm::radians(_fov), _aspectRatio, _near, _far);
     }
 
@@ -50,7 +50,6 @@ public:
 
 protected:
     GLFWwindow *_window;
-private:
     glm::mat4 _viewMatrix{};
     glm::mat4 _projectionMatrix{};
     float _fov = 45.f;        // Field of view, in degrees

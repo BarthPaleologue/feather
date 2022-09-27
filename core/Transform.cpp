@@ -21,3 +21,15 @@ void Transform::setPositionFromFloats(float x, float y, float z) {
 glm::vec3 Transform::getPosition() {
     return _position;
 }
+
+glm::vec3 Transform::getForwardDirection() {
+    return {0, 0, -1};
+}
+
+glm::vec3 Transform::getUpwardDirection() {
+    return {0, 1, 0};
+}
+
+glm::vec3 Transform::getLeftDirection() {
+    return {1, 0, 0};
+}

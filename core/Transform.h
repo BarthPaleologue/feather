@@ -15,6 +15,12 @@ public:
 
     glm::vec3 getPosition();
 
+    glm::vec3 getForwardDirection();
+
+    glm::vec3 getUpwardDirection();
+
+    glm::vec3 getLeftDirection();
+
     void setPositionFromFloats(float x, float y, float z);
 
 protected:
