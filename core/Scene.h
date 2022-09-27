@@ -7,7 +7,7 @@
 
 
 #include "../drawables/Drawable.h"
-#include "Camera.h"
+#include "cameras/Camera.h"
 
 class Scene {
 public:

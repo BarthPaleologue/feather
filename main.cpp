@@ -3,13 +3,16 @@
 #include <iostream>
 #include "core/Scene.h"
 #include "drawables/Triangle.h"
-#include "core/Camera.h"
+#include "cameras/FreeCamera.h"
+
+#define AZERTY_KEY_Z GLFW_KEY_W
+#define AZERTY_KEY_W GLFW_KEY_Z
 
 
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
-    if(action == GLFW_PRESS && key == GLFW_KEY_W) {
+    if(key == AZERTY_KEY_W && action == GLFW_PRESS) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    } else if(action == GLFW_PRESS && key == GLFW_KEY_F) {
+    } else if(key == GLFW_KEY_F && action == GLFW_PRESS) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     } else if(action == GLFW_PRESS && (key == GLFW_KEY_ESCAPE || key == GLFW_KEY_Q)) {
         glfwSetWindowShouldClose(window, true); // Closes the application if the escape key is pressed
@@ -42,21 +45,22 @@ int main() {
     }
 
     Scene scene;
-    Camera camera(window);
+    FreeCamera camera(window);
 
     Triangle triangle("triangle", 0.2f, 0.0f, 0.0f);
     scene.addDrawable(&triangle);
 
-    Triangle triangle2("triangle2", -0.2f, 0.3f, 0.0f);
+    Triangle triangle2("triangle2", 0.5f, 0.3f, 2.0f);
     scene.addDrawable(&triangle2);
 
     //glCullFace(GL_BACK); // Specifies the faces to cull (here the ones pointing away from the camera)
     //glEnable(GL_CULL_FACE); // Enables face culling (based on the orientation defined by the CW/CCW enumeration).
-    //glDepthFunc(GL_LESS);   // Specify the depth test for the z-buffer
-    //glEnable(GL_DEPTH_TEST);      // Enable the z-buffer test in the rasterization
+    glDepthFunc(GL_LESS);   // Specify the depth test for the z-buffer
+    glEnable(GL_DEPTH_TEST);      // Enable the z-buffer test in the rasterization
     glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
     while (!glfwWindowShouldClose(window)) {
+        camera.update();
         scene.render(&camera);
 
         glfwPollEvents();

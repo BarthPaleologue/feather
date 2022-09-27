@@ -17,6 +17,7 @@ public:
     void bind() const;
 
     void setMat4(const char* uniformName, const glm::mat4 * matrix) const;
+    void setVec3(const char* uniformName, const glm::vec3 * vector) const;
 
 private:
     GLuint _program;

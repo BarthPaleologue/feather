@@ -2,11 +2,10 @@
 // Created by barth on 19/09/2022.
 //
 
-#include "glm/ext.hpp"
 #include "Drawable.h"
 #include "../materials/DefaultMaterial.h"
 
-Drawable::Drawable(const char* name) : _name(name), _material(DefaultMaterial()), _vao(0), _vbo(0), _position(glm::vec3(0.0f, 0.0f, 0.0f)) {}
+Drawable::Drawable(const char* name) : Transform(), _name(name), _material(DefaultMaterial()), _vao(0), _vbo(0) {}
 
 void
 Drawable::setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indices, std::vector<GLfloat> *colors) {
@@ -32,8 +31,8 @@ Drawable::setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indi
     GLuint colVbo = 0;
     glGenBuffers(1, &colVbo);
     glBindBuffer(GL_ARRAY_BUFFER, colVbo);
-    glBufferData(GL_ARRAY_BUFFER, _colors.size() * sizeof(float ), _colors.data(), GL_DYNAMIC_READ);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
+    glBufferData(GL_ARRAY_BUFFER, _colors.size() * sizeof(float), _colors.data(), GL_DYNAMIC_READ);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
     glEnableVertexAttribArray(1);
 
 }
@@ -45,24 +44,14 @@ void Drawable::setMaterial(Material *material) {
 void Drawable::render(Camera* camera) {
     _material.bind();
 
-    const glm::mat4 viewMatrix = camera->computeViewMatrix();
-    const glm::mat4 projMatrix = camera->computeProjectionMatrix();
+    const glm::mat4 viewMatrix = camera->getViewMatrix();
+    const glm::mat4 projMatrix = camera->getProjectionMatrix();
 
-    const glm::mat4 MVP = glm::translate(glm::mat4(1.0f), _position);
-    _material.setMat4("MVP", &MVP);
+    _material.setMat4("projection", &projMatrix);
+    _material.setMat4("view", &viewMatrix);
+
+    _material.setVec3("worldPosition", &_position);
 
     glBindVertexArray(_vao);
-    glDrawArrays(GL_TRIANGLES, 0, _indices.size());
-}
-
-void Drawable::setPosition(glm::vec3 *newPosition) {
-    _position.x = newPosition->x;
-    _position.y = newPosition->y;
-    _position.z = newPosition->z;
-}
-
-void Drawable::setPositionFromFloats(float newX, float newY, float newZ) {
-    _position.x = newX;
-    _position.y = newY;
-    _position.z = newZ;
+    glDrawElements(GL_TRIANGLES, (int)_indices.size(), GL_UNSIGNED_INT, nullptr);
 }

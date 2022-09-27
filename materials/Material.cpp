@@ -61,3 +61,7 @@ void Material::bind() const {
 void Material::setMat4(const char *uniformName, const glm::mat4 *matrix) const {
     glUniformMatrix4fv(glGetUniformLocation(_program, uniformName), 1, GL_FALSE, glm::value_ptr(*matrix));
 }
+
+void Material::setVec3(const char *uniformName, const glm::vec3 *vector) const {
+    glUniform3fv(glGetUniformLocation(_program, uniformName), 1, glm::value_ptr(*vector));
+}

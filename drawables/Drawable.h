@@ -7,19 +7,16 @@
 
 #include <vector>
 #include "../materials/Material.h"
-#include "Camera.h"
+#include "cameras/Camera.h"
+#include "Transform.h"
 
-class Drawable {
+class Drawable: public Transform {
 public:
     explicit Drawable(const char* name);
 
     void setMaterial(Material *material);
 
     void setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indices, std::vector<GLfloat> *colors);
-
-    void setPosition(glm::vec3 * newPosition);
-
-    void setPositionFromFloats(float newX, float newY, float newZ);
 
     void render(Camera* camera);
 
@@ -28,7 +25,6 @@ private:
     std::vector<GLfloat> _vertices;
     std::vector<GLfloat> _colors;
     std::vector<GLint> _indices;
-    glm::vec3 _position;
     Material _material;
     GLuint _vao;
     GLuint _vbo;
