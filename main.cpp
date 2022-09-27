@@ -6,6 +6,7 @@
 #include "cameras/FreeCamera.h"
 #include "Cube.h"
 #include "cameras/OrbitCamera.h"
+#include "Sphere.h"
 
 #define AZERTY_KEY_Z GLFW_KEY_W
 #define AZERTY_KEY_W GLFW_KEY_Z
@@ -51,6 +52,10 @@ int main() {
 
     Cube cube("cube", 1, 0.0f, 0.0f, 0.0f);
     scene.addDrawable(&cube);
+
+    Sphere sphere("sphere", 1, 16);
+    sphere.setPositionFromFloats(0, 3, 0);
+    scene.addDrawable(&sphere);
 
     /*Triangle triangle("triangle", 0.2f, 0.0f, 0.0f);
     scene.addDrawable(&triangle);

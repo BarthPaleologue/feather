@@ -34,12 +34,19 @@ Cube::Cube(const char *name, int size, float x, float y, float z): Drawable(name
             3, 2, 7, 7, 2, 6,
             4, 5, 0, 0, 5, 1
     };
-    setVertexData(&vertices, &indices, &colors);
-
+    std::vector<float> normals = {
+            0.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, -1.0f,
+            -1.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f
+    };
     std::vector<float> uvs = {
             0.0f, 0.0f,
             1.0f, 0.0f,
             1.0f, 1.0f,
             0.0f, 1.0f
     };
+    setVertexData(&vertices, &indices, &colors);
 }

@@ -9,7 +9,11 @@
 #include "Drawable.h"
 
 class Sphere: public Drawable {
-    Sphere(const char* name, int resolution, float x, float y, float z);
+public:
+    Sphere(const char* name, float radius, int resolution);
+
+private:
+    float _radius;
 };
 
 
