@@ -5,6 +5,7 @@
 #include "drawables/Triangle.h"
 #include "cameras/FreeCamera.h"
 #include "Cube.h"
+#include "cameras/OrbitCamera.h"
 
 #define AZERTY_KEY_Z GLFW_KEY_W
 #define AZERTY_KEY_W GLFW_KEY_Z
@@ -46,7 +47,7 @@ int main() {
     }
 
     Scene scene;
-    FreeCamera camera(window);
+    OrbitCamera camera(window);
 
     Cube cube("cube", 1, 0.0f, 0.5f, 1.0f);
     scene.addDrawable(&cube);
