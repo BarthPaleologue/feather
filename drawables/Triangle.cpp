@@ -12,10 +12,15 @@ Triangle::Triangle(const char *name, float x, float y, float z) : Drawable(name)
             -0.5f, -0.5f, 0.0f
     };
     std::vector<GLint> indices = {0, 1, 2};
+    std::vector<GLfloat> normals = {
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f
+    };
     std::vector<GLfloat> colors = {
             1.0f, 0.0f, 0.0f,
             0.0f, 1.0f, 0.0f,
             0.0f, 0.0f, 1.0f
     };
-    setVertexData(&points, &indices, &colors);
+    setVertexData(&points, &indices, &normals, &colors);
 }

@@ -98,5 +98,5 @@ Sphere::Sphere(const char *name, float radius, int resolution): Drawable(name), 
 
     for(int i = 0; i < vertices.size(); i++) colors.push_back((float)random()/(float)INT_MAX);
 
-    setVertexData(&vertices, &indices, &colors);
+    setVertexData(&vertices, &indices, &normals, &colors);
 }
