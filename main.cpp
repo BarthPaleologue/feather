@@ -58,7 +58,7 @@ int main() {
     scene.addDrawable(cube);
 
     Sphere sphere("sphere", 1, 32);
-    sphere.setPositionFromFloats(0, 3, 0);
+    sphere.setPositionFromFloats(0, 2, 0);
     scene.addDrawable(sphere);
 
     /*Triangle triangle("triangle", 0.2f, 0.0f, 0.0f);

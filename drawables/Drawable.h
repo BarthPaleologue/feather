@@ -29,6 +29,7 @@ private:
     std::vector<GLfloat> _colors;
     std::vector<GLint> _indices;
     Material _material;
+    Texture* _texture;
     GLuint _vao;
     GLuint _vbo;
 };

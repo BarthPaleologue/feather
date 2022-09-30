@@ -5,6 +5,7 @@
 #ifndef FEATHERGL_UTILS_H
 #define FEATHERGL_UTILS_H
 
+#include <string>
 #include "glad/glad.h"
 
 /**
@@ -14,6 +15,6 @@
  */
 void loadFileToBuffer(const char *filename, std::string &stringBuffer);
 
-//GLuint loadTextureFromFileToGPU(const std::string &filename)
+GLuint loadTextureFromFileToGPU(const char *filename);
 
 #endif //FEATHERGL_UTILS_H

@@ -14,7 +14,7 @@ file(GLOB SRCS ./*.h ./*.cpp
         )
 add_executable(featherGL ${SRCS})
 
-file(COPY shaders DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
 add_subdirectory(glfw)
 target_link_libraries(${PROJECT_NAME} glfw)

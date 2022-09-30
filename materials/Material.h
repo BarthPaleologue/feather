@@ -9,6 +9,7 @@
 #include <string>
 #include "glad/glad.h"
 #include "glm/ext/matrix_float4x4.hpp"
+#include "Texture.h"
 
 class Material {
 public:
@@ -18,6 +19,8 @@ public:
 
     void setMat4(const char* uniformName, const glm::mat4 * matrix) const;
     void setVec3(const char* uniformName, const glm::vec3 * vector) const;
+
+    void setTexture(const char* uniformName, Texture *texture) const;
 
 private:
     GLuint _program;

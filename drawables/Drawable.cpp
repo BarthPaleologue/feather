@@ -5,7 +5,9 @@
 #include "Drawable.h"
 #include "../materials/DefaultMaterial.h"
 
-Drawable::Drawable(const char* name) : Transform(), _name(name), _material(DefaultMaterial()), _vao(0), _vbo(0) {}
+Drawable::Drawable(const char* name) : Transform(), _name(name), _material(DefaultMaterial()), _vao(0), _vbo(0) {
+    _texture = new Texture("assets/textures/tronche.jpg");
+}
 
 void
 Drawable::setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indices, std::vector<GLfloat> *normals, std::vector<GLfloat> *uvs, std::vector<GLfloat> *colors) {
@@ -70,6 +72,8 @@ void Drawable::render(Camera &camera, PointLight &light) {
 
     _material.setVec3("lightPosition", light.getPosition());
     _material.setVec3("worldPosition", &_position);
+
+    _material.setTexture("texture", _texture);
 
     glBindVertexArray(_vao);
     glDrawElements(GL_TRIANGLES, (int)_indices.size(), GL_UNSIGNED_INT, nullptr);

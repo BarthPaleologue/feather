@@ -4,4 +4,4 @@
 
 #include "DefaultMaterial.h"
 
-DefaultMaterial::DefaultMaterial() : Material("./shaders/default") {}
+DefaultMaterial::DefaultMaterial() : Material("./assets/shaders/default") {}

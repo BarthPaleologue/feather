@@ -5,10 +5,10 @@
 #include <iostream>
 #include "glm/ext.hpp"
 #include "Material.h"
-#include "../utils/utils.h"
 #include "glad/glad.h"
+#include "../utils/utils.h"
 
-Material::Material(const char* shaderFolder) {
+Material::Material(const char *shaderFolder) {
     std::string vertexPath;
     vertexPath.append(shaderFolder);
     vertexPath += "/vertex.glsl";
@@ -25,26 +25,26 @@ Material::Material(const char* shaderFolder) {
 
 void Material::compile() {
     GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-    const char* vertexShaderCString = _vertexShaderCode.c_str();
+    const char *vertexShaderCString = _vertexShaderCode.c_str();
     glShaderSource(vs, 1, &vertexShaderCString, nullptr);
     glCompileShader(vs);
 
     GLint success;
     GLchar infoLog[512];
     glGetShaderiv(vs, GL_COMPILE_STATUS, &success);
-    if(!success) {
+    if (!success) {
         glGetShaderInfoLog(vs, 512, nullptr, infoLog);
         std::cout << "ERROR in compiling GL_VERTEX_SHADER\n" << infoLog << std::endl;
     }
 
 
     GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-    const char* fragmentShaderCString = _fragmentShaderCode.c_str();
+    const char *fragmentShaderCString = _fragmentShaderCode.c_str();
     glShaderSource(fs, 1, &fragmentShaderCString, nullptr);
     glCompileShader(fs);
 
     glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
-    if(!success) {
+    if (!success) {
         glGetShaderInfoLog(fs, 512, nullptr, infoLog);
         std::cout << "ERROR in compiling GL_FRAGMENT_SHADER\n" << infoLog << std::endl;
     }
@@ -64,4 +64,10 @@ void Material::setMat4(const char *uniformName, const glm::mat4 *matrix) const {
 
 void Material::setVec3(const char *uniformName, const glm::vec3 *vector) const {
     glUniform3fv(glGetUniformLocation(_program, uniformName), 1, glm::value_ptr(*vector));
+}
+
+void Material::setTexture(const char *uniformName, Texture *texture) const {
+    glUniform1i(glGetUniformLocation(_program, uniformName), 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture->getId());
 }
