@@ -4,7 +4,7 @@
 
 #include "Cube.h"
 
-Cube::Cube(const char *name, int size, float x, float y, float z) : Drawable(name) {
+Cube::Cube(const char *name, float x, float y, float z) : Drawable(name) {
     setPositionFromFloats(x, y, z);
     std::vector<float> vertices = {
             -1.0f, -1.0f, -1.0f,
@@ -54,7 +54,12 @@ Cube::Cube(const char *name, int size, float x, float y, float z) : Drawable(nam
             0.0f, 0.0f,
             1.0f, 0.0f,
             1.0f, 1.0f,
-            0.0f, 1.0f
+            0.0f, 1.0f,
+
+            0.0f, 1.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f,
+            0.0f, 0.0f
     };
-    setVertexData(&vertices, &indices, &normals, &colors);
+    setVertexData(&vertices, &indices, &normals, &uvs, &colors);
 }

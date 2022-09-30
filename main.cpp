@@ -54,7 +54,7 @@ int main() {
     PointLight light("sun");
     light.setPosition(glm::vec3(10.0f, 2.0f, 0.0f));
 
-    Cube cube("cube", 1, 0.0f, 0.0f, 0.0f);
+    Cube cube("cube", 0.0f, 0.0f, 0.0f);
     scene.addDrawable(cube);
 
     Sphere sphere("sphere", 1, 32);

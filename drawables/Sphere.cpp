@@ -38,13 +38,13 @@ Sphere::Sphere(const char *name, float radius, int resolution): Drawable(name), 
             x = xy * cosf(sectorAngle);             // r * cos(u) * cos(v)
             y = xy * sinf(sectorAngle);             // r * cos(u) * sin(v)
             vertices.push_back(x);
-            vertices.push_back(y);
             vertices.push_back(z);
+            vertices.push_back(y);
 
             // normalized vertex normal
             nx = x * lengthInv;
-            ny = y * lengthInv;
-            nz = z * lengthInv;
+            ny = z * lengthInv;
+            nz = y * lengthInv;
             normals.push_back(nx);
             normals.push_back(ny);
             normals.push_back(nz);
@@ -98,5 +98,5 @@ Sphere::Sphere(const char *name, float radius, int resolution): Drawable(name), 
 
     for(int i = 0; i < vertices.size(); i++) colors.push_back((float)random()/(float)INT_MAX);
 
-    setVertexData(&vertices, &indices, &normals, &colors);
+    setVertexData(&vertices, &indices, &normals, &uvs, &colors);
 }

@@ -10,7 +10,7 @@
 
 class Cube: public Drawable {
 public:
-    Cube(const char* name, int size, float x, float y, float z);
+    Cube(const char *name, float x, float y, float z);
 };
 
 

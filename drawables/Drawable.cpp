@@ -8,17 +8,18 @@
 Drawable::Drawable(const char* name) : Transform(), _name(name), _material(DefaultMaterial()), _vao(0), _vbo(0) {}
 
 void
-Drawable::setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indices, std::vector<GLfloat> *normals, std::vector<GLfloat> *colors) {
+Drawable::setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indices, std::vector<GLfloat> *normals, std::vector<GLfloat> *uvs, std::vector<GLfloat> *colors) {
     _vertices = *vertices;
+    int vertexLayoutIndex = 0;
     glGenBuffers(1, &_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
     glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(float), _vertices.data(), GL_DYNAMIC_READ);
 
     glGenVertexArrays(1, &_vao);
     glBindVertexArray(_vao);
-    glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glVertexAttribPointer(vertexLayoutIndex, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(vertexLayoutIndex);
 
     _indices = *indices;
     GLuint ibo = 0;
@@ -27,20 +28,31 @@ Drawable::setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indi
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(float), _indices.data(), GL_DYNAMIC_READ);
 
     _normals = *normals;
+    int normalLayoutIndex = 2;
     GLuint normalVbo = 0;
     glGenBuffers(1, &normalVbo);
     glBindBuffer(GL_ARRAY_BUFFER, normalVbo);
     glBufferData(GL_ARRAY_BUFFER, _normals.size() * sizeof(float), _normals.data(), GL_DYNAMIC_READ);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
-    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(normalLayoutIndex, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
+    glEnableVertexAttribArray(normalLayoutIndex);
+
+    _uvs = *uvs;
+    int uvLayoutIndex = 3;
+    GLuint uvVbo = 0;
+    glGenBuffers(1, &uvVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+    glBufferData(GL_ARRAY_BUFFER, _uvs.size() * sizeof(float), _uvs.data(), GL_DYNAMIC_READ);
+    glVertexAttribPointer(uvLayoutIndex, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), nullptr);
+    glEnableVertexAttribArray(uvLayoutIndex);
 
     _colors = *colors;
+    int colorLayoutIndex = 1;
     GLuint colVbo = 0;
     glGenBuffers(1, &colVbo);
     glBindBuffer(GL_ARRAY_BUFFER, colVbo);
     glBufferData(GL_ARRAY_BUFFER, _colors.size() * sizeof(float), _colors.data(), GL_DYNAMIC_READ);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
-    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(colorLayoutIndex, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
+    glEnableVertexAttribArray(colorLayoutIndex);
 }
 
 void Drawable::setMaterial(Material *material) {

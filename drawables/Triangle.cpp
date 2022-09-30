@@ -22,5 +22,10 @@ Triangle::Triangle(const char *name, float x, float y, float z) : Drawable(name)
             0.0f, 1.0f, 0.0f,
             0.0f, 0.0f, 1.0f
     };
-    setVertexData(&points, &indices, &normals, &colors);
+    std::vector<GLfloat> uvs = {
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+            0.0f, 1.0f
+    };
+    setVertexData(&points, &indices, &normals, &uvs, &colors);
 }
