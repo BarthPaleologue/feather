@@ -34,7 +34,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow *window = glfwCreateWindow(640, 480, "Hello World !", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(1000, 600, "Hello World !", nullptr, nullptr);
     if (window == nullptr) {
         glfwTerminate();
         return -1;
@@ -69,7 +69,7 @@ int main() {
     earth.setMaterial(&troncheMaterial);
     scene.addDrawable(earth);
 
-    Sphere moon("moon", 0.8, 32);
+    Sphere moon("moon", 1, 32);
     moon.setParent(&earth);
     moon.setMaterial(&troncheMaterial);
     scene.addDrawable(moon);

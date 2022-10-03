@@ -6,7 +6,7 @@
 
 #include <cmath>
 
-OrbitCamera::OrbitCamera(GLFWwindow *window) : Camera(window), _target(0.0f), _radius(10.0f), _theta(3.14f / 2.0f),
+OrbitCamera::OrbitCamera(GLFWwindow *window) : Camera(window), _target(0.0f), _radius(20.0f), _theta(3.14f / 2.0f),
                                                _phi(0.0f) {}
 
 glm::mat4 OrbitCamera::computeViewMatrix() {
