@@ -5,8 +5,8 @@
 #include "Drawable.h"
 #include "../materials/DefaultMaterial.h"
 
-Drawable::Drawable(const char* name) : Transform(), _name(name), _material(DefaultMaterial()), _vao(0), _vbo(0) {
-    _texture = new Texture("assets/textures/tronche.jpg");
+Drawable::Drawable(const char* name) : Transform(), _name(name), _vao(0), _vbo(0) {
+    _material = new DefaultMaterial();
 }
 
 void
@@ -58,22 +58,20 @@ Drawable::setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indi
 }
 
 void Drawable::setMaterial(Material *material) {
-    _material = *material;
+    _material = material;
 }
 
 void Drawable::render(Camera &camera, PointLight &light) {
-    _material.bind();
+    _material->bind();
 
     const glm::mat4 viewMatrix = camera.getViewMatrix();
     const glm::mat4 projMatrix = camera.getProjectionMatrix();
 
-    _material.setMat4("projection", &projMatrix);
-    _material.setMat4("view", &viewMatrix);
+    _material->setMat4("projection", &projMatrix);
+    _material->setMat4("view", &viewMatrix);
 
-    _material.setVec3("lightPosition", light.getPosition());
-    _material.setVec3("worldPosition", &_position);
-
-    _material.setTexture("texture", _texture);
+    _material->setVec3("lightPosition", light.getPosition());
+    _material->setVec3("worldPosition", &_position);
 
     glBindVertexArray(_vao);
     glDrawElements(GL_TRIANGLES, (int)_indices.size(), GL_UNSIGNED_INT, nullptr);

@@ -9,6 +9,7 @@
 #include "Sphere.h"
 #include "lights/DirectionalLight.h"
 #include "lights/PointLight.h"
+#include "StandardMaterial.h"
 
 #define AZERTY_KEY_Z GLFW_KEY_W
 #define AZERTY_KEY_W GLFW_KEY_Z
@@ -54,11 +55,17 @@ int main() {
     PointLight light("sun");
     light.setPosition(glm::vec3(10.0f, 2.0f, 0.0f));
 
+    StandardMaterial troncheMaterial;
+    Texture texture("assets/textures/tronche.jpg");
+    troncheMaterial.setDiffuseTexture(&texture);
+
     Cube cube("cube", 0.0f, 0.0f, 0.0f);
+    //cube.setMaterial(&troncheMaterial);
     scene.addDrawable(cube);
 
     Sphere sphere("sphere", 1, 32);
     sphere.setPositionFromFloats(0, 2, 0);
+    sphere.setMaterial(&troncheMaterial);
     scene.addDrawable(sphere);
 
     /*Triangle triangle("triangle", 0.2f, 0.0f, 0.0f);

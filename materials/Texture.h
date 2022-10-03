@@ -11,6 +11,10 @@ class Texture {
 public:
     explicit Texture(const char *filepath);
 
+    void bind(int texShaderId);
+
+    void unbind();
+
     int getId();
 
 private:

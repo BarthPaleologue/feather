@@ -45,7 +45,7 @@ GLuint loadTextureFromFileToGPU(const char *filename) {
 
     // Free useless CPU memory
     stbi_image_free(data);
-    glBindTexture(GL_TEXTURE_2D, 0); // unbind the texture
+    //glBindTexture(GL_TEXTURE_2D, 0); // unbind the texture
 
     return texID;
 }

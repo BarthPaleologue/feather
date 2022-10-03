@@ -12,4 +12,13 @@ int Texture::getId() {
     return _id;
 }
 
+void Texture::bind(int texShaderId) {
+    glActiveTexture(GL_TEXTURE0 + texShaderId);
+    glBindTexture(GL_TEXTURE_2D, _id);
+}
+
+void Texture::unbind() {
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 

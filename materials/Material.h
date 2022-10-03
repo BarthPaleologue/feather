@@ -15,12 +15,13 @@ class Material {
 public:
     explicit Material(const char* shaderFolder);
     void compile();
-    void bind() const;
+    virtual void bind();
+    virtual void unbind();
 
     void setMat4(const char* uniformName, const glm::mat4 * matrix) const;
     void setVec3(const char* uniformName, const glm::vec3 * vector) const;
 
-    void setTexture(const char* uniformName, Texture *texture) const;
+    void setTexture(const char* uniformName, Texture *texture, int id) const;
 
 private:
     GLuint _program;

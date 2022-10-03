@@ -6,7 +6,6 @@
 #include "glm/ext.hpp"
 #include "Material.h"
 #include "glad/glad.h"
-#include "../utils/utils.h"
 
 Material::Material(const char *shaderFolder) {
     std::string vertexPath;
@@ -54,7 +53,7 @@ void Material::compile() {
     glLinkProgram(_program);
 }
 
-void Material::bind() const {
+void Material::bind() {
     glUseProgram(_program);
 }
 
@@ -66,8 +65,8 @@ void Material::setVec3(const char *uniformName, const glm::vec3 *vector) const {
     glUniform3fv(glGetUniformLocation(_program, uniformName), 1, glm::value_ptr(*vector));
 }
 
-void Material::setTexture(const char *uniformName, Texture *texture) const {
-    glUniform1i(glGetUniformLocation(_program, uniformName), 0);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture->getId());
+void Material::setTexture(const char *uniformName, Texture *texture, int id) const {
+    glUniform1i(glGetUniformLocation(_program, uniformName), id);
 }
+
+void Material::unbind() {}
