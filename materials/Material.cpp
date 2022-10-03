@@ -66,6 +66,7 @@ void Material::setVec3(const char *uniformName, const glm::vec3 *vector) const {
 }
 
 void Material::setTexture(const char *uniformName, Texture *texture, int id) const {
+    //TODO: use dict if possible
     glUniform1i(glGetUniformLocation(_program, uniformName), id);
 }
 

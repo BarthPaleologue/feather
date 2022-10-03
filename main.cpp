@@ -2,12 +2,10 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "core/Scene.h"
-#include "drawables/Triangle.h"
 #include "cameras/FreeCamera.h"
 #include "Cube.h"
 #include "cameras/OrbitCamera.h"
 #include "Sphere.h"
-#include "lights/DirectionalLight.h"
 #include "lights/PointLight.h"
 #include "StandardMaterial.h"
 
@@ -16,17 +14,17 @@
 
 
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
-    if(key == AZERTY_KEY_W && action == GLFW_PRESS) {
+    if (key == AZERTY_KEY_W && action == GLFW_PRESS) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    } else if(key == GLFW_KEY_F && action == GLFW_PRESS) {
+    } else if (key == GLFW_KEY_F && action == GLFW_PRESS) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    } else if(action == GLFW_PRESS && (key == GLFW_KEY_ESCAPE || key == GLFW_KEY_Q)) {
+    } else if (action == GLFW_PRESS && (key == GLFW_KEY_ESCAPE || key == GLFW_KEY_Q)) {
         glfwSetWindowShouldClose(window, true); // Closes the application if the escape key is pressed
     }
 }
 
 void errorCallback(int error, const char *desc) {
-    std::cout <<  "Error " << error << ": " << desc << std::endl;
+    std::cout << "Error " << error << ": " << desc << std::endl;
 }
 
 
@@ -60,7 +58,6 @@ int main() {
     troncheMaterial.setDiffuseTexture(&texture);
 
     Cube cube("cube", 0.0f, 0.0f, 0.0f);
-    //cube.setMaterial(&troncheMaterial);
     scene.addDrawable(cube);
 
     Sphere sphere("sphere", 1, 32);
@@ -68,22 +65,29 @@ int main() {
     sphere.setMaterial(&troncheMaterial);
     scene.addDrawable(sphere);
 
-    /*Triangle triangle("triangle", 0.2f, 0.0f, 0.0f);
-    scene.addDrawable(&triangle);
+    Sphere earth("earth", 1, 32);
+    earth.setMaterial(&troncheMaterial);
+    scene.addDrawable(earth);
 
-    Triangle triangle2("triangle2", 0.5f, 0.3f, 2.0f);
-    scene.addDrawable(&triangle2);*/
+    Sphere moon("moon", 0.8, 32);
+    moon.setParent(&earth);
+    moon.setMaterial(&troncheMaterial);
+    scene.addDrawable(moon);
 
-    //glCullFace(GL_BACK); // Specifies the faces to cull (here the ones pointing away from the camera)
-    //glEnable(GL_CULL_FACE); // Enables face culling (based on the orientation defined by the CW/CCW enumeration).
+
+    glCullFace(GL_BACK); // Specifies the faces to cull (here the ones pointing away from the camera)
+    glEnable(GL_CULL_FACE); // Enables face culling (based on the orientation defined by the CW/CCW enumeration).
     glDepthFunc(GL_LESS);   // Specify the depth test for the z-buffer
     glEnable(GL_DEPTH_TEST);      // Enable the z-buffer test in the rasterization
     glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
     while (!glfwWindowShouldClose(window)) {
         camera.update();
-        scene.render(camera, light);
+        auto time = (float) glfwGetTime();
+        earth.setPositionFromFloats(5.0f * std::cos(time), 0, 5.0f * std::sin(time));
+        moon.setPositionFromFloats(2.0f * std::cos(5.0f * time), 0, 2.0f * std::sin(5.0f * time));
 
+        scene.render(camera, light);
         glfwPollEvents();
         glfwSwapBuffers(window);
     }

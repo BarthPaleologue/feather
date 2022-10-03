@@ -5,6 +5,8 @@
 #include "Sphere.h"
 
 Sphere::Sphere(const char *name, float radius, int resolution) : Drawable(name), _radius(radius) {
+    setScale(radius);
+
     std::vector<GLfloat> vertices;
     std::vector<GLfloat> normals;
     std::vector<GLfloat> uvs;
@@ -14,7 +16,7 @@ Sphere::Sphere(const char *name, float radius, int resolution) : Drawable(name),
     const float PI = std::acos(-1.0f);
 
     float x, y, z, xy;                              // vertex position
-    float nx, ny, nz, lengthInv = 1.0f / radius;    // normal
+    float nx, ny, nz, lengthInv = 1.0f;    // normal
     float s, t;                                     // texCoord
 
     float sectorStep = 2 * PI / (float) resolution;
@@ -68,14 +70,16 @@ Sphere::Sphere(const char *name, float radius, int resolution) : Drawable(name),
             // 2 triangles per sector excluding 1st and last stacks
             if (i != 0) {
                 indices.push_back(k1);
-                indices.push_back(k2);
+                //indices.push_back(k2);
                 indices.push_back(k1 + 1);   // k1---k2---k1+1
+                indices.push_back(k2);
             }
 
             if (i != (resolution - 1)) {
                 indices.push_back(k1 + 1);
-                indices.push_back(k2);
+                //indices.push_back(k2);
                 indices.push_back(k2 + 1); // k1+1---k2---k2+1
+                indices.push_back(k2);
             }
         }
     }

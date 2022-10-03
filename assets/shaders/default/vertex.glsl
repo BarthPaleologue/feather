@@ -13,14 +13,14 @@ varying vec2 vUV;
 
 uniform mat4 projection;
 uniform mat4 view;
-uniform vec3 worldPosition;
+uniform mat4 world;
 
 void main() {
     fColor = vColor;
     vPosition = position;
-    vPositionW = position + worldPosition;
+    vPositionW = vec3(world * vec4(position, 1.0));
     vNormal = normal;
     vUV = uv;
 
-    gl_Position = projection * view * vec4(vPositionW, 1.0);
+    gl_Position = projection * view * world * vec4(position, 1.0);
 }

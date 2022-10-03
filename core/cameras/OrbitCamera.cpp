@@ -10,7 +10,7 @@ OrbitCamera::OrbitCamera(GLFWwindow *window) : Camera(window), _target(0.0f), _r
                                                _phi(0.0f) {}
 
 glm::mat4 OrbitCamera::computeViewMatrix() {
-    return glm::lookAt(_position, _target, getUpwardDirection());
+    return glm::lookAt(*_position, _target, getUpwardDirection());
 }
 
 void OrbitCamera::update() {
@@ -23,7 +23,7 @@ void OrbitCamera::update() {
     if (glfwGetKey(_window, GLFW_KEY_LEFT)) _phi -= speed;
     if (glfwGetKey(_window, GLFW_KEY_RIGHT)) _phi += speed;
 
-    _position.x = _target.x + _radius * std::sin(_theta) * std::sin(_phi);
-    _position.z = _target.z + _radius * std::sin(_theta) * std::cos(_phi);
-    _position.y = _target.y + _radius * std::cos(_theta);
+    _position->x = _target.x + _radius * std::sin(_theta) * std::sin(_phi);
+    _position->z = _target.z + _radius * std::sin(_theta) * std::cos(_phi);
+    _position->y = _target.y + _radius * std::cos(_theta);
 }

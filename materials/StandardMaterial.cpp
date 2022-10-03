@@ -3,7 +3,6 @@
 //
 
 #include "StandardMaterial.h"
-#include <iostream>
 
 StandardMaterial::StandardMaterial() : Material("./assets/shaders/standard") {}
 

@@ -31,8 +31,6 @@ public:
 
     inline void setFar(const float n) { _far = n; }
 
-    inline void setPosition(const glm::vec3 &p) { _position = p; }
-
     virtual inline glm::mat4 computeViewMatrix() = 0;
 
     inline glm::mat4 getViewMatrix() { return _viewMatrix; }

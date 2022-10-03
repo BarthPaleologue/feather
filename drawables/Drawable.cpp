@@ -4,13 +4,16 @@
 
 #include "Drawable.h"
 #include "../materials/DefaultMaterial.h"
+#include <iostream>
 
-Drawable::Drawable(const char* name) : Transform(), _name(name), _vao(0), _vbo(0) {
+Drawable::Drawable(const char *name) : Transform(), _name(name), _vao(0), _vbo(0) {
     _material = new DefaultMaterial();
+    _scaling = new glm::vec3(1.0f);
 }
 
 void
-Drawable::setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indices, std::vector<GLfloat> *normals, std::vector<GLfloat> *uvs, std::vector<GLfloat> *colors) {
+Drawable::setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indices, std::vector<GLfloat> *normals,
+                        std::vector<GLfloat> *uvs, std::vector<GLfloat> *colors) {
     _vertices = *vertices;
     int vertexLayoutIndex = 0;
     glGenBuffers(1, &_vbo);
@@ -67,12 +70,21 @@ void Drawable::render(Camera &camera, PointLight &light) {
     const glm::mat4 viewMatrix = camera.getViewMatrix();
     const glm::mat4 projMatrix = camera.getProjectionMatrix();
 
+    glm::mat4 world = glm::scale(glm::mat4(1.0f), *_scaling);
+    world = glm::translate(world, getAbsolutePosition());
+
     _material->setMat4("projection", &projMatrix);
     _material->setMat4("view", &viewMatrix);
+    _material->setMat4("world", &world);
 
     _material->setVec3("lightPosition", light.getPosition());
-    _material->setVec3("worldPosition", &_position);
 
     glBindVertexArray(_vao);
-    glDrawElements(GL_TRIANGLES, (int)_indices.size(), GL_UNSIGNED_INT, nullptr);
+    glDrawElements(GL_TRIANGLES, (int) _indices.size(), GL_UNSIGNED_INT, nullptr);
+}
+
+void Drawable::setScale(float scale) {
+    _scaling->x = scale;
+    _scaling->y = scale;
+    _scaling->z = scale;
 }

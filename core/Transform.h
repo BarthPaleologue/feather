@@ -11,9 +11,7 @@ class Transform {
 public:
     Transform();
 
-    void setPosition(glm::vec3 &newPosition);
-
-    glm::vec3 getPosition();
+    glm::vec3 *getPosition();
 
     glm::vec3 getForwardDirection();
 
@@ -23,9 +21,15 @@ public:
 
     void setPositionFromFloats(float x, float y, float z);
 
+    void setParent(Transform *parent);
+
+    glm::vec3 getAbsolutePosition();
+
 protected:
-    glm::vec3 _position;
-    glm::vec3 _rotation;
+    glm::vec3 *_position;
+    glm::vec3 *_rotation;
+    Transform *_parent = nullptr;
+
 };
 
 
