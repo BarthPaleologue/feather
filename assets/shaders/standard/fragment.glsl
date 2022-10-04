@@ -4,6 +4,7 @@ in vec3 fColor;
 varying vec3 vPosition;
 varying vec3 vPositionW;
 varying vec3 vNormal;
+varying vec3 vNormalW;
 varying vec2 vUV;
 
 uniform vec3 lightPosition;
@@ -26,7 +27,7 @@ void main() {
     if(diffuseColor == alphaColor) discard;
     #endif
 
-    float ndl = max(dot(vNormal, normalize(lightPosition - vPositionW)), 0.0);
+    float ndl = max(dot(vNormalW, normalize(lightPosition - vPositionW)), 0.0);
 
     color += diffuseColor * ndl;
 

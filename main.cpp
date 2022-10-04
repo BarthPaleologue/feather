@@ -29,8 +29,7 @@ void errorCallback(int error, const char *desc) {
     std::cout << "Error " << error << ": " << desc << std::endl;
 }
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
     std::cout << "Scrolling" << std::endl;
 }
 
@@ -75,8 +74,13 @@ int main() {
     Texture earthMap("./assets/textures/earth.jpg");
     earthMat.setDiffuseTexture(&earthMap);
 
+    StandardMaterial cloudMat;
+    Texture cloudMap("./assets/textures/clouds.jpg");
+    cloudMat.setDiffuseTexture(&cloudMap);
+    cloudMat.setAlphaColor(0, 0, 0);
+
     Sphere earth("earth", 1, 32);
-    earth.setMaterial(&earthMat);
+    earth.setMaterial(&troncheMaterial);
     scene.addDrawable(earth);
 
     StandardMaterial moonMat;
@@ -93,6 +97,7 @@ int main() {
     glEnable(GL_CULL_FACE); // Enables face culling (based on the orientation defined by the CW/CCW enumeration).
     glDepthFunc(GL_LESS);   // Specify the depth test for the z-buffer
     glEnable(GL_DEPTH_TEST);      // Enable the z-buffer test in the rasterization
+    glEnable(GL_BLEND);
     glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 
     while (!glfwWindowShouldClose(window)) {
@@ -100,7 +105,7 @@ int main() {
         auto time = (float) glfwGetTime();
 
         earth.setPositionFromFloats(7.0f * std::cos(time), 0, 7.0f * std::sin(time));
-        //earth.setRotationY(time);
+        earth.setRotationY(time * 2.0f);
 
         moon.setPositionFromFloats(2.0f * std::cos(5.0f * time), 0, 2.0f * std::sin(5.0f * time));
 
