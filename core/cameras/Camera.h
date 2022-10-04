@@ -6,10 +6,10 @@
 #define FEATHERGL_CAMERA_H
 
 
-#include "glm/glm.hpp"
-#include "glm/ext.hpp"
 #include "GLFW/glfw3.h"
 #include "Transform.h"
+#include "glm/ext.hpp"
+
 
 class Camera : public Transform {
 public:

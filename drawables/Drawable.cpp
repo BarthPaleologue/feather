@@ -8,7 +8,6 @@
 
 Drawable::Drawable(const char *name) : Transform(), _name(name), _vao(0), _vbo(0) {
     _material = new DefaultMaterial();
-    _scaling = new glm::vec3(1.0f);
 }
 
 void
@@ -69,12 +68,7 @@ void Drawable::render(Camera &camera, PointLight &light) {
 
     const glm::mat4 viewMatrix = camera.getViewMatrix();
     const glm::mat4 projMatrix = camera.getProjectionMatrix();
-
-    glm::mat4 world = glm::translate(glm::mat4(1.0f), getAbsolutePosition());
-    world = glm::scale(world, *_scaling);
-    world = glm::rotate(world, _rotation->x, glm::vec3(1.0f, 0.0f, 0.0f));
-    world = glm::rotate(world, _rotation->y, glm::vec3(0.0f, 1.0f, 0.0f));
-    world = glm::rotate(world, _rotation->z, glm::vec3(0.0f, 0.0f, 1.0f));
+    const glm::mat4 world = computeWorldMatrix();
 
     _material->setMat4("projection", &projMatrix);
     _material->setMat4("view", &viewMatrix);
@@ -86,8 +80,3 @@ void Drawable::render(Camera &camera, PointLight &light) {
     glDrawElements(GL_TRIANGLES, (int) _indices.size(), GL_UNSIGNED_INT, nullptr);
 }
 
-void Drawable::setScale(float scale) {
-    _scaling->x = scale;
-    _scaling->y = scale;
-    _scaling->z = scale;
-}

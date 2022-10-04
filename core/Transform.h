@@ -5,6 +5,7 @@
 #ifndef FEATHERGL_TRANSFORM_H
 #define FEATHERGL_TRANSFORM_H
 
+#include <vector>
 #include "glm/glm.hpp"
 
 class Transform {
@@ -31,8 +32,13 @@ public:
 
     inline void setRotationZ(float angle) { _rotation->z = angle; };
 
+    glm::mat4 computeWorldMatrix();
+
+    void setScale(float scale);
+
 protected:
     glm::vec3 *_position = new glm::vec3(0.0);
+    glm::vec3 *_scaling = new glm::vec3(1.0);
     glm::vec3 *_rotation = new glm::vec3(0.0);
     Transform *_parent = nullptr;
 

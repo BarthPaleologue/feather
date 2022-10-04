@@ -17,8 +17,6 @@ public:
 
     void setMaterial(Material *material);
 
-    void setScale(float scale);
-
     void setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indices, std::vector<GLfloat> *normals, std::vector<GLfloat> *uvs, std::vector<GLfloat> *colors);
 
     void render(Camera &camera, PointLight &light);
@@ -31,7 +29,6 @@ private:
     std::vector<GLfloat> _colors;
     std::vector<GLint> _indices;
     Material *_material;
-    glm::vec3* _scaling;
     GLuint _vao;
     GLuint _vbo;
 };
