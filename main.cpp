@@ -80,7 +80,8 @@ int main() {
     cloudMat.setAlphaColor(0, 0, 0);
 
     Sphere earth("earth", 1, 32);
-    earth.setMaterial(&troncheMaterial);
+    earth.setRotationX(0.3);
+    earth.setMaterial(&earthMat);
     scene.addDrawable(earth);
 
     StandardMaterial moonMat;
