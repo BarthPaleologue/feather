@@ -51,15 +51,15 @@ Cube::Cube(const char *name, float x, float y, float z) : Drawable(name) {
             0.577350, 0.577350, 0.577350,
     };
     std::vector<float> uvs = {
+            0.0f, 1.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f,
             0.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 0.0f,
-            1.0f, 1.0f,
 
-            1.0f, 1.0f,
+            0.0f, 0.0f,
             1.0f, 0.0f,
+            1.0f, 1.0f,
             0.0f, 1.0f,
-            0.0f, 0.0f
     };
     setVertexData(&vertices, &indices, &normals, &uvs, &colors);
 }

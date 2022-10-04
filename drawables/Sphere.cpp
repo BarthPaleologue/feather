@@ -51,7 +51,7 @@ Sphere::Sphere(const char *name, float radius, int resolution) : Drawable(name),
             // vertex tex coord between [0, 1]
             s = (float) j / (float) resolution;
             t = (float) i / (float) resolution;
-            uvs.push_back(s);
+            uvs.push_back(1.0f - s);
             uvs.push_back(t);
         }
     }

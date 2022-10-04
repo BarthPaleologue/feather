@@ -27,3 +27,11 @@ void OrbitCamera::update() {
     _position->z = _target.z + _radius * std::sin(_theta) * std::cos(_phi);
     _position->y = _target.y + _radius * std::cos(_theta);
 }
+
+void OrbitCamera::zoom() {
+    _radius -= 0.1;
+}
+
+void OrbitCamera::dezoom() {
+    _radius += 0.1;
+}

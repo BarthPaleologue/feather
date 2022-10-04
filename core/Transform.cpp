@@ -4,10 +4,7 @@
 
 #include "Transform.h"
 
-Transform::Transform() {
-    _position = new glm::vec3(0.0f);
-    _rotation = new glm::vec3(0.0f);
-}
+Transform::Transform() {}
 
 void Transform::setPositionFromFloats(float x, float y, float z) {
     _position->x = x;
@@ -36,6 +33,6 @@ void Transform::setParent(Transform *parent) {
 }
 
 glm::vec3 Transform::getAbsolutePosition() {
-    if(_parent == nullptr) return *_position;
+    if (_parent == nullptr) return *_position;
     return *_position + _parent->getAbsolutePosition();
 }

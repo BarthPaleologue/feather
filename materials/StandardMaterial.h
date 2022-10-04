@@ -14,6 +14,12 @@ public:
 
     void setDiffuseTexture(Texture *texture);
 
+    void setEmissiveTexture(Texture *texture);
+
+    void setDiffuseColor(float r, float g, float b);
+
+    void setAlphaColor(float r, float g, float b);
+
     void setEmissiveColor(float r, float g, float b);
 
     void bind() override;
@@ -22,7 +28,10 @@ public:
 
 private:
     Texture *_diffuseTexture = nullptr;
-    glm::vec3 *_emissiveColor = new glm::vec3(0.0);
+    Texture *_emissiveTexture = nullptr;
+    glm::vec3 *_alphaColor = nullptr;
+    glm::vec3 *_diffuseColor;
+    glm::vec3 *_emissiveColor;
 };
 
 

@@ -25,9 +25,15 @@ public:
 
     glm::vec3 getAbsolutePosition();
 
+    inline void setRotationX(float angle) { _rotation->x = angle; };
+
+    inline void setRotationY(float angle) { _rotation->y = angle; };
+
+    inline void setRotationZ(float angle) { _rotation->z = angle; };
+
 protected:
-    glm::vec3 *_position;
-    glm::vec3 *_rotation;
+    glm::vec3 *_position = new glm::vec3(0.0);
+    glm::vec3 *_rotation = new glm::vec3(0.0);
     Transform *_parent = nullptr;
 
 };

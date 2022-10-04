@@ -12,6 +12,8 @@
 #define AZERTY_KEY_Z GLFW_KEY_W
 #define AZERTY_KEY_W GLFW_KEY_Z
 
+const int WINDOW_WIDTH = 1000;
+const int WINDOW_HEIGHT = 600;
 
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
     if (key == AZERTY_KEY_W && action == GLFW_PRESS) {
@@ -39,7 +41,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow *window = glfwCreateWindow(1000, 600, "Hello World !", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Hello World !", nullptr, nullptr);
     if (window == nullptr) {
         glfwTerminate();
         return -1;
@@ -69,13 +71,21 @@ int main() {
     sun.setMaterial(&sunMaterial);
     scene.addDrawable(sun);
 
+    StandardMaterial earthMat;
+    Texture earthMap("./assets/textures/earth.jpg");
+    earthMat.setDiffuseTexture(&earthMap);
+
     Sphere earth("earth", 1, 32);
-    earth.setMaterial(&troncheMaterial);
+    earth.setMaterial(&earthMat);
     scene.addDrawable(earth);
+
+    StandardMaterial moonMat;
+    Texture moonMap("./assets/textures/moon.jpg");
+    moonMat.setDiffuseTexture(&moonMap);
 
     Sphere moon("moon", 0.5, 32);
     moon.setParent(&earth);
-    moon.setMaterial(&troncheMaterial);
+    moon.setMaterial(&moonMat);
     scene.addDrawable(moon);
 
 
@@ -88,7 +98,10 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         camera.update();
         auto time = (float) glfwGetTime();
+
         earth.setPositionFromFloats(7.0f * std::cos(time), 0, 7.0f * std::sin(time));
+        //earth.setRotationY(time);
+
         moon.setPositionFromFloats(2.0f * std::cos(5.0f * time), 0, 2.0f * std::sin(5.0f * time));
 
         scene.render(camera, light);

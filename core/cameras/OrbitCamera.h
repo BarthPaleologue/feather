@@ -13,6 +13,10 @@ public:
 
     glm::mat4 computeViewMatrix() override;
 
+    void zoom();
+
+    void dezoom();
+
     void update() override;
 
 private:
