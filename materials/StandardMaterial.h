@@ -8,15 +8,21 @@
 #include "Material.h"
 #include "Texture.h"
 
-class StandardMaterial: public Material {
+class StandardMaterial : public Material {
 public:
     StandardMaterial();
+
     void setDiffuseTexture(Texture *texture);
+
+    void setEmissiveColor(float r, float g, float b);
+
     void bind() override;
+
     void unbind() override;
 
 private:
-    Texture* _diffuseTexture = nullptr;
+    Texture *_diffuseTexture = nullptr;
+    glm::vec3 *_emissiveColor = new glm::vec3(0.0);
 };
 
 

@@ -27,6 +27,11 @@ void errorCallback(int error, const char *desc) {
     std::cout << "Error " << error << ": " << desc << std::endl;
 }
 
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    std::cout << "Scrolling" << std::endl;
+}
+
 
 int main() {
     if (!glfwInit()) return -1;
@@ -42,6 +47,7 @@ int main() {
 
     glfwMakeContextCurrent(window);
     glfwSetKeyCallback(window, keyCallback);
+    glfwSetScrollCallback(window, scroll_callback);
 
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
@@ -51,25 +57,23 @@ int main() {
     Scene scene;
     OrbitCamera camera(window);
     PointLight light("sun");
-    light.setPosition(glm::vec3(10.0f, 2.0f, 0.0f));
 
     StandardMaterial troncheMaterial;
     Texture texture("assets/textures/tronche.jpg");
     troncheMaterial.setDiffuseTexture(&texture);
 
-    Cube cube("cube", 0.0f, 0.0f, 0.0f);
-    scene.addDrawable(cube);
+    StandardMaterial sunMaterial;
+    sunMaterial.setEmissiveColor(1.0, 1.0, 0.0);
 
-    Sphere sphere("sphere", 1, 32);
-    sphere.setPositionFromFloats(0, 2, 0);
-    sphere.setMaterial(&troncheMaterial);
-    scene.addDrawable(sphere);
+    Cube sun("sun", 0.0f, 0.0f, 0.0f);
+    sun.setMaterial(&sunMaterial);
+    scene.addDrawable(sun);
 
     Sphere earth("earth", 1, 32);
     earth.setMaterial(&troncheMaterial);
     scene.addDrawable(earth);
 
-    Sphere moon("moon", 1, 32);
+    Sphere moon("moon", 0.5, 32);
     moon.setParent(&earth);
     moon.setMaterial(&troncheMaterial);
     scene.addDrawable(moon);
@@ -84,7 +88,7 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         camera.update();
         auto time = (float) glfwGetTime();
-        earth.setPositionFromFloats(5.0f * std::cos(time), 0, 5.0f * std::sin(time));
+        earth.setPositionFromFloats(7.0f * std::cos(time), 0, 7.0f * std::sin(time));
         moon.setPositionFromFloats(2.0f * std::cos(5.0f * time), 0, 2.0f * std::sin(5.0f * time));
 
         scene.render(camera, light);

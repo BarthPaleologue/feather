@@ -23,6 +23,8 @@ public:
 
     void setTexture(const char* uniformName, Texture *texture, int id) const;
 
+    void setDefine(const char* defineName);
+
 private:
     GLuint _program;
     std::string _vertexShaderCode;

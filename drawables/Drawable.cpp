@@ -70,8 +70,11 @@ void Drawable::render(Camera &camera, PointLight &light) {
     const glm::mat4 viewMatrix = camera.getViewMatrix();
     const glm::mat4 projMatrix = camera.getProjectionMatrix();
 
-    glm::mat4 world = glm::scale(glm::mat4(1.0f), *_scaling);
-    world = glm::translate(world, getAbsolutePosition());
+    glm::mat4 world = glm::translate(glm::mat4(1.0f), getAbsolutePosition());
+    world = glm::scale(world, *_scaling);
+    world = glm::rotate(world, _rotation->x, glm::vec3(1.0f, 0.0f, 0.0f));
+    world = glm::rotate(world, _rotation->y, glm::vec3(0.0f, 1.0f, 0.0f));
+    world = glm::rotate(world, _rotation->z, glm::vec3(0.0f, 0.0f, 1.0f));
 
     _material->setMat4("projection", &projMatrix);
     _material->setMat4("view", &viewMatrix);

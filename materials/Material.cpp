@@ -23,8 +23,14 @@ Material::Material(const char *shaderFolder) {
 }
 
 void Material::compile() {
+    _program = glCreateProgram();
+
+    std::string versionedVertexShaderCode = "#version 400\n" + _vertexShaderCode;
+    std::string versionedFragmentShaderCode = "#version 400\n" + _fragmentShaderCode;
+
+
     GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-    const char *vertexShaderCString = _vertexShaderCode.c_str();
+    const char *vertexShaderCString = versionedVertexShaderCode.c_str();
     glShaderSource(vs, 1, &vertexShaderCString, nullptr);
     glCompileShader(vs);
 
@@ -38,7 +44,7 @@ void Material::compile() {
 
 
     GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-    const char *fragmentShaderCString = _fragmentShaderCode.c_str();
+    const char *fragmentShaderCString = versionedFragmentShaderCode.c_str();
     glShaderSource(fs, 1, &fragmentShaderCString, nullptr);
     glCompileShader(fs);
 
@@ -71,3 +77,9 @@ void Material::setTexture(const char *uniformName, Texture *texture, int id) con
 }
 
 void Material::unbind() {}
+
+void Material::setDefine(const char *defineName) {
+    _fragmentShaderCode = "#define " + std::string(defineName) + "\n" + _fragmentShaderCode;
+    _vertexShaderCode = "#define " + std::string(defineName) + "\n" + _vertexShaderCode;
+    compile();
+}
