@@ -69,10 +69,12 @@ void Drawable::render(Camera &camera, PointLight &light) {
     const glm::mat4 viewMatrix = camera.getViewMatrix();
     const glm::mat4 projMatrix = camera.getProjectionMatrix();
     const glm::mat4 world = computeWorldMatrix();
+    const glm::mat4 normalMatrix = glm::transpose(glm::inverse(world));
 
     _material->setMat4("projection", &projMatrix);
     _material->setMat4("view", &viewMatrix);
     _material->setMat4("world", &world);
+    _material->setMat4("normalMatrix", &normalMatrix);
 
     _material->setVec3("lightPosition", light.getPosition());
 
