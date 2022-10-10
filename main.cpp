@@ -33,8 +33,8 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
     mouseDX = xpos - mouseX;
     mouseDY = ypos - mouseY;
-    if(std::abs(mouseDX) < 0.1) mouseDX = 0;
-    if(std::abs(mouseDY) < 0.1) mouseDY = 0;
+    if(std::abs(mouseDX) < 7.0) mouseDX = 0;
+    if(std::abs(mouseDY) < 7.0) mouseDY = 0;
 
     mouseX = xpos;
     mouseY = ypos;
