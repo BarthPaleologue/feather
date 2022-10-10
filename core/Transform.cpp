@@ -55,3 +55,9 @@ void Transform::setScale(float scale) {
     _scaling->y = scale;
     _scaling->z = scale;
 }
+
+void Transform::translate(glm::vec3 displacement) {
+    _position->x += displacement.x;
+    _position->y += displacement.y;
+    _position->z += displacement.z;
+}

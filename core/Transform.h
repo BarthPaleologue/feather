@@ -22,6 +22,8 @@ public:
 
     void setPositionFromFloats(float x, float y, float z);
 
+    void translate(glm::vec3 displacement);
+
     void setParent(Transform *parent);
 
     glm::vec3 getAbsolutePosition();

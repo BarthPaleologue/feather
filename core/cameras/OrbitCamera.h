@@ -13,9 +13,15 @@ public:
 
     glm::mat4 computeViewMatrix() override;
 
-    void zoom();
+    void setTarget(glm::vec3 *target);
 
-    void dezoom();
+    void setRadius(float radius);
+
+    void zoom(float amount);
+
+    void rotateTheta(float angle);
+
+    void rotatePhi(float angle);
 
     void update() override;
 

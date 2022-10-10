@@ -77,6 +77,7 @@ void Drawable::render(Camera &camera, PointLight &light) {
     _material->setMat4("normalMatrix", &normalMatrix);
 
     _material->setVec3("lightPosition", light.getPosition());
+    _material->setVec3("cameraPosition", camera.getPosition());
 
     glBindVertexArray(_vao);
     glDrawElements(GL_TRIANGLES, (int) _indices.size(), GL_UNSIGNED_INT, nullptr);

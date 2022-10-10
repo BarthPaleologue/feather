@@ -15,17 +15,17 @@ void StandardMaterial::setDiffuseTexture(Texture *texture) {
     setTexture("diffuseTexture", _diffuseTexture, 0);
 }
 
-void StandardMaterial::setEmissiveTexture(Texture *texture) {
-    if(_emissiveTexture == nullptr) setDefine("EMISSIVE_TEXTURE");
+void StandardMaterial::setAmbientTexture(Texture *texture) {
+    if(_emissiveTexture == nullptr) setDefine("AMBIENT_TEXTURE");
     _emissiveTexture = texture;
-    setTexture("emissiveTexture", _emissiveTexture, 1);
+    setTexture("ambientTexture", _emissiveTexture, 1);
 }
 
 void StandardMaterial::bind() {
     Material::bind();
     if (_diffuseTexture != nullptr) _diffuseTexture->bind(0);
     setVec3("diffuseColor", _diffuseColor);
-    setVec3("emissiveColor", _emissiveColor);
+    setVec3("ambientColor", _emissiveColor);
     if(_alphaColor != nullptr) setVec3("alphaColor", _alphaColor);
 }
 
@@ -34,7 +34,7 @@ void StandardMaterial::unbind() {
     if (_diffuseTexture != nullptr) _diffuseTexture->unbind();
 }
 
-void StandardMaterial::setEmissiveColor(float r, float g, float b) {
+void StandardMaterial::setAmbientColor(float r, float g, float b) {
     _emissiveColor->x = r;
     _emissiveColor->y = g;
     _emissiveColor->z = b;

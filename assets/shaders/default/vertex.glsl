@@ -12,6 +12,7 @@ varying vec2 vUV;
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 world;
+uniform mat4 normalMatrix;
 
 void main() {
     fColor = vColor;

@@ -20,7 +20,7 @@ void main() {
     vPosition = position;
     vPositionW = vec3(world * vec4(position, 1.0));
     vNormal = normal;
-    vNormalW = mat3(normalMatrix) * normal;
+    vNormalW = normalize(vec3(normalMatrix * vec4(normal, 0.0)));
     vUV = uv;
 
     gl_Position = projection * view * world * vec4(position, 1.0);

@@ -18,8 +18,8 @@ void OrbitCamera::update() {
     _viewMatrix = computeViewMatrix();
 
     float speed = 0.02f;
-    if (glfwGetKey(_window, GLFW_KEY_UP)) _theta = std::max(_theta - speed, 0.01f);
-    if (glfwGetKey(_window, GLFW_KEY_DOWN)) _theta = std::min(_theta + speed, 3.13f);
+    if (glfwGetKey(_window, GLFW_KEY_UP)) _theta = std::max(_theta - speed, 0.14f);
+    if (glfwGetKey(_window, GLFW_KEY_DOWN)) _theta = std::min(_theta + speed, 3.00f);
     if (glfwGetKey(_window, GLFW_KEY_LEFT)) _phi -= speed;
     if (glfwGetKey(_window, GLFW_KEY_RIGHT)) _phi += speed;
 
@@ -28,10 +28,24 @@ void OrbitCamera::update() {
     _position->y = _target.y + _radius * std::cos(_theta);
 }
 
-void OrbitCamera::zoom() {
-    _radius -= 0.1;
+void OrbitCamera::zoom(float amount) {
+    _radius -= amount;
 }
 
-void OrbitCamera::dezoom() {
-    _radius += 0.1;
+void OrbitCamera::setTarget(glm::vec3 *target) {
+    _target.x = target->x;
+    _target.y = target->y;
+    _target.z = target->z;
+}
+
+void OrbitCamera::setRadius(float radius) {
+    _radius = radius;
+}
+
+void OrbitCamera::rotatePhi(float angle) {
+    _phi += angle;
+}
+
+void OrbitCamera::rotateTheta(float angle) {
+    _theta += angle;
 }

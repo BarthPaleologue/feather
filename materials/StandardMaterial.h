@@ -14,13 +14,13 @@ public:
 
     void setDiffuseTexture(Texture *texture);
 
-    void setEmissiveTexture(Texture *texture);
+    void setAmbientTexture(Texture *texture);
 
     void setDiffuseColor(float r, float g, float b);
 
     void setAlphaColor(float r, float g, float b);
 
-    void setEmissiveColor(float r, float g, float b);
+    void setAmbientColor(float r, float g, float b);
 
     void bind() override;
 

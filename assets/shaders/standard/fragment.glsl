@@ -7,14 +7,17 @@ varying vec3 vNormal;
 varying vec3 vNormalW;
 varying vec2 vUV;
 
+uniform mat4 world;
+
 uniform vec3 lightPosition;
+uniform vec3 cameraPosition;
 
 uniform vec3 diffuseColor;
-uniform vec3 emissiveColor;
+uniform vec3 ambientColor;
 uniform vec3 alphaColor;
 
 uniform sampler2D diffuseTexture;
-uniform sampler2D emissiveTexture;
+uniform sampler2D ambientTexture;
 
 void main() {
     vec3 color = vec3(0.0);
@@ -31,16 +34,24 @@ void main() {
 
     color += diffuseColor * ndl;
 
-    vec3 emissiveColor = emissiveColor;
-    #ifdef EMISSIVE_TEXTURE
-    emissiveColor = texture2D(emissiveTexture, vUV).rgb;
+    vec3 ambientColor = ambientColor;
+    #ifdef AMBIENT_TEXTURE
+    ambientColor = texture2D(ambientTexture, vUV).rgb;
     #endif
 
     #ifdef ALPHA_COLOR
-    if(emissiveColor == alphaColor) discard;
+    if(ambientColor == alphaColor) discard;
     #endif
 
-    color += emissiveColor;
+    color += ambientColor;
+
+    vec3 lightRayW = normalize(lightPosition - vPositionW);
+    vec3 viewDirW = normalize(cameraPosition - vPositionW);
+    vec3 angleW = normalize(viewDirW + lightRayW);
+    float specComp = max(0., dot(normalize(vec3(world * vec4(vNormal, 0.0))), angleW));
+    specComp = pow(specComp, max(1.0, 64.0));
+
+    color += vec3(specComp);
 
     frag_color = vec4(color, 1.0);
 }
