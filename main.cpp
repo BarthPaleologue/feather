@@ -7,6 +7,7 @@
 #include "Sphere.h"
 #include "lights/PointLight.h"
 #include "StandardMaterial.h"
+#include "Planet.h"
 
 #define AZERTY_KEY_Z GLFW_KEY_W
 #define AZERTY_KEY_W GLFW_KEY_Z
@@ -100,7 +101,7 @@ int main() {
     cloudMat.setDiffuseTexture(&cloudMap);
     cloudMat.setAlphaColor(0, 0, 0);
 
-    Sphere earth("earth", 0.5, 32);
+    Planet earth("earth", 0.5, 10, 10, 10);
     earth.setRotationX(0.3);
     earth.setMaterial(&earthMat);
     scene.addDrawable(earth);
@@ -110,7 +111,7 @@ int main() {
     moonMat.setDiffuseTexture(&moonMap);
     moonMat.setAlphaColor(0, 0, 0.02);
 
-    Sphere moon("moon", 0.25, 32);
+    Planet moon("moon", 0.25, 0, 5, 2);
     moon.setMaterial(&moonMat);
     scene.addDrawable(moon);
 
@@ -125,20 +126,15 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         auto time = (float) glfwGetTime();
 
-        earth.setPositionFromFloats(10.0f * std::cos(time * 0.2f), 0, 10.0f * std::sin(time * 0.2f));
-        earth.setRotationY(time * 0.4f);
+        earth.update(time);
+        moon.update(time);
+        moon.translate(*earth.getPosition());
 
         camera.setTarget(earth.getPosition());
-
-        moon.setPositionFromFloats(2.0f * std::cos(time * 0.4f), 0, 2.0f * std::sin(time * 0.4f));
-        moon.translate(*earth.getPosition());
-        //moon.setRotationY(time * 0.4f);
-
         camera.zoom((float) scrollOffset);
         scrollOffset = 0.0;
-
         camera.rotatePhi(-(float)mouseDX / 500.0f);
-        camera.rotateTheta(-(float)mouseDY / 500.0f);
+        camera.rotateTheta((float)mouseDY / 500.0f);
         camera.update();
         scene.render(camera, light);
         glfwPollEvents();

@@ -10,6 +10,8 @@
 class Planet: public Sphere {
 public:
     Planet(const char* name, float radius, float rotationPeriod, float orbitPeriod, float orbitRadius);
+
+    void update(float time);
 private:
     float _rotationPeriod;
     float _orbitPeriod;
