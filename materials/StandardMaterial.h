@@ -28,10 +28,10 @@ public:
 
 private:
     Texture *_diffuseTexture = nullptr;
-    Texture *_emissiveTexture = nullptr;
+    Texture *_ambientTexture = nullptr;
     glm::vec3 *_alphaColor = nullptr;
     glm::vec3 *_diffuseColor;
-    glm::vec3 *_emissiveColor;
+    glm::vec3 *_ambientColor;
 };
 
 

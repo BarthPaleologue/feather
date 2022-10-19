@@ -83,7 +83,7 @@ int main() {
     Texture texture("assets/textures/bestteacher.png");
     Texture blackTex("assets/textures/black.jpg");
     troncheMaterial.setDiffuseTexture(&blackTex);
-    //troncheMaterial.setAmbientTexture(&texture);
+    troncheMaterial.setAmbientTexture(&texture);
 
     StandardMaterial sunMaterial;
     sunMaterial.setAmbientColor(1.0, 1.0, 0.0);
