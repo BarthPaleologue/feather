@@ -4,14 +4,19 @@
 
 #include "StandardMaterial.h"
 
-StandardMaterial::StandardMaterial() : Material("./assets/shaders/standard") {
-    _diffuseColor = new glm::vec3(0.0);
-    _ambientColor = new glm::vec3(0.0);
+StandardMaterial::StandardMaterial() : Material("./assets/shaders/standard") {}
+
+StandardMaterial::StandardMaterial(const char *diffuseTexturePath) : Material("./assets/shaders/standard") {
+    setDiffuseTextureFromFile(diffuseTexturePath);
 }
 
 void StandardMaterial::setDiffuseTexture(Texture *texture) {
     if (_diffuseTexture == nullptr) setDefine("DIFFUSE_TEXTURE");
     _diffuseTexture = texture;
+}
+
+void StandardMaterial::setDiffuseTextureFromFile(const char *filePath) {
+    _diffuseTexture = new Texture(filePath);
 }
 
 void StandardMaterial::setAmbientTexture(Texture *texture) {

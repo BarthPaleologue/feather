@@ -4,11 +4,12 @@
 
 #include "CelestialBody.h"
 
-CelestialBody::CelestialBody(const char *name, float radius, float rotationPeriod, float orbitPeriod, float orbitRadius): Sphere(name, radius, 32) {
+CelestialBody::CelestialBody(const char *name, float radius, float rotationPeriod, float orbitPeriod, float orbitRadius, StandardMaterial *material): Sphere(name, radius, 32) {
     _radius = radius;
     _rotationPeriod = rotationPeriod;
     _orbitPeriod = orbitPeriod;
     _orbitRadius = orbitRadius;
+    _material = material;
 }
 
 void CelestialBody::update(float time) {

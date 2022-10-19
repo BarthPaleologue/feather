@@ -82,15 +82,16 @@ int main() {
     PointLight light("sun");
 
     StandardMaterial troncheMaterial;
-    Texture troncheTex("assets/textures/bestteacher.png");
+    Texture troncheTex("assets/textures/tronche.jpg");
     troncheMaterial.setAmbientTexture(&troncheTex);
 
     StandardMaterial sunMaterial;
-    sunMaterial.setAmbientColor(1.0, 1.0, 0.0);
+    Texture sunMap("assets/textures/sun.jpg");
+    sunMaterial.setAmbientTexture(&sunMap);
 
-    CelestialBody sun("sun", 1, 100, 10, 0);
-    sun.setMaterial(&troncheMaterial);
-    scene.addDrawable(sun);
+    StandardMaterial mercuryMat;
+    Texture mercuryMap("./assets/textures/mercury.jpg");
+    mercuryMat.setDiffuseTexture(&mercuryMap);
 
     StandardMaterial earthMat;
     Texture earthMap("./assets/textures/earth.jpg");
@@ -102,9 +103,14 @@ int main() {
     cloudMat.setDiffuseTexture(&cloudMap);
     cloudMat.setAlphaColor(0, 0, 0);
 
-    CelestialBody earth("earth", 0.5, 10, 10, 10);
+    CelestialBody sun("sun", 1, 100, 10, 0, &sunMaterial);
+    scene.addDrawable(sun);
+
+    CelestialBody mercury("mercury", 0.2, 12, 12, 5, &mercuryMat);
+    scene.addDrawable(mercury);
+
+    CelestialBody earth("earth", 0.5, 10, 10, 10, &earthMat);
     earth.setRotationX(0.3);
-    earth.setMaterial(&earthMat);
     scene.addDrawable(earth);
 
     StandardMaterial moonMat;
@@ -112,7 +118,7 @@ int main() {
     moonMat.setDiffuseTexture(&moonMap);
     moonMat.setAlphaColor(0, 0, 0.02);
 
-    CelestialBody moon("moon", 0.25, 0, 5, 2);
+    CelestialBody moon("moon", 0.25, 0, 5, 2, &moonMat);
     moon.setMaterial(&moonMat);
     scene.addDrawable(moon);
 
@@ -129,6 +135,7 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         auto time = (float) glfwGetTime();
 
+        mercury.update(time);
         earth.update(time);
         moon.update(time);
         moon.translate(*earth.getPosition());

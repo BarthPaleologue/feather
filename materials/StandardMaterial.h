@@ -11,8 +11,11 @@
 class StandardMaterial : public Material {
 public:
     StandardMaterial();
+    StandardMaterial(const char* diffuseTexturePath);
 
     void setDiffuseTexture(Texture *texture);
+
+    void setDiffuseTextureFromFile(const char* filePath);
 
     void setAmbientTexture(Texture *texture);
 
@@ -30,8 +33,8 @@ private:
     Texture *_diffuseTexture = nullptr;
     Texture *_ambientTexture = nullptr;
     glm::vec3 *_alphaColor = nullptr;
-    glm::vec3 *_diffuseColor;
-    glm::vec3 *_ambientColor;
+    glm::vec3 *_diffuseColor = new glm::vec3(0.0);
+    glm::vec3 *_ambientColor = new glm::vec3(0.0);
 };
 
 

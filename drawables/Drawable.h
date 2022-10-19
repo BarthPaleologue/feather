@@ -28,9 +28,10 @@ private:
     std::vector<GLfloat> _uvs;
     std::vector<GLfloat> _colors;
     std::vector<GLint> _indices;
-    Material *_material;
     GLuint _vao;
     GLuint _vbo;
+protected:
+    Material *_material;
 };
 
 
