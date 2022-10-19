@@ -12,19 +12,17 @@ StandardMaterial::StandardMaterial() : Material("./assets/shaders/standard") {
 void StandardMaterial::setDiffuseTexture(Texture *texture) {
     if (_diffuseTexture == nullptr) setDefine("DIFFUSE_TEXTURE");
     _diffuseTexture = texture;
-    setTexture("diffuseTexture", _diffuseTexture, 0);
 }
 
 void StandardMaterial::setAmbientTexture(Texture *texture) {
     if (_ambientTexture == nullptr) setDefine("AMBIENT_TEXTURE");
     _ambientTexture = texture;
-    setTexture("ambientTexture", _ambientTexture, 1);
 }
 
 void StandardMaterial::bind() {
     Material::bind();
-    if (_diffuseTexture != nullptr) _diffuseTexture->bind(0);
-    if (_ambientTexture != nullptr) _ambientTexture->bind(1);
+    if (_diffuseTexture != nullptr) bindTexture("diffuseTexture", _diffuseTexture, 0);
+    if (_ambientTexture != nullptr) bindTexture("ambientTexture", _ambientTexture, 1);
     setVec3("diffuseColor", _diffuseColor);
     setVec3("ambientColor", _ambientColor);
     if (_alphaColor != nullptr) setVec3("alphaColor", _alphaColor);

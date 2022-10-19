@@ -71,9 +71,9 @@ void Material::setVec3(const char *uniformName, const glm::vec3 *vector) const {
     glUniform3fv(glGetUniformLocation(_program, uniformName), 1, glm::value_ptr(*vector));
 }
 
-void Material::setTexture(const char *uniformName, Texture *texture, int id) const {
-    //TODO: use dict if possible
+void Material::bindTexture(const char *uniformName, Texture *texture, int id) const {
     glUniform1i(glGetUniformLocation(_program, uniformName), id);
+    texture->bind(id);
 }
 
 void Material::unbind() {}
@@ -82,4 +82,8 @@ void Material::setDefine(const char *defineName) {
     _fragmentShaderCode = "#define " + std::string(defineName) + "\n" + _fragmentShaderCode;
     _vertexShaderCode = "#define " + std::string(defineName) + "\n" + _vertexShaderCode;
     compile();
+}
+
+void Material::setInt(const char *uniformName, int integer) const {
+    glUniform1i(glGetUniformLocation(_program, uniformName), integer);
 }

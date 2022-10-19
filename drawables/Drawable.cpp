@@ -81,5 +81,7 @@ void Drawable::render(Camera &camera, PointLight &light) {
 
     glBindVertexArray(_vao);
     glDrawElements(GL_TRIANGLES, (int) _indices.size(), GL_UNSIGNED_INT, nullptr);
+
+    _material->unbind();
 }
 

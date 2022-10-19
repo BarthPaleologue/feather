@@ -20,8 +20,9 @@ public:
 
     void setMat4(const char* uniformName, const glm::mat4 * matrix) const;
     void setVec3(const char* uniformName, const glm::vec3 * vector) const;
+    void setInt(const char* uniformName, int integer) const;
 
-    void setTexture(const char* uniformName, Texture *texture, int id) const;
+    void bindTexture(const char* uniformName, Texture *texture, int id) const;
 
     void setDefine(const char* defineName);
 

@@ -14,8 +14,8 @@ const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
 
 double scrollOffset = 0.0;
-double mouseX = 0.0;
-double mouseY = 0.0;
+double mouseX = -1.0;
+double mouseY = -1.0;
 double mouseDX = 0.0;
 double mouseDY = 0.0;
 
@@ -32,6 +32,8 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 void cursor_position_callback(GLFWwindow *window, double xpos, double ypos) {
     mouseDX = xpos - mouseX;
     mouseDY = ypos - mouseY;
+    if(mouseX == -1) mouseDX = 0;
+    if(mouseY == -1) mouseDY = 0;
     if (std::abs(mouseDX) < 7.0) mouseDX = 0;
     if (std::abs(mouseDY) < 7.0) mouseDY = 0;
 
@@ -80,10 +82,8 @@ int main() {
     PointLight light("sun");
 
     StandardMaterial troncheMaterial;
-    Texture texture("assets/textures/bestteacher.png");
-    Texture blackTex("assets/textures/black.jpg");
-    troncheMaterial.setDiffuseTexture(&blackTex);
-    troncheMaterial.setAmbientTexture(&texture);
+    Texture troncheTex("assets/textures/bestteacher.png");
+    troncheMaterial.setAmbientTexture(&troncheTex);
 
     StandardMaterial sunMaterial;
     sunMaterial.setAmbientColor(1.0, 1.0, 0.0);
