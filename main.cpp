@@ -2,12 +2,10 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "core/Scene.h"
-#include "Cube.h"
 #include "cameras/OrbitCamera.h"
-#include "Sphere.h"
 #include "lights/PointLight.h"
 #include "StandardMaterial.h"
-#include "Planet.h"
+#include "CelestialBody.h"
 
 #define AZERTY_KEY_Z GLFW_KEY_W
 #define AZERTY_KEY_W GLFW_KEY_Z
@@ -31,11 +29,11 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
     }
 }
 
-void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
+void cursor_position_callback(GLFWwindow *window, double xpos, double ypos) {
     mouseDX = xpos - mouseX;
     mouseDY = ypos - mouseY;
-    if(std::abs(mouseDX) < 7.0) mouseDX = 0;
-    if(std::abs(mouseDY) < 7.0) mouseDY = 0;
+    if (std::abs(mouseDX) < 7.0) mouseDX = 0;
+    if (std::abs(mouseDY) < 7.0) mouseDY = 0;
 
     mouseX = xpos;
     mouseY = ypos;
@@ -77,18 +75,21 @@ int main() {
 
     Scene scene;
     OrbitCamera camera(window);
-    camera.setRadius(1.0);
+    camera.setRadius(20.0);
+    camera.rotateTheta(-3.0f);
     PointLight light("sun");
 
     StandardMaterial troncheMaterial;
-    Texture texture("assets/textures/tronche.jpg");
-    troncheMaterial.setDiffuseTexture(&texture);
+    Texture texture("assets/textures/bestteacher.png");
+    Texture blackTex("assets/textures/black.jpg");
+    troncheMaterial.setDiffuseTexture(&blackTex);
+    //troncheMaterial.setAmbientTexture(&texture);
 
     StandardMaterial sunMaterial;
     sunMaterial.setAmbientColor(1.0, 1.0, 0.0);
 
-    Cube sun("sun", 0.0f, 0.0f, 0.0f);
-    sun.setMaterial(&sunMaterial);
+    CelestialBody sun("sun", 1, 100, 10, 0);
+    sun.setMaterial(&troncheMaterial);
     scene.addDrawable(sun);
 
     StandardMaterial earthMat;
@@ -101,7 +102,7 @@ int main() {
     cloudMat.setDiffuseTexture(&cloudMap);
     cloudMat.setAlphaColor(0, 0, 0);
 
-    Planet earth("earth", 0.5, 10, 10, 10);
+    CelestialBody earth("earth", 0.5, 10, 10, 10);
     earth.setRotationX(0.3);
     earth.setMaterial(&earthMat);
     scene.addDrawable(earth);
@@ -111,7 +112,7 @@ int main() {
     moonMat.setDiffuseTexture(&moonMap);
     moonMat.setAlphaColor(0, 0, 0.02);
 
-    Planet moon("moon", 0.25, 0, 5, 2);
+    CelestialBody moon("moon", 0.25, 0, 5, 2);
     moon.setMaterial(&moonMat);
     scene.addDrawable(moon);
 
@@ -123,6 +124,8 @@ int main() {
     glEnable(GL_BLEND);
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
+    CelestialBody *currentTarget = &sun;
+
     while (!glfwWindowShouldClose(window)) {
         auto time = (float) glfwGetTime();
 
@@ -130,11 +133,20 @@ int main() {
         moon.update(time);
         moon.translate(*earth.getPosition());
 
-        camera.setTarget(earth.getPosition());
+        if (glfwGetKey(window, GLFW_KEY_S)) {
+            currentTarget = &sun;
+        } else if (glfwGetKey(window, GLFW_KEY_E)) {
+            currentTarget = &earth;
+        } else if (glfwGetKey(window, GLFW_KEY_M)) {
+            currentTarget = &moon;
+        }
+
+        camera.setTarget(currentTarget->getPosition());
+        camera.setMinRadius(currentTarget->getRadius());
         camera.zoom((float) scrollOffset);
         scrollOffset = 0.0;
-        camera.rotatePhi(-(float)mouseDX / 500.0f);
-        camera.rotateTheta((float)mouseDY / 500.0f);
+        camera.rotatePhi(-(float) mouseDX / 500.0f);
+        camera.rotateTheta((float) mouseDY / 500.0f);
         camera.update();
         scene.render(camera, light);
         glfwPollEvents();

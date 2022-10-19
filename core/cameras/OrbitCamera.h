@@ -17,6 +17,8 @@ public:
 
     void setRadius(float radius);
 
+    void setMinRadius(float minRadius);
+
     void zoom(float amount);
 
     void rotateTheta(float angle);
@@ -28,6 +30,7 @@ public:
 private:
     glm::vec3 _target;
     float _radius;
+    float _minRadius;
     float _theta;
     float _phi;
 };

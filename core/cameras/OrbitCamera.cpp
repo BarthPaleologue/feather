@@ -29,7 +29,7 @@ void OrbitCamera::update() {
 }
 
 void OrbitCamera::zoom(float amount) {
-    _radius -= amount;
+    _radius = std::max(_radius - amount, _minRadius);
 }
 
 void OrbitCamera::setTarget(glm::vec3 *target) {
@@ -47,5 +47,9 @@ void OrbitCamera::rotatePhi(float angle) {
 }
 
 void OrbitCamera::rotateTheta(float angle) {
-    _theta += angle;
+    _theta = std::max(std::min(_theta + angle, 3.00f), 0.14f);
+}
+
+void OrbitCamera::setMinRadius(float minRadius) {
+    _minRadius = minRadius;
 }
