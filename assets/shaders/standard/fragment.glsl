@@ -10,6 +10,7 @@ varying vec2 vUV;
 uniform mat4 world;
 
 uniform vec3 lightPosition;
+uniform vec3 lightColor;
 uniform vec3 cameraPosition;
 
 uniform vec3 diffuseColor;
@@ -32,7 +33,7 @@ void main() {
 
     float ndl = max(dot(vNormalW, normalize(lightPosition - vPositionW)), 0.0);
 
-    color += diffuseColor * ndl;
+    color += diffuseColor * lightColor * ndl;
 
     vec3 ambientColor = ambientColor;
     #ifdef AMBIENT_TEXTURE
@@ -51,7 +52,7 @@ void main() {
     float specComp = max(0., dot(normalize(vec3(world * vec4(vNormal, 0.0))), angleW));
     specComp = pow(specComp, max(1.0, 64.0));
 
-    color += vec3(specComp);
+    color += lightColor * specComp;
 
     frag_color = vec4(color, 1.0);
 }

@@ -1,11 +1,11 @@
-run:
-	./build/featherGL
-
 rebuild:
 	rm -rf ./build/assets
 	cmake -B build
 	make -C build
 	make run
+
+run:
+	./build/featherGL
 
 clean:
 	rm -rf ./build

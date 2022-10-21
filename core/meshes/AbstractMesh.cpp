@@ -77,6 +77,7 @@ void AbstractMesh::render(Camera &camera, PointLight &light) {
     _material->setMat4("normalMatrix", &normalMatrix);
 
     _material->setVec3("lightPosition", light.getPosition());
+    _material->setVec3("lightColor", light.getColor());
     _material->setVec3("cameraPosition", camera.getPosition());
 
     glBindVertexArray(_vao);
