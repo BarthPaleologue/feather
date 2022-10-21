@@ -13,10 +13,12 @@
 class Scene {
 public:
     void addDrawable(AbstractMesh &mesh);
-    void render(Camera &camera, PointLight &light);
+    void setActiveCamera(Camera* camera);
+    void render(PointLight &light);
 
 private:
     std::vector<AbstractMesh> _meshes;
+    Camera* _activeCamera = nullptr;
 };
 
 

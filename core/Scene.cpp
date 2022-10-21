@@ -8,9 +8,13 @@ void Scene::addDrawable(AbstractMesh &mesh) {
     _meshes.push_back(mesh);
 }
 
-void Scene::render(Camera &camera, PointLight &light) {
+void Scene::render(PointLight &light) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     for (AbstractMesh &_drawable: _meshes) {
-        _drawable.render(camera, light);
+        _drawable.render(*_activeCamera, light);
     }
+}
+
+void Scene::setActiveCamera(Camera *camera) {
+    _activeCamera = camera;
 }
