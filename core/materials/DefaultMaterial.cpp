@@ -11,7 +11,7 @@ DefaultMaterial::DefaultMaterial() : Material("./assets/shaders/default") {
 
 void DefaultMaterial::bind() {
     Material::bind();
-    _texture->bind(0);
+    bindTexture("texture", _texture, 0);
 }
 
 void DefaultMaterial::unbind() {

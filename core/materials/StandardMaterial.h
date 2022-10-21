@@ -19,6 +19,8 @@ public:
 
     void setAmbientTexture(Texture *texture);
 
+    void setAmbientTextureFromFile(const char* filePath);
+
     void setDiffuseColor(float r, float g, float b);
 
     void setAlphaColor(float r, float g, float b);

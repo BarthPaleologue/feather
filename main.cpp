@@ -90,18 +90,15 @@ int main() {
     sunMaterial.setAmbientTexture(&sunMap);
 
     StandardMaterial mercuryMat;
-    Texture mercuryMap("./assets/textures/mercury.jpg");
-    mercuryMat.setDiffuseTexture(&mercuryMap);
+    mercuryMat.setDiffuseTextureFromFile("./assets/textures/mercury.jpg");
 
     StandardMaterial earthMat;
-    Texture earthMap("./assets/textures/earth.jpg");
-    earthMat.setDiffuseTexture(&earthMap);
+    earthMat.setDiffuseTextureFromFile("./assets/textures/earth.jpg");
     earthMat.setAmbientColor(0, 0.02, 0);
 
-    StandardMaterial cloudMat;
-    Texture cloudMap("./assets/textures/clouds.jpg");
-    cloudMat.setDiffuseTexture(&cloudMap);
-    cloudMat.setAlphaColor(0, 0, 0);
+    StandardMaterial moonMat;
+    moonMat.setDiffuseTextureFromFile("./assets/textures/moon.jpg");
+    moonMat.setAmbientColor(0, 0, 0.02);
 
     CelestialBody sun("sun", 1, 100, 10, 0, &sunMaterial);
     scene.addDrawable(sun);
@@ -113,12 +110,7 @@ int main() {
     earth.setRotationX(0.3);
     scene.addDrawable(earth);
 
-    StandardMaterial moonMat;
-    Texture moonMap("./assets/textures/moon.jpg");
-    moonMat.setDiffuseTexture(&moonMap);
-    moonMat.setAlphaColor(0, 0, 0.02);
-
-    CelestialBody moon("moon", 0.25, 0, 5, 2, &moonMat);
+    CelestialBody moon("moon", 0.25, 5, 5, 2, &moonMat);
     moon.setMaterial(&moonMat);
     scene.addDrawable(moon);
 

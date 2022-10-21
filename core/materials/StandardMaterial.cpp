@@ -16,7 +16,8 @@ void StandardMaterial::setDiffuseTexture(Texture *texture) {
 }
 
 void StandardMaterial::setDiffuseTextureFromFile(const char *filePath) {
-    _diffuseTexture = new Texture(filePath);
+    Texture *diffuseTexture = new Texture(filePath);
+    setDiffuseTexture(diffuseTexture);
 }
 
 void StandardMaterial::setAmbientTexture(Texture *texture) {
@@ -60,4 +61,9 @@ void StandardMaterial::setAlphaColor(float r, float g, float b) {
         _alphaColor->y = g;
         _alphaColor->z = b;
     }
+}
+
+void StandardMaterial::setAmbientTextureFromFile(const char *filePath) {
+    Texture *ambientTexture = new Texture(filePath);
+    setAmbientTexture(ambientTexture);
 }

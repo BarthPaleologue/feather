@@ -17,5 +17,5 @@ void CelestialBody::update(float time) {
     _position->y = 0.0f;
     if(_orbitPeriod != 0) _position->z = _orbitRadius * std::sin(time / _orbitPeriod);
 
-    if(_rotationPeriod != 0) setRotationY(time / _rotationPeriod);
+    if(_rotationPeriod != 0) setRotationY(-time / _rotationPeriod);
 }
