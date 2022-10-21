@@ -6,17 +6,17 @@
 #define FEATHERGL_SCENE_H
 
 
-#include "../drawables/Drawable.h"
+#include "../meshes/AbstractMesh.h"
 #include "cameras/Camera.h"
 #include "lights/PointLight.h"
 
 class Scene {
 public:
-    void addDrawable(Drawable &drawable);
+    void addDrawable(AbstractMesh &mesh);
     void render(Camera &camera, PointLight &light);
 
 private:
-    std::vector<Drawable> _drawables;
+    std::vector<AbstractMesh> _meshes;
 };
 
 

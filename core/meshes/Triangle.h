@@ -5,9 +5,9 @@
 #ifndef FEATHERGL_TRIANGLE_H
 #define FEATHERGL_TRIANGLE_H
 
-#include "Drawable.h"
+#include "AbstractMesh.h"
 
-class Triangle: public Drawable {
+class Triangle: public AbstractMesh {
 public:
     Triangle(const char* name, float x, float y, float z);
 };

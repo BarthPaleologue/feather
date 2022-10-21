@@ -4,7 +4,7 @@
 
 #include "Sphere.h"
 
-Sphere::Sphere(const char *name, float radius, int resolution) : Drawable(name), _radius(radius) {
+Sphere::Sphere(const char *name, float radius, int resolution) : AbstractMesh(name), _radius(radius) {
     setScale(radius);
 
     std::vector<GLfloat> vertices;

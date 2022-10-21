@@ -3,14 +3,14 @@ project(featherGL)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(materials core utils drawables)
+include_directories(core/materials core core/utils core/meshes core/lights core/cameras)
 file(GLOB SRCS ./*.h ./*.cpp
         ./core/*.cpp ./core/*.h
         ./core/cameras/*.cpp ./core/cameras/*.h
         ./core/lights/*.cpp ./core/lights/*.h
-        ./drawables/*.cpp ./drawables/*.h
-        ./materials/*.cpp ./materials/*.h
-        ./utils/*.cpp ./utils/*.h
+        core/meshes/*.cpp core/meshes/*.h
+        core/materials/*.cpp core/materials/*.h
+        core/utils/*.cpp core/utils/*.h
         )
 add_executable(featherGL ${SRCS})
 

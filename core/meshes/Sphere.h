@@ -6,9 +6,9 @@
 #define FEATHERGL_SPHERE_H
 
 
-#include "Drawable.h"
+#include "AbstractMesh.h"
 
-class Sphere: public Drawable {
+class Sphere: public AbstractMesh {
 public:
     Sphere(const char* name, float radius, int resolution);
 

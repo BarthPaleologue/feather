@@ -4,7 +4,7 @@
 
 #include "Cube.h"
 
-Cube::Cube(const char *name, float x, float y, float z) : Drawable(name) {
+Cube::Cube(const char *name, float x, float y, float z) : AbstractMesh(name) {
     setPositionFromFloats(x, y, z);
     std::vector<float> vertices = {
             -1.0f, -1.0f, -1.0f,

@@ -2,8 +2,8 @@
 // Created by barth on 19/09/2022.
 //
 
-#ifndef FEATHERGL_DRAWABLE_H
-#define FEATHERGL_DRAWABLE_H
+#ifndef FEATHERGL_ABSTRACTMESH_H
+#define FEATHERGL_ABSTRACTMESH_H
 
 #include <vector>
 #include "../materials/Material.h"
@@ -11,9 +11,9 @@
 #include "Transform.h"
 #include "lights/PointLight.h"
 
-class Drawable: public Transform {
+class AbstractMesh: public Transform {
 public:
-    explicit Drawable(const char* name);
+    explicit AbstractMesh(const char* name);
 
     void setMaterial(Material *material);
 
@@ -35,4 +35,4 @@ protected:
 };
 
 
-#endif //FEATHERGL_DRAWABLE_H
+#endif //FEATHERGL_ABSTRACTMESH_H

@@ -2,17 +2,17 @@
 // Created by barth on 19/09/2022.
 //
 
-#include "Drawable.h"
+#include "AbstractMesh.h"
 #include "../materials/DefaultMaterial.h"
 #include <iostream>
 
-Drawable::Drawable(const char *name) : Transform(), _name(name), _vao(0), _vbo(0) {
+AbstractMesh::AbstractMesh(const char *name) : Transform(), _name(name), _vao(0), _vbo(0) {
     _material = new DefaultMaterial();
 }
 
 void
-Drawable::setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indices, std::vector<GLfloat> *normals,
-                        std::vector<GLfloat> *uvs, std::vector<GLfloat> *colors) {
+AbstractMesh::setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indices, std::vector<GLfloat> *normals,
+                            std::vector<GLfloat> *uvs, std::vector<GLfloat> *colors) {
     _vertices = *vertices;
     int vertexLayoutIndex = 0;
     glGenBuffers(1, &_vbo);
@@ -59,11 +59,11 @@ Drawable::setVertexData(std::vector<GLfloat> *vertices, std::vector<GLint> *indi
     glEnableVertexAttribArray(colorLayoutIndex);
 }
 
-void Drawable::setMaterial(Material *material) {
+void AbstractMesh::setMaterial(Material *material) {
     _material = material;
 }
 
-void Drawable::render(Camera &camera, PointLight &light) {
+void AbstractMesh::render(Camera &camera, PointLight &light) {
     _material->bind();
 
     const glm::mat4 viewMatrix = camera.getViewMatrix();
