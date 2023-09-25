@@ -22,6 +22,7 @@ public:
     ~Engine();
 
     Observable<int> onKeyPressObservable{};
+    Observable<double, double> onMouseScrollObservable{};
 
 private:
     GLFWwindow *window;

@@ -42,6 +42,11 @@ Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Pr
         }
     });
 
+    glfwSetScrollCallback(window, [](GLFWwindow *window, double xOffset, double yOffset) {
+        auto *engine = static_cast<Engine *>(glfwGetWindowUserPointer(window));
+        engine->onMouseScrollObservable.notifyObservers(xOffset, yOffset);
+    });
+
 }
 
 void Engine::setCursorEnabled(bool enabled) {

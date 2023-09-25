@@ -29,16 +29,11 @@ void cursor_position_callback(GLFWwindow *window, double xpos, double ypos) {
     mouseY = ypos;
 }
 
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
-    scrollOffset = yoffset / 5.0;
-}
-
-
 int main() {
     Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Hello World !");
     GLFWwindow *window = engine.getWindow();
 
-    engine.onKeyPressObservable.add([&window](int key) {
+    engine.onKeyPressObservable.add([](int key) {
         std::cout << "Key pressed: " << key << std::endl;
 
         if (key == GLFW_KEY_W) {
@@ -48,7 +43,10 @@ int main() {
         }
     });
 
-    glfwSetScrollCallback(window, scroll_callback);
+    engine.onMouseScrollObservable.add([](double xOffset, double yOffset) {
+        scrollOffset = yOffset / 5.0;
+    });
+
     glfwSetCursorPosCallback(window, cursor_position_callback);
 
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
