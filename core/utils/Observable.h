@@ -23,12 +23,12 @@ public:
         observersOnce.push_back(observer);
     }
 
-    void notifyObservers() {
+    void notifyObservers(T value) {
         for (auto &observer: observers) {
-            observer->update();
+            observer(value);
         }
         for (auto &observer: observersOnce) {
-            observer->update();
+            observer(value);
         }
         observersOnce.clear();
     }

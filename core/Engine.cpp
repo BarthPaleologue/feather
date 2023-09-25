@@ -21,6 +21,23 @@ Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Pr
     }
 
     if (glfwRawMouseMotionSupported()) glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+
+    onKeyPressObservable.add([this](int key) {
+        if (key == GLFW_KEY_ESCAPE) {
+            glfwSetWindowShouldClose(window, true); // Closes the application if the escape key is pressed
+        }
+    });
+
+    glfwMakeContextCurrent(window);
+
+    glfwSetWindowUserPointer(window, this);
+    glfwSetKeyCallback(window, [](GLFWwindow *window, int key, int scancode, int action, int mods) {
+        auto *engine = static_cast<Engine *>(glfwGetWindowUserPointer(window));
+        if (action == GLFW_PRESS) {
+            engine->onKeyPressObservable.notifyObservers(key);
+        }
+    });
+
 }
 
 void Engine::setCursorEnabled(bool enabled) {

@@ -17,16 +17,6 @@ double mouseY = -1.0;
 double mouseDX = 0.0;
 double mouseDY = 0.0;
 
-void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    } else if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    } else if (action == GLFW_PRESS && (key == GLFW_KEY_ESCAPE || key == GLFW_KEY_Q)) {
-        glfwSetWindowShouldClose(window, true); // Closes the application if the escape key is pressed
-    }
-}
-
 void cursor_position_callback(GLFWwindow *window, double xpos, double ypos) {
     mouseDX = xpos - mouseX;
     mouseDY = ypos - mouseY;
@@ -52,8 +42,16 @@ int main() {
     Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Hello World !");
     GLFWwindow *window = engine.getWindow();
 
-    glfwMakeContextCurrent(window);
-    glfwSetKeyCallback(window, keyCallback);
+    engine.onKeyPressObservable.add([&window](int key) {
+        std::cout << "Key pressed: " << key << std::endl;
+
+        if (key == GLFW_KEY_W) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        } else if (key == GLFW_KEY_F) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
+    });
+
     glfwSetScrollCallback(window, scroll_callback);
     glfwSetCursorPosCallback(window, cursor_position_callback);
 

@@ -5,6 +5,7 @@
 #ifndef FEATHERGL_ENGINE_H
 #define FEATHERGL_ENGINE_H
 
+#include "Observable.h"
 
 class Engine {
 public:
@@ -15,6 +16,8 @@ public:
     GLFWwindow *getWindow() const;
 
     ~Engine();
+
+    Observable<int> onKeyPressObservable{};
 
 private:
     GLFWwindow *window;
