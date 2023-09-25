@@ -11,9 +11,22 @@ class Engine {
 public:
     Engine(int windowWidth, int windowHeight, const char *name);
 
-    void setCursorEnabled(bool enabled);
+    void setCursorEnabled(bool enabled) {
+        glfwSetInputMode(window, GLFW_CURSOR, enabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+    }
 
-    GLFWwindow *getWindow() const;
+    void setWireframeEnabled(bool enabled) {
+        _isWireframeEnabled = enabled;
+        glPolygonMode(GL_FRONT_AND_BACK, enabled ? GL_LINE : GL_FILL);
+    }
+
+    bool isWireframeEnabled() const {
+        return _isWireframeEnabled;
+    }
+
+    GLFWwindow *getWindow() const {
+        return window;
+    }
 
     float getElapsedTime() const {
         return (float) glfwGetTime();
@@ -25,6 +38,7 @@ public:
     Observable<double, double> onMouseScrollObservable{};
 
 private:
+    bool _isWireframeEnabled = false;
     GLFWwindow *window;
 };
 

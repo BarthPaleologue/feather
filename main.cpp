@@ -9,7 +9,6 @@
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
 
-double scrollOffset = 0.0;
 double mouseX = -1.0;
 double mouseY = -1.0;
 double mouseDX = 0.0;
@@ -29,19 +28,16 @@ void cursor_position_callback(GLFWwindow *window, double xpos, double ypos) {
 
 int main() {
     Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Solar System");
-    engine.onKeyPressObservable.add([](int key) {
-        std::cout << "Key pressed: " << key << std::endl;
-
+    engine.onKeyPressObservable.add([&engine](int key) {
         if (key == GLFW_KEY_W) {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        } else if (key == GLFW_KEY_F) {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            if (engine.isWireframeEnabled()) {
+                engine.setWireframeEnabled(false);
+            } else {
+                engine.setWireframeEnabled(true);
+            }
         }
     });
 
-    engine.onMouseScrollObservable.add([](double xOffset, double yOffset) {
-        scrollOffset = yOffset / 5.0;
-    });
 
     GLFWwindow *window = engine.getWindow();
     glfwSetCursorPosCallback(window, cursor_position_callback);
@@ -52,6 +48,11 @@ int main() {
     camera.rotateTheta(-3.0f);
     scene.setActiveCamera(&camera);
     PointLight light("sun");
+
+    engine.onMouseScrollObservable.add([&camera](double xOffset, double yOffset) {
+        float scrollOffset = (float) yOffset / 5.0f;
+        camera.zoom(scrollOffset);
+    });
 
     StandardMaterial sunMaterial;
     Texture sunMap("assets/textures/sun.jpg");
@@ -104,6 +105,16 @@ int main() {
 
     CelestialBody *currentTarget = &sun;
 
+    engine.onKeyPressObservable.add([&currentTarget, &sun, &earth, &moon](int key) {
+        if (key == GLFW_KEY_S) {
+            currentTarget = &sun;
+        } else if (key == GLFW_KEY_E) {
+            currentTarget = &earth;
+        } else if (key == GLFW_KEY_M) {
+            currentTarget = &moon;
+        }
+    });
+
     while (!glfwWindowShouldClose(window)) {
         auto elapsedTime = engine.getElapsedTime();
 
@@ -114,18 +125,9 @@ int main() {
         moon.translate(*earth.getPosition());
         mars.update(elapsedTime);
 
-        if (glfwGetKey(window, GLFW_KEY_S)) {
-            currentTarget = &sun;
-        } else if (glfwGetKey(window, GLFW_KEY_E)) {
-            currentTarget = &earth;
-        } else if (glfwGetKey(window, GLFW_KEY_M)) {
-            currentTarget = &moon;
-        }
-
         camera.setTarget(currentTarget->getPosition());
         camera.setMinRadius(currentTarget->getRadius());
-        camera.zoom((float) scrollOffset);
-        scrollOffset = 0.0;
+
         camera.rotatePhi(-(float) mouseDX / 500.0f);
         camera.rotateTheta(-(float) mouseDY / 500.0f);
         camera.update();

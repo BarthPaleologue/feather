@@ -53,12 +53,4 @@ Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Pr
     });
 }
 
-void Engine::setCursorEnabled(bool enabled) {
-    glfwSetInputMode(window, GLFW_CURSOR, enabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
-}
-
-GLFWwindow *Engine::getWindow() const {
-    return window;
-}
-
 Engine::~Engine() = default;
