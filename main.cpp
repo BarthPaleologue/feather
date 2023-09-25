@@ -1,5 +1,3 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <iostream>
 #include "core/Scene.h"
 #include "cameras/OrbitCamera.h"
@@ -48,11 +46,6 @@ int main() {
     });
 
     glfwSetCursorPosCallback(window, cursor_position_callback);
-
-    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
-    }
 
     Scene scene;
     OrbitCamera camera(window);

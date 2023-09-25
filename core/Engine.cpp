@@ -2,6 +2,7 @@
 // Created by barth on 25/09/23.
 //
 
+#include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 #include "Engine.h"
@@ -34,6 +35,10 @@ Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Pr
 
     glfwMakeContextCurrent(window);
 
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+        throw std::runtime_error("Failed to initialize GLAD");
+    }
+
     glfwSetWindowUserPointer(window, this);
     glfwSetKeyCallback(window, [](GLFWwindow *window, int key, int scancode, int action, int mods) {
         auto *engine = static_cast<Engine *>(glfwGetWindowUserPointer(window));
@@ -46,7 +51,6 @@ Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Pr
         auto *engine = static_cast<Engine *>(glfwGetWindowUserPointer(window));
         engine->onMouseScrollObservable.notifyObservers(xOffset, yOffset);
     });
-
 }
 
 void Engine::setCursorEnabled(bool enabled) {
