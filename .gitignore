@@ -33,7 +33,6 @@
 
 .idea
 cmake-build-debug
-glad
 glfw
 build
 glm
