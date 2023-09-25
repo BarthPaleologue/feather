@@ -6,6 +6,7 @@
 #include "lights/PointLight.h"
 #include "StandardMaterial.h"
 #include "CelestialBody.h"
+#include "Engine.h"
 
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
@@ -29,8 +30,8 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 void cursor_position_callback(GLFWwindow *window, double xpos, double ypos) {
     mouseDX = xpos - mouseX;
     mouseDY = ypos - mouseY;
-    if(mouseX == -1) mouseDX = 0;
-    if(mouseY == -1) mouseDY = 0;
+    if (mouseX == -1) mouseDX = 0;
+    if (mouseY == -1) mouseDY = 0;
     if (std::abs(mouseDX) < 7.0) mouseDX = 0;
     if (std::abs(mouseDY) < 7.0) mouseDY = 0;
 
@@ -48,19 +49,8 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
 
 
 int main() {
-    if (!glfwInit()) return -1;
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    GLFWwindow *window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Hello World !", nullptr, nullptr);
-    if (window == nullptr) {
-        glfwTerminate();
-        return -1;
-    }
-
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    if (glfwRawMouseMotionSupported()) glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Hello World !");
+    GLFWwindow *window = engine.getWindow();
 
     glfwMakeContextCurrent(window);
     glfwSetKeyCallback(window, keyCallback);
