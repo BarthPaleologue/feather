@@ -10,33 +10,33 @@
 #include <algorithm>
 #include <functional>
 
-template<typename T>
+template<class... T>
 class Observable {
 public:
     Observable() = default;
 
-    void add(std::function<void(T)> observer) {
+    void add(std::function<void(T...)> observer) {
         observers.push_back(observer);
     }
 
-    void addOnce(std::function<void(T)> observer) {
+    void addOnce(std::function<void(T...)> observer) {
         observersOnce.push_back(observer);
     }
 
-    void notifyObservers(T value) {
+    void notifyObservers(T... value) {
         for (auto &observer: observers) {
-            observer(value);
+            observer(value...);
         }
         for (auto &observer: observersOnce) {
-            observer(value);
+            observer(value...);
         }
         observersOnce.clear();
     }
 
 private:
     // vector of lambda taking T as parameter
-    std::vector<std::function<void(T)>> observers;
-    std::vector<std::function<void(T)>> observersOnce;
+    std::vector<std::function<void(T...)>> observers;
+    std::vector<std::function<void(T...)>> observersOnce;
 };
 
 
