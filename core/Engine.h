@@ -36,8 +36,11 @@ public:
 
     Observable<int> onKeyPressObservable{};
     Observable<double, double> onMouseScrollObservable{};
+    Observable<double, double> onMouseMoveObservable{};
 
 private:
+    double mouseX{};
+    double mouseY{};
     bool _isWireframeEnabled = false;
     GLFWwindow *window;
 };

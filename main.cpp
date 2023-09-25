@@ -1,4 +1,3 @@
-#include <iostream>
 #include "core/Scene.h"
 #include "cameras/OrbitCamera.h"
 #include "lights/PointLight.h"
@@ -8,23 +7,6 @@
 
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
-
-double mouseX = -1.0;
-double mouseY = -1.0;
-double mouseDX = 0.0;
-double mouseDY = 0.0;
-
-void cursor_position_callback(GLFWwindow *window, double xpos, double ypos) {
-    mouseDX = xpos - mouseX;
-    mouseDY = ypos - mouseY;
-    if (mouseX == -1) mouseDX = 0;
-    if (mouseY == -1) mouseDY = 0;
-    if (std::abs(mouseDX) < 7.0) mouseDX = 0;
-    if (std::abs(mouseDY) < 7.0) mouseDY = 0;
-
-    mouseX = xpos;
-    mouseY = ypos;
-}
 
 int main() {
     Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Solar System");
@@ -38,9 +20,7 @@ int main() {
         }
     });
 
-
     GLFWwindow *window = engine.getWindow();
-    glfwSetCursorPosCallback(window, cursor_position_callback);
 
     Scene scene;
     OrbitCamera camera(window);
@@ -52,6 +32,11 @@ int main() {
     engine.onMouseScrollObservable.add([&camera](double xOffset, double yOffset) {
         float scrollOffset = (float) yOffset / 5.0f;
         camera.zoom(scrollOffset);
+    });
+
+    engine.onMouseMoveObservable.add([&camera](double mouseDX, double mouseDY) {
+        camera.rotatePhi(-(float) mouseDX / 500.0f);
+        camera.rotateTheta(-(float) mouseDY / 500.0f);
     });
 
     StandardMaterial sunMaterial;
@@ -128,8 +113,6 @@ int main() {
         camera.setTarget(currentTarget->getPosition());
         camera.setMinRadius(currentTarget->getRadius());
 
-        camera.rotatePhi(-(float) mouseDX / 500.0f);
-        camera.rotateTheta(-(float) mouseDY / 500.0f);
         camera.update();
         scene.render(light);
         glfwPollEvents();

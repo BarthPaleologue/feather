@@ -5,6 +5,7 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <stdexcept>
+#include <iostream>
 #include "Engine.h"
 
 Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Project") {
@@ -50,6 +51,18 @@ Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Pr
     glfwSetScrollCallback(window, [](GLFWwindow *window, double xOffset, double yOffset) {
         auto *engine = static_cast<Engine *>(glfwGetWindowUserPointer(window));
         engine->onMouseScrollObservable.notifyObservers(xOffset, yOffset);
+    });
+
+    glfwSetCursorPosCallback(window, [](GLFWwindow *window, double xpos, double ypos) {
+        auto *engine = static_cast<Engine *>(glfwGetWindowUserPointer(window));
+        double mouseDX = xpos - engine->mouseX;
+        double mouseDY = ypos - engine->mouseY;
+        if (mouseDX != 0 || mouseDY != 0) {
+            engine->onMouseMoveObservable.notifyObservers(mouseDX, mouseDY);
+        }
+
+        engine->mouseX = xpos;
+        engine->mouseY = ypos;
     });
 }
 
