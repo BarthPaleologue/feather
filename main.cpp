@@ -28,9 +28,7 @@ void cursor_position_callback(GLFWwindow *window, double xpos, double ypos) {
 }
 
 int main() {
-    Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Hello World !");
-    GLFWwindow *window = engine.getWindow();
-
+    Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Solar System");
     engine.onKeyPressObservable.add([](int key) {
         std::cout << "Key pressed: " << key << std::endl;
 
@@ -45,6 +43,7 @@ int main() {
         scrollOffset = yOffset / 5.0;
     });
 
+    GLFWwindow *window = engine.getWindow();
     glfwSetCursorPosCallback(window, cursor_position_callback);
 
     Scene scene;
