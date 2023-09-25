@@ -29,10 +29,6 @@ void cursor_position_callback(GLFWwindow *window, double xpos, double ypos) {
     mouseY = ypos;
 }
 
-void errorCallback(int error, const char *desc) {
-    std::cout << "Error " << error << ": " << desc << std::endl;
-}
-
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
     scrollOffset = yoffset / 5.0;
 }
@@ -119,14 +115,14 @@ int main() {
     CelestialBody *currentTarget = &sun;
 
     while (!glfwWindowShouldClose(window)) {
-        auto time = (float) glfwGetTime();
+        auto elapsedTime = engine.getElapsedTime();
 
-        mercury.update(time);
-        venus.update(time);
-        earth.update(time);
-        moon.update(time);
+        mercury.update(elapsedTime);
+        venus.update(elapsedTime);
+        earth.update(elapsedTime);
+        moon.update(elapsedTime);
         moon.translate(*earth.getPosition());
-        mars.update(time);
+        mars.update(elapsedTime);
 
         if (glfwGetKey(window, GLFW_KEY_S)) {
             currentTarget = &sun;

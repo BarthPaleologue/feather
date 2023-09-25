@@ -15,6 +15,10 @@ public:
 
     GLFWwindow *getWindow() const;
 
+    float getElapsedTime() const {
+        return (float) glfwGetTime();
+    }
+
     ~Engine();
 
     Observable<int> onKeyPressObservable{};

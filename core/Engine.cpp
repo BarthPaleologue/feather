@@ -20,6 +20,10 @@ Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Pr
         throw std::runtime_error("Failed to create GLFW window");
     }
 
+    glfwSetErrorCallback([](int error, const char *description) {
+        throw std::runtime_error(description);
+    });
+
     if (glfwRawMouseMotionSupported()) glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
     onKeyPressObservable.add([this](int key) {
