@@ -18,15 +18,10 @@ file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
 find_package(glfw3 REQUIRED)
 message(STATUS "Found GLFW3")
-target_link_libraries(glfw)
-#add_subdirectory(glfw)
-#target_link_libraries(${PROJECT_NAME} glfw)
+target_link_libraries(${PROJECT_NAME} glfw)
 
 find_package(glm REQUIRED)
 message(STATUS "GLM included")
-
-#add_subdirectory(glm)
-#target_link_libraries(${PROJECT_NAME} glm)
 
 target_sources(${PROJECT_NAME} PRIVATE glad/src/glad.c)
 target_include_directories(${PROJECT_NAME} PRIVATE glad/include/)
