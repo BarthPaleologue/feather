@@ -11,13 +11,7 @@ const int WINDOW_HEIGHT = 600;
 int main() {
     Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Solar System");
     engine.onKeyPressObservable.add([&engine](int key) {
-        if (key == GLFW_KEY_W) {
-            if (engine.isWireframeEnabled()) {
-                engine.setWireframeEnabled(false);
-            } else {
-                engine.setWireframeEnabled(true);
-            }
-        }
+        if (key == GLFW_KEY_W) engine.setWireframeEnabled(!engine.isWireframeEnabled());
     });
 
     GLFWwindow *window = engine.getWindow();
