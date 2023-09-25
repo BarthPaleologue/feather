@@ -24,6 +24,10 @@ public:
         return _isWireframeEnabled;
     }
 
+    bool isMousePressed() const {
+        return glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+    }
+
     GLFWwindow *getWindow() const {
         return window;
     }

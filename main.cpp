@@ -34,7 +34,8 @@ int main() {
         camera.zoom(scrollOffset);
     });
 
-    engine.onMouseMoveObservable.add([&camera](double mouseDX, double mouseDY) {
+    engine.onMouseMoveObservable.add([&camera, &engine](double mouseDX, double mouseDY) {
+        if (!engine.isMousePressed()) return;
         camera.rotatePhi(-(float) mouseDX / 500.0f);
         camera.rotateTheta(-(float) mouseDY / 500.0f);
     });
