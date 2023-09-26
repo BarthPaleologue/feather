@@ -7,6 +7,7 @@
 
 #include "Observable.h"
 #include <GLFW/glfw3.h>
+#include <map>
 
 class Engine {
 public:
@@ -29,6 +30,10 @@ public:
         return glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
     }
 
+    bool isKeyPressed(int key) const {
+        return _keyStates.find(key) != _keyStates.end() && _keyStates.at(key);
+    }
+
     GLFWwindow *getWindow() const {
         return window;
     }
@@ -40,12 +45,16 @@ public:
     ~Engine();
 
     Observable<int> onKeyPressObservable{};
+    Observable<int> onKeyReleaseObservable{};
     Observable<double, double> onMouseScrollObservable{};
     Observable<double, double> onMouseMoveObservable{};
 
 private:
     double mouseX{};
     double mouseY{};
+
+    std::map<int, bool> _keyStates{};
+
     bool _isWireframeEnabled = false;
     GLFWwindow *window;
 };

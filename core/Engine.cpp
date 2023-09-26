@@ -44,7 +44,11 @@ Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Pr
     glfwSetKeyCallback(window, [](GLFWwindow *window, int key, int scancode, int action, int mods) {
         auto *engine = static_cast<Engine *>(glfwGetWindowUserPointer(window));
         if (action == GLFW_PRESS) {
+            engine->_keyStates[key] = true;
             engine->onKeyPressObservable.notifyObservers(key);
+        } else if (action == GLFW_RELEASE) {
+            engine->_keyStates[key] = false;
+            engine->onKeyReleaseObservable.notifyObservers(key);
         }
     });
 

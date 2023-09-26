@@ -4,6 +4,7 @@
 #include "StandardMaterial.h"
 #include "CelestialBody.h"
 #include "Engine.h"
+#include "FreeCamera.h"
 
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
@@ -18,21 +19,11 @@ int main() {
 
     Scene scene;
     OrbitCamera camera(&engine);
+    camera.setPositionFromFloats(0, 0, 20);
     camera.setRadius(20.0);
     camera.rotateTheta(-3.0f);
     scene.setActiveCamera(&camera);
     PointLight light("sun");
-
-    engine.onMouseScrollObservable.add([&camera](double xOffset, double yOffset) {
-        float scrollOffset = (float) yOffset / 5.0f;
-        camera.zoom(scrollOffset);
-    });
-
-    engine.onMouseMoveObservable.add([&camera, &engine](double mouseDX, double mouseDY) {
-        if (!engine.isMousePressed()) return;
-        camera.rotatePhi(-(float) mouseDX / 500.0f);
-        camera.rotateTheta(-(float) mouseDY / 500.0f);
-    });
 
     StandardMaterial sunMaterial;
     Texture sunMap("assets/textures/sun.jpg");
