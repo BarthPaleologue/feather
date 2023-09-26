@@ -19,7 +19,7 @@ int main() {
 
     Scene scene;
     OrbitCamera camera(&engine);
-    camera.setPositionFromFloats(0, 0, 20);
+    camera.setPosition(0, 0, 20);
     camera.setRadius(20.0);
     camera.rotateTheta(-3.0f);
     scene.setActiveCamera(&camera);

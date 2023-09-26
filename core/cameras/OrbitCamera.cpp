@@ -16,8 +16,8 @@ OrbitCamera::OrbitCamera(Engine *engine) : Camera(engine), _target(0.0f), _radiu
 
     engine->onMouseMoveObservable.add([this](double mouseDX, double mouseDY) {
         if (!this->_engine->isMousePressed()) return;
-        this->rotatePhi(-(float) mouseDX / 500.0f);
-        this->rotateTheta(-(float) mouseDY / 500.0f);
+        this->rotatePhi(-(float) mouseDX / 200.0f);
+        this->rotateTheta(-(float) mouseDY / 200.0f);
     });
 }
 

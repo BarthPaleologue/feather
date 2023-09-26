@@ -5,7 +5,7 @@
 #include "Triangle.h"
 
 Triangle::Triangle(const char *name, float x, float y, float z) : AbstractMesh(name) {
-    setPositionFromFloats(x, y, z);
+    setPosition(x, y, z);
     std::vector<GLfloat> points = {
             0.0f, 0.5f, 0.0f,
             0.5f, -0.5f, 0.0f,

@@ -7,7 +7,7 @@
 
 Transform::Transform() {}
 
-void Transform::setPositionFromFloats(float x, float y, float z) {
+void Transform::setPosition(float x, float y, float z) {
     _position->x = x;
     _position->y = y;
     _position->z = z;
