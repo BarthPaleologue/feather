@@ -20,7 +20,7 @@ public:
 
     void setMaterial(Material *material);
 
-    Material *getMaterial() const {
+    Material *material() const {
         return _material;
     }
 

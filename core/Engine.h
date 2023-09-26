@@ -17,15 +17,6 @@ public:
         glfwSetInputMode(window, GLFW_CURSOR, enabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
     }
 
-    void setWireframeEnabled(bool enabled) {
-        _isWireframeEnabled = enabled;
-        glPolygonMode(GL_FRONT_AND_BACK, enabled ? GL_LINE : GL_FILL);
-    }
-
-    bool isWireframeEnabled() const {
-        return _isWireframeEnabled;
-    }
-
     bool isMousePressed() const {
         return glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
     }
@@ -71,7 +62,6 @@ private:
 
     std::map<int, bool> _keyStates{};
 
-    bool _isWireframeEnabled = false;
     GLFWwindow *window;
 };
 

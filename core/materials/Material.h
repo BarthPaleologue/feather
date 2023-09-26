@@ -31,6 +31,14 @@ public:
 
     void setDefine(const char *defineName);
 
+    bool setWireframe(bool enabled) {
+        _isWireframe = enabled;
+    }
+
+    bool wireframe() const {
+        return _isWireframe;
+    }
+
     bool isBackFaceCullingEnabled() const {
         return _isBackFaceCullingEnabled;
     }
@@ -44,6 +52,7 @@ private:
     std::string _vertexShaderCode;
     std::string _fragmentShaderCode;
 
+    bool _isWireframe = false;
     bool _isBackFaceCullingEnabled = true;
 };
 

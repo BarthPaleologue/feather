@@ -67,6 +67,8 @@ void Material::bind() {
     } else {
         glDisable(GL_CULL_FACE);
     }
+
+    glPolygonMode(GL_FRONT_AND_BACK, _isWireframe ? GL_LINE : GL_FILL);
 }
 
 void Material::setMat4(const char *uniformName, const glm::mat4 *matrix) const {

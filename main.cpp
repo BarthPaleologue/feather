@@ -56,15 +56,13 @@ int main() {
 
     CelestialBody *currentTarget = &sun;
 
-    Mesh *sphere = MeshBuilder::makeSphere("sphere", scene, 32);
-    sphere->setPosition(0, 3, 0);
-
-    Mesh *plane = MeshBuilder::makePlane("plane", scene, 4);
+    Mesh *plane = MeshBuilder::makePlane("plane", scene, 64);
     plane->setPosition(0, -2, 0);
-    plane->setScale(10);
-    plane->getMaterial()->setBackFaceCullingEnabled(false);
+    plane->setScale(40);
+    plane->material()->setWireframe(true);
+    plane->material()->setBackFaceCullingEnabled(false);
 
-    engine.onKeyPressObservable.add([&currentTarget, &sun, &earth, &moon, &engine](int key) {
+    engine.onKeyPressObservable.add([&currentTarget, &sun, &earth, &moon, &plane](int key) {
         if (key == GLFW_KEY_S) {
             currentTarget = &sun;
         } else if (key == GLFW_KEY_E) {
@@ -73,7 +71,7 @@ int main() {
             currentTarget = &moon;
         }
 
-        if (key == GLFW_KEY_W) engine.setWireframeEnabled(!engine.isWireframeEnabled());
+        if (key == GLFW_KEY_W) plane->material()->setWireframe(!plane->material()->wireframe());
     });
 
     scene.onBeforeRenderObservable.add([&]() {
