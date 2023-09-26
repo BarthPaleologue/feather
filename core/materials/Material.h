@@ -13,23 +13,34 @@
 
 class Material {
 public:
-    explicit Material(const char* shaderFolder);
+    explicit Material(const char *shaderFolder);
+
     void compile();
+
     virtual void bind();
+
     virtual void unbind();
 
-    void setMat4(const char* uniformName, const glm::mat4 * matrix) const;
-    void setVec3(const char* uniformName, const glm::vec3 * vector) const;
-    void setInt(const char* uniformName, int integer) const;
+    void setMat4(const char *uniformName, const glm::mat4 *matrix) const;
 
-    void bindTexture(const char* uniformName, Texture *texture, int id) const;
+    void setVec3(const char *uniformName, const glm::vec3 *vector) const;
 
-    void setDefine(const char* defineName);
+    void setInt(const char *uniformName, int integer) const;
+
+    void bindTexture(const char *uniformName, Texture *texture, int id) const;
+
+    void setDefine(const char *defineName);
+
+    bool isBackFaceCullingEnabled() const {
+        return _isBackFaceCullingEnabled;
+    }
 
 private:
     GLuint _program;
     std::string _vertexShaderCode;
     std::string _fragmentShaderCode;
+
+    bool _isBackFaceCullingEnabled = true;
 };
 
 

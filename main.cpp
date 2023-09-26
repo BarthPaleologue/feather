@@ -52,14 +52,7 @@ int main() {
     CelestialBody moon("moon", 0.25, 5, 5, 2, &moonMat, scene);
 
     CelestialBody mars("mars", 0.35, 10, 12, 13, &marsMat, scene);
-
-    glCullFace(GL_BACK); // Specifies the faces to cull (here the ones pointing away from the camera)
-    glEnable(GL_CULL_FACE); // Enables face culling (based on the orientation defined by the CW/CCW enumeration).
-    glDepthFunc(GL_LESS);   // Specify the depth test for the z-buffer
-    glEnable(GL_DEPTH_TEST);      // Enable the z-buffer test in the rasterization
-    glEnable(GL_BLEND);
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-
+    
     CelestialBody *currentTarget = &sun;
 
     engine.onKeyPressObservable.add([&currentTarget, &sun, &earth, &moon, &engine](int key) {

@@ -42,6 +42,10 @@ public:
         return (float) glfwGetTime();
     }
 
+    void setClearColor(float r, float g, float b, float a) {
+        glClearColor(r, g, b, a);
+    }
+
     void start() {
         while (!glfwWindowShouldClose(window)) {
             onExecuteLoopObservable.notifyObservers();

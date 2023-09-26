@@ -61,6 +61,12 @@ void Material::compile() {
 
 void Material::bind() {
     glUseProgram(_program);
+
+    if (_isBackFaceCullingEnabled) {
+        glEnable(GL_CULL_FACE); // Enables face culling (based on the orientation defined by the CW/CCW enumeration).
+    } else {
+        glDisable(GL_CULL_FACE);
+    }
 }
 
 void Material::setMat4(const char *uniformName, const glm::mat4 *matrix) const {

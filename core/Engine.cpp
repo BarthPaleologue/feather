@@ -68,6 +68,13 @@ Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Pr
         engine->mouseX = xpos;
         engine->mouseY = ypos;
     });
+
+    setClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
+    glDepthFunc(GL_LESS);   // Specify the depth test for the z-buffer
+    glEnable(GL_DEPTH_TEST);      // Enable the z-buffer test in the rasterization
+    glEnable(GL_BLEND);
+    glCullFace(GL_BACK); // Specifies the faces to cull (here the ones pointing away from the camera)
 }
 
 Engine::~Engine() = default;
