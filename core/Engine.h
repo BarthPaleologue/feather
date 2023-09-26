@@ -6,6 +6,7 @@
 #define FEATHERGL_ENGINE_H
 
 #include "Observable.h"
+#include <GLFW/glfw3.h>
 
 class Engine {
 public:

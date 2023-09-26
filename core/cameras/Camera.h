@@ -6,14 +6,14 @@
 #define FEATHERGL_CAMERA_H
 
 
-#include "GLFW/glfw3.h"
 #include "Transform.h"
 #include "glm/ext.hpp"
+#include "Engine.h"
 
 
 class Camera : public Transform {
 public:
-    explicit Camera(GLFWwindow *window);
+    explicit Camera(Engine *engine);
 
     inline float getFov() const { return _fov; }
 
@@ -45,7 +45,7 @@ public:
     virtual void update();
 
 protected:
-    GLFWwindow *_window;
+    Engine *_engine;
     glm::mat4 _viewMatrix{};
     glm::mat4 _projectionMatrix{};
     float _fov = 45.f;        // Field of view, in degrees

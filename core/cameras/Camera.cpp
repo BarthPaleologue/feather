@@ -4,9 +4,9 @@
 
 #include "Camera.h"
 
-Camera::Camera(GLFWwindow *window) : Transform(), _window(window) {
+Camera::Camera(Engine *engine) : Transform(), _engine(engine) {
     int width, height;
-    glfwGetWindowSize(window, &width, &height);
+    glfwGetWindowSize(_engine->getWindow(), &width, &height);
     setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
 
     setPositionFromFloats(0.0f, 0.0f, 7.0f);

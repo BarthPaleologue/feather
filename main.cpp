@@ -17,7 +17,7 @@ int main() {
     GLFWwindow *window = engine.getWindow();
 
     Scene scene;
-    OrbitCamera camera(window);
+    OrbitCamera camera(&engine);
     camera.setRadius(20.0);
     camera.rotateTheta(-3.0f);
     scene.setActiveCamera(&camera);
