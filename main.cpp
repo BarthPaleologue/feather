@@ -1,4 +1,4 @@
-#include "core/Scene.h"
+#include "Scene.h"
 #include "cameras/OrbitCamera.h"
 #include "lights/PointLight.h"
 #include "StandardMaterial.h"
@@ -14,8 +14,6 @@ int main() {
     engine.onKeyPressObservable.add([&engine](int key) {
         if (key == GLFW_KEY_W) engine.setWireframeEnabled(!engine.isWireframeEnabled());
     });
-
-    GLFWwindow *window = engine.getWindow();
 
     Scene scene;
     OrbitCamera camera(&engine);
@@ -102,12 +100,11 @@ int main() {
         camera.update();
     });
 
-    while (!glfwWindowShouldClose(window)) {
+    engine.onExecuteLoopObservable.add([&scene, &light] {
         scene.render(light);
-        glfwPollEvents();
-        glfwSwapBuffers(window);
-    }
+    });
 
-    glfwTerminate();
+    engine.start();
+
     return 0;
 }

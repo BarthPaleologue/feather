@@ -42,7 +42,19 @@ public:
         return (float) glfwGetTime();
     }
 
+    void start() {
+        while (!glfwWindowShouldClose(window)) {
+            onExecuteLoopObservable.notifyObservers();
+            glfwPollEvents();
+            glfwSwapBuffers(window);
+        }
+
+        glfwTerminate();
+    }
+
     ~Engine();
+
+    Observable<> onExecuteLoopObservable{};
 
     Observable<int> onKeyPressObservable{};
     Observable<int> onKeyReleaseObservable{};
