@@ -11,16 +11,15 @@ const int WINDOW_HEIGHT = 600;
 
 int main() {
     Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Solar System");
-    engine.onKeyPressObservable.add([&engine](int key) {
-        if (key == GLFW_KEY_W) engine.setWireframeEnabled(!engine.isWireframeEnabled());
-    });
 
     Scene scene;
+
     OrbitCamera camera(&engine);
     camera.setPosition(0, 0, 20);
     camera.setRadius(20.0);
     camera.rotateTheta(-3.0f);
     scene.setActiveCamera(&camera);
+
     PointLight light("sun");
 
     StandardMaterial sunMaterial;
@@ -74,7 +73,7 @@ int main() {
 
     CelestialBody *currentTarget = &sun;
 
-    engine.onKeyPressObservable.add([&currentTarget, &sun, &earth, &moon](int key) {
+    engine.onKeyPressObservable.add([&currentTarget, &sun, &earth, &moon, &engine](int key) {
         if (key == GLFW_KEY_S) {
             currentTarget = &sun;
         } else if (key == GLFW_KEY_E) {
@@ -82,6 +81,8 @@ int main() {
         } else if (key == GLFW_KEY_M) {
             currentTarget = &moon;
         }
+
+        if (key == GLFW_KEY_W) engine.setWireframeEnabled(!engine.isWireframeEnabled());
     });
 
     scene.onBeforeRenderObservable.add([&]() {
