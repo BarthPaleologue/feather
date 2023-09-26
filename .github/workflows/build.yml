@@ -1,0 +1,32 @@
+name: Build
+on:
+  pull_request:
+  push:
+    branches: [ ci, master, latest, 3.3-stable ]
+  workflow_dispatch:
+permissions:
+  statuses: write
+  contents: read
+
+jobs:
+  build-linux-clang:
+    name: Build on Linux with Clang
+    runs-on: ubuntu-latest
+    env:
+      CC: clang
+      CFLAGS: -Werror
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y libglfw3 libglfw3-dev libglm-dev
+      - name: Configure static library
+        run: cmake -S . -B build-static
+      - name: Build static library
+        run: cmake --build build-static --parallel
+
+      - name: Configure shared library
+        run: cmake -S . -B build-shared -D BUILD_SHARED_LIBS=ON
+      - name: Build shared library
+        run: cmake --build build-shared --parallel
