@@ -9,7 +9,7 @@
 
 class OrbitCamera: public Camera {
 public:
-    explicit OrbitCamera(GLFWwindow *window);
+    explicit OrbitCamera(Engine *engine);
 
     glm::mat4 computeViewMatrix() override;
 

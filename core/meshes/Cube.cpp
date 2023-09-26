@@ -5,7 +5,7 @@
 #include "Cube.h"
 
 Cube::Cube(const char *name, float x, float y, float z) : AbstractMesh(name) {
-    setPositionFromFloats(x, y, z);
+    setPosition(x, y, z);
     std::vector<float> vertices = {
             -1.0f, -1.0f, -1.0f,
             1.0f, -1.0f, -1.0f,

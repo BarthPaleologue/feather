@@ -20,7 +20,7 @@ public:
 
     glm::vec3 getLeftDirection();
 
-    void setPositionFromFloats(float x, float y, float z);
+    void setPosition(float x, float y, float z);
 
     void translate(glm::vec3 displacement);
 
