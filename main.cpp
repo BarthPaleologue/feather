@@ -95,7 +95,7 @@ int main() {
         }
     });
 
-    while (!glfwWindowShouldClose(window)) {
+    scene.onBeforeRenderObservable.add([&]() {
         auto elapsedTime = engine.getElapsedTime();
 
         mercury.update(elapsedTime);
@@ -109,6 +109,9 @@ int main() {
         camera.setMinRadius(currentTarget->getRadius());
 
         camera.update();
+    });
+
+    while (!glfwWindowShouldClose(window)) {
         scene.render(light);
         glfwPollEvents();
         glfwSwapBuffers(window);

@@ -9,6 +9,8 @@ void Scene::addDrawable(AbstractMesh &mesh) {
 }
 
 void Scene::render(PointLight &light) {
+    onBeforeRenderObservable.notifyObservers();
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     for (AbstractMesh &_drawable: _meshes) {
         _drawable.render(*_activeCamera, light);
