@@ -5,6 +5,7 @@
 #ifndef FEATHERGL_MESHBUILDER_H
 #define FEATHERGL_MESHBUILDER_H
 
+#include <iostream>
 #include "Mesh.h"
 #include "Scene.h"
 
@@ -69,7 +70,7 @@ public:
         };
 
         auto mesh = Mesh::FromVertexData(name, vertexData);
-        scene.addDrawable(mesh);
+        scene.addMesh(mesh);
         return mesh;
     }
 
@@ -98,7 +99,7 @@ public:
         };
 
         auto mesh = Mesh::FromVertexData(name, vertexData);
-        scene.addDrawable(mesh);
+        scene.addMesh(mesh);
         return mesh;
     }
 
@@ -190,7 +191,56 @@ public:
         vertexData.colors = colors;
 
         auto mesh = Mesh::FromVertexData(name, vertexData);
-        scene.addDrawable(mesh);
+        scene.addMesh(mesh);
+        return mesh;
+    }
+
+    static Mesh *makePlane(const char *name, Scene &scene, int nbSubdivisions) {
+        VertexData vertexData = VertexData();
+        vertexData.positions = std::vector<GLfloat>(nbSubdivisions * nbSubdivisions * 3);
+        vertexData.indices = std::vector<GLint>((nbSubdivisions - 1) * (nbSubdivisions - 1) * 3 * 2);
+        vertexData.uvs = std::vector<GLfloat>(nbSubdivisions * nbSubdivisions * 2);
+        vertexData.normals = std::vector<GLfloat>(nbSubdivisions * nbSubdivisions * 3);
+
+        float size = 1.0f;
+
+        for (int x = 0; x < nbSubdivisions; x++) {
+            float xPosition = ((float) x / (float) (nbSubdivisions - 1)) * size - size / 2.0f;
+            float xUV = (float) x / (float) (nbSubdivisions - 1);
+
+            for (int z = 0; z < nbSubdivisions; z++) {
+                float zPosition = ((float) z / (float) (nbSubdivisions - 1)) * size - size / 2.0f;
+                float zUV = (float) z / (float) (nbSubdivisions - 1);
+
+                int positionIndex = 3 * (x * nbSubdivisions + z);
+                vertexData.positions[positionIndex] = xPosition;
+                vertexData.positions[positionIndex + 1] = 0;
+                vertexData.positions[positionIndex + 2] = zPosition;
+
+                int normalIndex = 3 * (x * nbSubdivisions + z);
+                vertexData.normals[normalIndex] = 0;
+                vertexData.normals[normalIndex + 1] = 1;
+                vertexData.normals[normalIndex + 2] = 0;
+
+                int uvIndex = 2 * (x * nbSubdivisions + z);
+                vertexData.uvs[uvIndex] = xUV;
+                vertexData.uvs[uvIndex + 1] = zUV;
+
+                if (x == nbSubdivisions - 1 || z == nbSubdivisions - 1) continue;
+
+                int index = 6 * (x * (nbSubdivisions - 1) + z);
+                vertexData.indices[index] = (x + 1) * nbSubdivisions + z;
+                vertexData.indices[index + 1] = x * nbSubdivisions + z;
+                vertexData.indices[index + 2] = x * nbSubdivisions + z + 1;
+
+                vertexData.indices[index + 3] = (x + 1) * nbSubdivisions + z;
+                vertexData.indices[index + 4] = x * nbSubdivisions + z + 1;
+                vertexData.indices[index + 5] = (x + 1) * nbSubdivisions + z + 1;
+            }
+        }
+
+        auto mesh = Mesh::FromVertexData(name, vertexData);
+        scene.addMesh(mesh);
         return mesh;
     }
 };

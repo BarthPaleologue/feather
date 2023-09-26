@@ -12,7 +12,7 @@
 
 class Scene {
 public:
-    void addDrawable(Mesh *mesh);
+    void addMesh(Mesh *mesh);
 
     void setActiveCamera(Camera *camera);
 

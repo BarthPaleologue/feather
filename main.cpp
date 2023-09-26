@@ -5,6 +5,7 @@
 #include "CelestialBody.h"
 #include "Engine.h"
 #include "FreeCamera.h"
+#include "MeshBuilder.h"
 
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
@@ -52,8 +53,16 @@ int main() {
     CelestialBody moon("moon", 0.25, 5, 5, 2, &moonMat, scene);
 
     CelestialBody mars("mars", 0.35, 10, 12, 13, &marsMat, scene);
-    
+
     CelestialBody *currentTarget = &sun;
+
+    Mesh *sphere = MeshBuilder::makeSphere("sphere", scene, 32);
+    sphere->setPosition(0, 3, 0);
+
+    Mesh *plane = MeshBuilder::makePlane("plane", scene, 4);
+    plane->setPosition(0, -2, 0);
+    plane->setScale(10);
+    plane->getMaterial()->setBackFaceCullingEnabled(false);
 
     engine.onKeyPressObservable.add([&currentTarget, &sun, &earth, &moon, &engine](int key) {
         if (key == GLFW_KEY_S) {

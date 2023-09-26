@@ -35,6 +35,10 @@ public:
         return _isBackFaceCullingEnabled;
     }
 
+    bool setBackFaceCullingEnabled(bool enabled) {
+        _isBackFaceCullingEnabled = enabled;
+    }
+
 private:
     GLuint _program;
     std::string _vertexShaderCode;

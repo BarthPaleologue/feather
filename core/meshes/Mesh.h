@@ -20,6 +20,10 @@ public:
 
     void setMaterial(Material *material);
 
+    Material *getMaterial() const {
+        return _material;
+    }
+
     void setVertexData(VertexData &vertexData);
 
     void render(Camera &camera, PointLight &light);

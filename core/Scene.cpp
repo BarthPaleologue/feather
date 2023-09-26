@@ -4,7 +4,7 @@
 
 #include "Scene.h"
 
-void Scene::addDrawable(Mesh *mesh) {
+void Scene::addMesh(Mesh *mesh) {
     _meshes.push_back(mesh);
 }
 
