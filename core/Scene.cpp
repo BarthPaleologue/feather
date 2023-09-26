@@ -15,6 +15,8 @@ void Scene::render(PointLight &light) {
     for (AbstractMesh &_drawable: _meshes) {
         _drawable.render(*_activeCamera, light);
     }
+
+    onAfterRenderObservable.notifyObservers();
 }
 
 void Scene::setActiveCamera(Camera *camera) {

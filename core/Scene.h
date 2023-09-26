@@ -19,6 +19,7 @@ public:
     void render(PointLight &light);
 
     Observable<> onBeforeRenderObservable{};
+    Observable<> onAfterRenderObservable{};
 
 private:
     std::vector<AbstractMesh> _meshes;
