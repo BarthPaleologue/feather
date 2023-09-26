@@ -16,6 +16,8 @@ class Mesh : public Transform {
 public:
     explicit Mesh(const char *name);
 
+    static Mesh *FromVertexData(const char *name, VertexData &vertexData);
+
     void setMaterial(Material *material);
 
     void setVertexData(VertexData &vertexData);

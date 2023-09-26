@@ -85,3 +85,9 @@ void Mesh::render(Camera &camera, PointLight &light) {
     _material->unbind();
 }
 
+Mesh* Mesh::FromVertexData(const char *name, VertexData &vertexData) {
+    Mesh *mesh = new Mesh(name);
+    mesh->setVertexData(vertexData);
+    return mesh;
+}
+

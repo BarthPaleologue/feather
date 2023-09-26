@@ -43,26 +43,15 @@ int main() {
     StandardMaterial marsMat;
     marsMat.setDiffuseTextureFromFile("./assets/textures/mars.jpg");
 
-    CelestialBody sun("sun", 1, 100, 10, 0, &sunMaterial);
-    scene.addDrawable(&sun);
+    CelestialBody sun("sun", 1, 100, 10, 0, &sunMaterial, scene);
+    CelestialBody mercury("mercury", 0.2, 1.6, 1.5, 5, &mercuryMat, scene);
+    CelestialBody venus("venus", 0.45, -0.1, 8, 7, &venusMat, scene);
 
-    CelestialBody mercury("mercury", 0.2, 1.6, 1.5, 5, &mercuryMat);
-    scene.addDrawable(&mercury);
+    CelestialBody earth("earth", 0.5, 10, 10, 10, &earthMat, scene);
+    earth.getMesh()->setRotationX(0.3);
+    CelestialBody moon("moon", 0.25, 5, 5, 2, &moonMat, scene);
 
-    CelestialBody venus("venus", 0.45, -0.1, 8, 7, &venusMat);
-    scene.addDrawable(&venus);
-
-    CelestialBody earth("earth", 0.5, 10, 10, 10, &earthMat);
-    earth.setRotationX(0.3);
-    scene.addDrawable(&earth);
-
-    CelestialBody moon("moon", 0.25, 5, 5, 2, &moonMat);
-    moon.setMaterial(&moonMat);
-    scene.addDrawable(&moon);
-
-    CelestialBody mars("mars", 0.35, 10, 12, 13, &marsMat);
-    scene.addDrawable(&mars);
-
+    CelestialBody mars("mars", 0.35, 10, 12, 13, &marsMat, scene);
 
     glCullFace(GL_BACK); // Specifies the faces to cull (here the ones pointing away from the camera)
     glEnable(GL_CULL_FACE); // Enables face culling (based on the orientation defined by the CW/CCW enumeration).
@@ -92,10 +81,10 @@ int main() {
         venus.update(elapsedTime);
         earth.update(elapsedTime);
         moon.update(elapsedTime);
-        moon.translate(*earth.getPosition());
+        moon.getMesh()->translate(*earth.getMesh()->getPosition());
         mars.update(elapsedTime);
 
-        camera.setTarget(currentTarget->getPosition());
+        camera.setTarget(currentTarget->getMesh()->getPosition());
         camera.setMinRadius(currentTarget->getRadius());
 
         camera.update();
