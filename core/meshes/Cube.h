@@ -5,10 +5,10 @@
 #ifndef FEATHERGL_CUBE_H
 #define FEATHERGL_CUBE_H
 
-#include "AbstractMesh.h"
+#include "Mesh.h"
 
 
-class Cube: public AbstractMesh {
+class Cube: public Mesh {
 public:
     Cube(const char *name, float x, float y, float z);
 };

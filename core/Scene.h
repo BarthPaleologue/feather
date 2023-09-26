@@ -6,13 +6,13 @@
 #define FEATHERGL_SCENE_H
 
 
-#include "../meshes/AbstractMesh.h"
+#include "../meshes/Mesh.h"
 #include "cameras/Camera.h"
 #include "lights/PointLight.h"
 
 class Scene {
 public:
-    void addDrawable(AbstractMesh &mesh);
+    void addDrawable(Mesh &mesh);
 
     void setActiveCamera(Camera *camera);
 
@@ -22,7 +22,7 @@ public:
     Observable<> onAfterRenderObservable{};
 
 private:
-    std::vector<AbstractMesh> _meshes;
+    std::vector<Mesh> _meshes;
     Camera *_activeCamera = nullptr;
 };
 

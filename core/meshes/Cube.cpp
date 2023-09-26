@@ -4,9 +4,11 @@
 
 #include "Cube.h"
 
-Cube::Cube(const char *name, float x, float y, float z) : AbstractMesh(name) {
+Cube::Cube(const char *name, float x, float y, float z) : Mesh(name) {
     setPosition(x, y, z);
-    std::vector<float> vertices = {
+
+    VertexData vertexData = VertexData();
+    vertexData.positions = {
             -1.0f, -1.0f, -1.0f,
             1.0f, -1.0f, -1.0f,
             -1.0f, 1.0f, -1.0f,
@@ -16,7 +18,7 @@ Cube::Cube(const char *name, float x, float y, float z) : AbstractMesh(name) {
             -1.0f, 1.0f, 1.0f,
             1.0f, 1.0f, 1.0f,
     };
-    std::vector<float> colors = {
+    vertexData.colors = {
             1.0f, 1.0f, 1.0f,
             1.0f, 0.0f, 1.0f,
             1.0f, 1.0f, 0.0f,
@@ -26,7 +28,7 @@ Cube::Cube(const char *name, float x, float y, float z) : AbstractMesh(name) {
             0.0f, 1.0f, 0.0f,
             0.0f, 0.0f, 0.0f
     };
-    std::vector<int> indices = {
+    vertexData.indices = {
             0, 2, 3,
             0, 3, 1,
             0, 1, 5,
@@ -40,7 +42,7 @@ Cube::Cube(const char *name, float x, float y, float z) : AbstractMesh(name) {
             4, 5, 7,
             4, 7, 6
     };
-    std::vector<float> normals = {
+    vertexData.normals = {
             -0.577350, -0.577350, -0.577350,
             0.816497, -0.408248, -0.408248,
             -0.408248, 0.816497, -0.408248,
@@ -50,7 +52,7 @@ Cube::Cube(const char *name, float x, float y, float z) : AbstractMesh(name) {
             -0.816497, 0.408248, 0.408248,
             0.577350, 0.577350, 0.577350,
     };
-    std::vector<float> uvs = {
+    vertexData.uvs = {
             0.0f, 1.0f,
             1.0f, 1.0f,
             1.0f, 0.0f,
@@ -61,5 +63,6 @@ Cube::Cube(const char *name, float x, float y, float z) : AbstractMesh(name) {
             1.0f, 1.0f,
             0.0f, 1.0f,
     };
-    setVertexData(&vertices, &indices, &normals, &uvs, &colors);
+
+    setVertexData(vertexData);
 }

@@ -6,14 +6,11 @@
 #define FEATHERGL_SPHERE_H
 
 
-#include "AbstractMesh.h"
+#include "Mesh.h"
 
-class Sphere: public AbstractMesh {
+class Sphere: public Mesh {
 public:
     Sphere(const char* name, float radius, int resolution);
-
-private:
-    float _radius;
 };
 
 

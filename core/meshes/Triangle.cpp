@@ -4,28 +4,30 @@
 
 #include "Triangle.h"
 
-Triangle::Triangle(const char *name, float x, float y, float z) : AbstractMesh(name) {
+Triangle::Triangle(const char *name, float x, float y, float z) : Mesh(name) {
     setPosition(x, y, z);
-    std::vector<GLfloat> points = {
+
+    VertexData vertexData = VertexData();
+    vertexData.positions = {
             0.0f, 0.5f, 0.0f,
             0.5f, -0.5f, 0.0f,
             -0.5f, -0.5f, 0.0f
     };
-    std::vector<GLint> indices = {0, 1, 2};
-    std::vector<GLfloat> normals = {
+    vertexData.indices = {0, 1, 2};
+    vertexData.normals = {
             0.0f, 0.0f, -1.0f,
             0.0f, 0.0f, -1.0f,
             0.0f, 0.0f, -1.0f
     };
-    std::vector<GLfloat> colors = {
+    vertexData.normals = {
             1.0f, 0.0f, 0.0f,
             0.0f, 1.0f, 0.0f,
             0.0f, 0.0f, 1.0f
     };
-    std::vector<GLfloat> uvs = {
+    vertexData.uvs = {
             0.0f, 0.0f,
             1.0f, 0.0f,
             0.0f, 1.0f
     };
-    setVertexData(&points, &indices, &normals, &uvs, &colors);
+    setVertexData(vertexData);
 }

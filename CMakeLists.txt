@@ -12,7 +12,8 @@ file(GLOB SRCS ./*.h ./*.cpp
         core/materials/*.cpp core/materials/*.h
         core/utils/*.cpp core/utils/*.h
 )
-add_executable(featherGL ${SRCS})
+add_executable(featherGL ${SRCS}
+        core/meshes/VertexData.h)
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 

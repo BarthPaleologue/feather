@@ -4,7 +4,7 @@
 
 #include "Sphere.h"
 
-Sphere::Sphere(const char *name, float radius, int resolution) : AbstractMesh(name), _radius(radius) {
+Sphere::Sphere(const char *name, float radius, int resolution) : Mesh(name) {
     setScale(radius);
 
     std::vector<GLfloat> vertices;
@@ -28,8 +28,8 @@ Sphere::Sphere(const char *name, float radius, int resolution) : AbstractMesh(na
         xy = radius * cosf(stackAngle);             // r * cos(u)
         z = radius * sinf(stackAngle);              // r * sin(u)
 
-        // add (sectorCount+1) vertices per stack
-        // the first and last vertices have same position and normal, but different tex coords
+        // add (sectorCount+1) positions per stack
+        // the first and last positions have same position and normal, but different tex coords
         for (int j = 0; j <= resolution; ++j) {
             sectorAngle = j * sectorStep;           // starting from 0 to 2pi
 
@@ -84,7 +84,14 @@ Sphere::Sphere(const char *name, float radius, int resolution) : AbstractMesh(na
         }
     }
 
-    for (int i = 0; i < vertices.size(); i++) colors.push_back((float) random() / (float) INT_MAX);
+    for (int i = 0; i < vertices.size(); i++) colors.push_back(1.0f);
 
-    setVertexData(&vertices, &indices, &normals, &uvs, &colors);
+    VertexData vertexData;
+    vertexData.positions = vertices;
+    vertexData.normals = normals;
+    vertexData.uvs = uvs;
+    vertexData.indices = indices;
+    vertexData.colors = colors;
+
+    setVertexData(vertexData);
 }
