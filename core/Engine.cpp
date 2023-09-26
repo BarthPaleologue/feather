@@ -69,6 +69,13 @@ Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Pr
         engine->mouseY = ypos;
     });
 
+    glfwSetFramebufferSizeCallback(window, [](GLFWwindow *window, int width, int height) {
+        glViewport(0, 0, width, height);
+
+        auto *engine = static_cast<Engine *>(glfwGetWindowUserPointer(window));
+        engine->onWindowResizeObservable.notifyObservers(width, height);
+    });
+
     setClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
     glDepthFunc(GL_LESS);   // Specify the depth test for the z-buffer

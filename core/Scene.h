@@ -12,6 +12,14 @@
 
 class Scene {
 public:
+    explicit Scene(Engine *engine) {
+        _engine = engine;
+
+        _engine->onWindowResizeObservable.add([this](int width, int height) {
+            this->_activeCamera->setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
+        });
+    }
+
     void addMesh(Mesh *mesh);
 
     void setActiveCamera(Camera *camera);
@@ -22,7 +30,9 @@ public:
     Observable<> onAfterRenderObservable{};
 
 private:
-    std::vector<Mesh*> _meshes;
+    Engine *_engine;
+
+    std::vector<Mesh *> _meshes;
     Camera *_activeCamera = nullptr;
 };
 

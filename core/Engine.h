@@ -51,6 +51,8 @@ public:
 
     Observable<> onExecuteLoopObservable{};
 
+    Observable<int, int> onWindowResizeObservable{};
+
     Observable<int> onKeyPressObservable{};
     Observable<int> onKeyReleaseObservable{};
     Observable<double, double> onMouseScrollObservable{};

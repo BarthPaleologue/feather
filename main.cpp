@@ -13,7 +13,7 @@ const int WINDOW_HEIGHT = 600;
 int main() {
     Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Solar System");
 
-    Scene scene;
+    Scene scene(&engine);
 
     OrbitCamera camera(&engine);
     camera.setPosition(0, 0, 20);
