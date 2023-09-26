@@ -44,24 +44,24 @@ int main() {
     marsMat.setDiffuseTextureFromFile("./assets/textures/mars.jpg");
 
     CelestialBody sun("sun", 1, 100, 10, 0, &sunMaterial);
-    scene.addDrawable(sun);
+    scene.addDrawable(&sun);
 
     CelestialBody mercury("mercury", 0.2, 1.6, 1.5, 5, &mercuryMat);
-    scene.addDrawable(mercury);
+    scene.addDrawable(&mercury);
 
     CelestialBody venus("venus", 0.45, -0.1, 8, 7, &venusMat);
-    scene.addDrawable(venus);
+    scene.addDrawable(&venus);
 
     CelestialBody earth("earth", 0.5, 10, 10, 10, &earthMat);
     earth.setRotationX(0.3);
-    scene.addDrawable(earth);
+    scene.addDrawable(&earth);
 
     CelestialBody moon("moon", 0.25, 5, 5, 2, &moonMat);
     moon.setMaterial(&moonMat);
-    scene.addDrawable(moon);
+    scene.addDrawable(&moon);
 
     CelestialBody mars("mars", 0.35, 10, 12, 13, &marsMat);
-    scene.addDrawable(mars);
+    scene.addDrawable(&mars);
 
 
     glCullFace(GL_BACK); // Specifies the faces to cull (here the ones pointing away from the camera)

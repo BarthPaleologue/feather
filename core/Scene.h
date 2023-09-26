@@ -12,7 +12,7 @@
 
 class Scene {
 public:
-    void addDrawable(Mesh &mesh);
+    void addDrawable(Mesh *mesh);
 
     void setActiveCamera(Camera *camera);
 
@@ -22,7 +22,7 @@ public:
     Observable<> onAfterRenderObservable{};
 
 private:
-    std::vector<Mesh> _meshes;
+    std::vector<Mesh*> _meshes;
     Camera *_activeCamera = nullptr;
 };
 
