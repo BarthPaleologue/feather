@@ -8,6 +8,7 @@
 
 #include <string>
 #include "glm/ext.hpp"
+#include "Observable.h"
 
 class Light {
 public:
@@ -17,11 +18,15 @@ public:
         _color->x = r;
         _color->y = g;
         _color->z = b;
+
+        onColorChanged.notifyObservers(_color->x, _color->y, _color->z);
     }
 
     inline glm::vec3 *color() { return _color; };
 
     float intensity() const { return _intensity; };
+
+    Observable<float, float, float> onColorChanged;
 
 private:
     std::string _name;

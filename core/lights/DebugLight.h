@@ -20,6 +20,9 @@ public:
         auto material = new StandardMaterial();
         material->setLightingEnabled(false);
         material->setAmbientColor(light->color());
+        light->onColorChanged.add([material](float r, float g, float b) {
+            material->setAmbientColor(r, g, b);
+        });
 
         mesh->setMaterial(material);
     }

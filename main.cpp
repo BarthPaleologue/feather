@@ -114,6 +114,11 @@ int main() {
         light4.transform()->setPosition(
                 0.0f, 10.0f * cosf(1.0f * elapsedTime), 10.0f * sinf(1.0f * elapsedTime)
         );
+        light4.setColor(
+                0.5f * cosf(1.0f * elapsedTime) + 0.5f,
+                0.5f * sinf(1.0f * elapsedTime) + 0.5f,
+                0.5f * cosf(1.0f * elapsedTime) + 0.5f
+        );
 
         camera.setTarget(currentTarget->getMesh()->transform()->position());
         camera.setMinRadius(currentTarget->getRadius());
