@@ -3,9 +3,11 @@
 //
 
 #include "StandardMaterial.h"
+#include "Settings.h"
 
 StandardMaterial::StandardMaterial() : Material("./assets/shaders/standard") {
-    setDefine("MAX_POINT_LIGHTS 128");
+    std::string maxPointLights = std::to_string(Settings::MAX_POINT_LIGHTS);
+    setDefine((std::string("MAX_POINT_LIGHTS ") + maxPointLights).c_str());
 }
 
 StandardMaterial::StandardMaterial(const char *diffuseTexturePath) : Material("./assets/shaders/standard") {
