@@ -42,15 +42,14 @@ int main() {
     DebugLight::CreateDebugPointLightMesh(&light4, scene);
     scene.addPointLight(&light4);
 
-    int width, height;
-    glfwGetWindowSize(engine.getWindow(), &width, &height);
-    PostProcessing postProcessing1(width, height, "./assets/shaders/invertPostProcess/");
-    PostProcessing postProcessing2(width, height, "./assets/shaders/invertPostProcess/");
+    PointLight light5("light5");
+    light5.setColor(1, 1, 0);
+    light5.transform()->setPosition(0.0f, 10.0f, 0.0f);
+    DebugLight::CreateDebugPointLightMesh(&light5, scene);
+    scene.addPointLight(&light5);
 
-    engine.onWindowResizeObservable.add([&postProcessing1](int width, int height) {
-        postProcessing1.resize(width, height);
-    });
-
+    PostProcessing postProcessing1("./assets/shaders/invertPostProcess/", &engine);
+    PostProcessing postProcessing2("./assets/shaders/invertPostProcess/", &engine);
     scene.addPostProcess(&postProcessing1);
     scene.addPostProcess(&postProcessing2);
 
@@ -129,6 +128,15 @@ int main() {
         light4.setColor(
                 0.5f * cosf(1.0f * elapsedTime) + 0.5f,
                 0.5f * sinf(1.0f * elapsedTime) + 0.5f,
+                0.5f * cosf(1.0f * elapsedTime) + 0.5f
+        );
+
+        light5.transform()->setPosition(
+                10.0f * cosf(1.0f * elapsedTime), -12.0f * sinf(1.0f * elapsedTime), 0.0f
+        );
+        light5.setColor(
+                0.5f * sinf(1.0f * elapsedTime) + 0.5f,
+                0.5f * cosf(1.0f * elapsedTime) + 0.5f,
                 0.5f * cosf(1.0f * elapsedTime) + 0.5f
         );
 

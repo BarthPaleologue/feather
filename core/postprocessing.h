@@ -9,6 +9,7 @@
 #include <iostream>
 #include "utils.h"
 #include "Shader.h"
+#include "Engine.h"
 
 class PostProcessingShader : public Shader {
 public:
@@ -39,7 +40,7 @@ private:
 
     unsigned int rectVAO;
 public:
-    PostProcessing(int _width, int _height, const char *shaderFolder);
+    explicit PostProcessing(const char *shaderFolder, Engine* engine);
 
     void RenderTo(unsigned int targetFrameBuffer);
 
@@ -53,22 +54,6 @@ public:
 
     unsigned int getFBO() const {
         return FBO;
-    }
-
-    void setRBO(unsigned int RBO) {
-        this->RBO = RBO;
-    }
-
-    unsigned int getRBO() const {
-        return RBO;
-    }
-
-    void setFramebufferTexture(unsigned int framebufferTexture) {
-        this->outputTexture = framebufferTexture;
-    }
-
-    unsigned int getFramebufferTexture() const {
-        return outputTexture;
     }
 
     void resize(int width, int height);

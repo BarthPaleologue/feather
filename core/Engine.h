@@ -29,6 +29,10 @@ public:
         return window;
     }
 
+    void windowSize(int *width, int *height) {
+        glfwGetWindowSize(window, width, height);
+    }
+
     float getElapsedTime() const {
         return (float) glfwGetTime();
     }
@@ -38,6 +42,10 @@ public:
     }
 
     void start() {
+        int width, height;
+        glfwGetWindowSize(window, &width, &height);
+        onWindowResizeObservable.notifyObservers(width, height);
+
         while (!glfwWindowShouldClose(window)) {
             onExecuteLoopObservable.notifyObservers();
             glfwPollEvents();

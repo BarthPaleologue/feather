@@ -11,9 +11,8 @@ const float PostProcessing::rectangleVerts[] = {
         -1.0f, 1.0f, 0.0f, 1.0f
 };
 
-PostProcessing::PostProcessing(int _width, int _height, const char *shaderFolder) {
-    _width = _width;
-    _height = _height;
+PostProcessing::PostProcessing(const char *shaderFolder, Engine* engine) {
+    engine->windowSize(&_width, &_height);
 
     // Prepare framebuffer rectangle VBO and VAO
     unsigned int rectVBO;
