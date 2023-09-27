@@ -103,6 +103,18 @@ int main() {
         moon.getMesh()->transform()->translate(*earth.getMesh()->transform()->position());
         mars.update(elapsedTime);
 
+        light2.transform()->setPosition(
+                10.0f * cosf(1.0f * elapsedTime), 10.0f * sinf(1.0f * elapsedTime), 0.0f
+        );
+
+        light3.transform()->setPosition(
+                10.0f * cosf(1.0f * elapsedTime), 0.0f, 10.0f * sinf(1.0f * elapsedTime)
+        );
+
+        light4.transform()->setPosition(
+                0.0f, 10.0f * cosf(1.0f * elapsedTime), 10.0f * sinf(1.0f * elapsedTime)
+        );
+
         camera.setTarget(currentTarget->getMesh()->transform()->position());
         camera.setMinRadius(currentTarget->getRadius());
 
