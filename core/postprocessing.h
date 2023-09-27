@@ -29,9 +29,9 @@ private:
 
     unsigned int FBO;
     unsigned int RBO;
-    unsigned int framebufferTexture;
+    unsigned int outputTexture;
 
-    PostProcessingShader *framebuffer_shader;
+    PostProcessingShader *_shader;
 
     GLuint uniformScreenResolution;
 
@@ -43,7 +43,31 @@ public:
 
     void StartProcessing();
 
-    void EndProcessing();
+    void EndProcessing(int targetFrameBuffer = 0);
+
+    void setFBO(unsigned int FBO) {
+        this->FBO = FBO;
+    }
+
+    unsigned int getFBO() const {
+        return FBO;
+    }
+
+    void setRBO(unsigned int RBO) {
+        this->RBO = RBO;
+    }
+
+    unsigned int getRBO() const {
+        return RBO;
+    }
+
+    void setFramebufferTexture(unsigned int framebufferTexture) {
+        this->outputTexture = framebufferTexture;
+    }
+
+    unsigned int getFramebufferTexture() const {
+        return outputTexture;
+    }
 
     void resize(int width, int height);
 

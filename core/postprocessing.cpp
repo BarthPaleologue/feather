@@ -32,14 +32,14 @@ PostProcessing::PostProcessing(int _width, int _height, const char *shaderFolder
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
     // Create Framebuffer Texture
-    glGenTextures(1, &framebufferTexture);
-    glBindTexture(GL_TEXTURE_2D, framebufferTexture);
+    glGenTextures(1, &outputTexture);
+    glBindTexture(GL_TEXTURE_2D, outputTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // Prevents edge bleeding
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Prevents edge bleeding
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, framebufferTexture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, outputTexture, 0);
 
     // Create Render Buffer Object
     glGenRenderbuffers(1, &RBO);
@@ -52,32 +52,31 @@ PostProcessing::PostProcessing(int _width, int _height, const char *shaderFolder
     if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "Framebuffer error: " << fboStatus << std::endl;
 
-    framebuffer_shader = new PostProcessingShader(shaderFolder);
+    _shader = new PostProcessingShader(shaderFolder);
 
     // get screen resolution uniform locations
-    uniformScreenResolution = glGetUniformLocation(framebuffer_shader->program(), "screenResolution");
+    uniformScreenResolution = glGetUniformLocation(_shader->program(), "screenResolution");
 }
 
 void PostProcessing::StartProcessing() {
-    // Bind the custom framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-
-    // Enable depth testing since it's disabled when drawing the framebuffer rectangle
-    glEnable(GL_DEPTH_TEST);
 }
 
-void PostProcessing::EndProcessing() {
+void PostProcessing::EndProcessing(int targetFramebuffer) {
     // Bind the default framebuffer
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, targetFramebuffer);
     // Draw the framebuffer rectangle
-    framebuffer_shader->bind();
+    _shader->bind();
 
-    glUniform2f(uniformScreenResolution, _width, _height);
+    // resize screen resolution uniform
+    _shader->setVec2("screenResolution", (float) _width, (float) _height);
 
     glBindVertexArray(rectVAO);
     glDisable(GL_DEPTH_TEST); // prevents framebuffer rectangle from being discarded
-    glBindTexture(GL_TEXTURE_2D, framebufferTexture);
+    glBindTexture(GL_TEXTURE_2D, outputTexture);
     glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+    glEnable(GL_DEPTH_TEST);
 }
 
 void PostProcessing::resize(int width, int height) {
@@ -85,15 +84,12 @@ void PostProcessing::resize(int width, int height) {
     _height = height;
 
     // resize framebuffer texture
-    glBindTexture(GL_TEXTURE_2D, framebufferTexture);
+    glBindTexture(GL_TEXTURE_2D, outputTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
     // resize render buffer
     glBindRenderbuffer(GL_RENDERBUFFER, RBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _width, _height);
-
-    // resize screen resolution uniform
-    glUniform2f(uniformScreenResolution, _width, _height);
 
     // Error checking framebuffer
     auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);

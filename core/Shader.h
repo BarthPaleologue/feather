@@ -42,13 +42,12 @@ public:
         compileShader(versionedFragmentShaderCode, GL_FRAGMENT_SHADER);
 
         GLint result = 0;
-        GLchar errLog[1024] = { 0 };
+        GLchar errLog[1024] = {0};
 
         glLinkProgram(_program);
         glGetProgramiv(_program, GL_LINK_STATUS, &result);
 
-        if (!result)
-        {
+        if (!result) {
             glGetProgramInfoLog(_program, sizeof(errLog), NULL, errLog);
             std::cerr << "Error linking program: '" << errLog << "'\n";
             return;
@@ -57,8 +56,7 @@ public:
         glValidateProgram(_program);
         glGetProgramiv(_program, GL_VALIDATE_STATUS, &result);
 
-        if (!result)
-        {
+        if (!result) {
             glGetProgramInfoLog(_program, sizeof(errLog), NULL, errLog);
             std::cerr << "Error validating program: '" << errLog << "'\n";
             return;
@@ -75,6 +73,14 @@ public:
 
     void setMat4(const char *uniformName, const glm::mat4 *matrix) const {
         glUniformMatrix4fv(glGetUniformLocation(_program, uniformName), 1, GL_FALSE, glm::value_ptr(*matrix));
+    }
+
+    void setVec2(const char *uniformName, const float x, const float y) const {
+        glUniform2f(glGetUniformLocation(_program, uniformName), x, y);
+    }
+
+    void setVec2(const char *uniformName, const glm::vec2 *vector) const {
+        glUniform2fv(glGetUniformLocation(_program, uniformName), 1, glm::value_ptr(*vector));
     }
 
     void setVec3(const char *uniformName, const glm::vec3 *vector) const {

@@ -78,7 +78,6 @@ Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Pr
 
     setClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-    glEnable(GL_FRAMEBUFFER_SRGB);
     glDepthFunc(GL_LESS);   // Specify the depth test for the z-buffer
     glEnable(GL_DEPTH_TEST);      // Enable the z-buffer test in the rasterization
     glEnable(GL_BLEND);

@@ -42,6 +42,10 @@ public:
         int width, height;
         glfwGetWindowSize(window, &width, &height);
         PostProcessing postProcessing(width, height, "./assets/shaders/invertPostProcess/");
+
+
+        PostProcessing postProcessing2(width, height, "./assets/shaders/invertPostProcess/");
+
         this->onWindowResizeObservable.add([this, &postProcessing](int width, int height) {
             postProcessing.resize(width, height);
         });
@@ -50,7 +54,10 @@ public:
             postProcessing.StartProcessing();
             onExecuteLoopObservable.notifyObservers();
             glfwPollEvents();
-            postProcessing.EndProcessing();
+
+            postProcessing.EndProcessing(postProcessing2.getFBO());
+            postProcessing2.EndProcessing();
+
             glfwSwapBuffers(window);
         }
 
