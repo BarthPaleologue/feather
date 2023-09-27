@@ -1,17 +1,11 @@
 out vec4 frag_color;
-in vec3 fColor;
-
-varying vec3 vPosition;
-varying vec3 vPositionW;
-varying vec3 vNormal;
-varying vec2 vUV;
-
-uniform vec3 lightPosition;
-
-uniform sampler2D texture;
+in vec2 vUV;
 
 void main() {
-  vec3 texColor = texture2D(texture, vUV).rgb;
-  vec3 color = texColor;
-  frag_color = vec4(color, 1.0);
+    // https://stackoverflow.com/questions/4694608/glsl-checkerboard-pattern
+    float total = floor(floor(vUV.x * 10.0) + floor(10.0 * vUV.y));
+    bool isEven = mod(total, 2.0) == 0.0;
+    vec4 col1 = vec4(0.0, 0.0, 0.0, 1.0);
+    vec4 col2 = vec4(1.0, 1.0, 1.0, 1.0);
+    frag_color = (isEven) ? col1 : col2;
 }
