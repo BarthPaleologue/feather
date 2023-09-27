@@ -7,5 +7,6 @@ uniform vec2 screenResolution;
 
 void main()
 {
-    fragColor = vec4(1.0f) - texture2D(screenTexture, texCoords);
+    vec4 screenColor = texture2D(screenTexture, texCoords);
+    fragColor = vec4(vec3(1.0f) - screenColor.rgb, screenColor.a);
 }

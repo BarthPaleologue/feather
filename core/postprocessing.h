@@ -43,7 +43,11 @@ public:
 
     void StartProcessing();
 
-    void EndProcessing(int targetFrameBuffer = 0);
+    void RenderTo(int targetFrameBuffer);
+
+    void RenderToScreen() {
+        RenderTo(0);
+    }
 
     void setFBO(unsigned int FBO) {
         this->FBO = FBO;

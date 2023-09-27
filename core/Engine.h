@@ -55,8 +55,8 @@ public:
             onExecuteLoopObservable.notifyObservers();
             glfwPollEvents();
 
-            postProcessing.EndProcessing(postProcessing2.getFBO());
-            postProcessing2.EndProcessing();
+            postProcessing.RenderTo(postProcessing2.getFBO());
+            postProcessing2.RenderToScreen();
 
             glfwSwapBuffers(window);
         }

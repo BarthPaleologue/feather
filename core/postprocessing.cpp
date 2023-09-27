@@ -62,7 +62,7 @@ void PostProcessing::StartProcessing() {
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 }
 
-void PostProcessing::EndProcessing(int targetFramebuffer) {
+void PostProcessing::RenderTo(int targetFramebuffer) {
     // Bind the default framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, targetFramebuffer);
     // Draw the framebuffer rectangle
