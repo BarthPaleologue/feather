@@ -39,8 +39,7 @@ public:
     }
 
     void start() {
-        PostProcessing postProcessing;
-        postProcessing.Initialize(800, 600, "./assets/shaders/invertPostProcess/vertex.glsl",
+        PostProcessing postProcessing(800, 600, "./assets/shaders/invertPostProcess/vertex.glsl",
                                   "./assets/shaders/invertPostProcess/fragment.glsl");
 
         while (!glfwWindowShouldClose(window)) {

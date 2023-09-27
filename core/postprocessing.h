@@ -50,9 +50,7 @@ private:
 
     unsigned int rectVAO;
 public:
-    PostProcessing();
-
-    void Initialize(int _width, int _height, const char *vShader_Path, const char *fShader_Path);
+    PostProcessing(int _width, int _height, const char *vShader_Path, const char *fShader_Path);
 
     void StartProcessing();
 

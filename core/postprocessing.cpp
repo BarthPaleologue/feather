@@ -11,13 +11,7 @@ const float PostProcessing::rectangleVerts[] = {
 	-1.0f,  1.0f,  0.0f, 1.0f
 };
 
-PostProcessing::PostProcessing()
-{
-    width = 0;
-    height = 0;
-}
-
-void PostProcessing::Initialize(int _width, int _height, const char* vShader_Path, const char* fShader_Path)
+PostProcessing::PostProcessing(int _width, int _height, const char* vShader_Path, const char* fShader_Path)
 {
     width = _width;
     height = _height;
