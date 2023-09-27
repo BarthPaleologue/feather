@@ -42,6 +42,18 @@ int main() {
     DebugLight::CreateDebugPointLightMesh(&light4, scene);
     scene.addPointLight(&light4);
 
+    int width, height;
+    glfwGetWindowSize(engine.getWindow(), &width, &height);
+    PostProcessing postProcessing1(width, height, "./assets/shaders/invertPostProcess/");
+    PostProcessing postProcessing2(width, height, "./assets/shaders/invertPostProcess/");
+
+    engine.onWindowResizeObservable.add([&postProcessing1](int width, int height) {
+        postProcessing1.resize(width, height);
+    });
+
+    scene.addPostProcess(&postProcessing1);
+    scene.addPostProcess(&postProcessing2);
+
     StandardMaterial sunMaterial;
     Texture sunMap("assets/textures/sun.jpg");
     sunMaterial.setAmbientTexture(&sunMap);

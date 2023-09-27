@@ -6,7 +6,6 @@
 #define FEATHERGL_ENGINE_H
 
 #include "Observable.h"
-#include "postprocessing.h"
 #include <GLFW/glfw3.h>
 #include <map>
 
@@ -39,25 +38,9 @@ public:
     }
 
     void start() {
-        int width, height;
-        glfwGetWindowSize(window, &width, &height);
-        PostProcessing postProcessing(width, height, "./assets/shaders/invertPostProcess/");
-
-
-        PostProcessing postProcessing2(width, height, "./assets/shaders/invertPostProcess/");
-
-        this->onWindowResizeObservable.add([this, &postProcessing](int width, int height) {
-            postProcessing.resize(width, height);
-        });
-
         while (!glfwWindowShouldClose(window)) {
-            postProcessing.StartProcessing();
             onExecuteLoopObservable.notifyObservers();
             glfwPollEvents();
-
-            postProcessing.RenderTo(postProcessing2.getFBO());
-            postProcessing2.RenderToScreen();
-
             glfwSwapBuffers(window);
         }
 

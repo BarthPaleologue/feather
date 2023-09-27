@@ -43,7 +43,7 @@ public:
 
     void StartProcessing();
 
-    void RenderTo(int targetFrameBuffer);
+    void RenderTo(unsigned int targetFrameBuffer);
 
     void RenderToScreen() {
         RenderTo(0);

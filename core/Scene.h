@@ -9,6 +9,7 @@
 #include "../meshes/Mesh.h"
 #include "cameras/Camera.h"
 #include "lights/PointLight.h"
+#include "postprocessing.h"
 
 class Scene {
 public:
@@ -24,6 +25,10 @@ public:
 
     void addPointLight(PointLight *light) {
         _pointLights.push_back(light);
+    }
+
+    void addPostProcess(PostProcessing *postProcess) {
+        _postProcesses.push_back(postProcess);
     }
 
     void setActiveCamera(Camera *camera);
@@ -44,6 +49,8 @@ private:
 
     std::vector<PointLight *> _pointLights;
     std::vector<Mesh *> _meshes;
+    std::vector<PostProcessing *> _postProcesses;
+
     Camera *_activeCamera = nullptr;
 };
 
