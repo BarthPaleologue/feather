@@ -18,10 +18,6 @@ public:
         _engine->onWindowResizeObservable.add([this](int width, int height) {
             this->_activeCamera->setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
         });
-
-        onBeforeRenderObservable.addOnce([this]() {
-            compileShaders();
-        });
     }
 
     void addMesh(Mesh *mesh);

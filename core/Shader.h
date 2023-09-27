@@ -26,6 +26,10 @@ public:
 
         loadFileToBuffer(vertexPath.c_str(), _vertexShaderCode);
         loadFileToBuffer(fragmentPath.c_str(), _fragmentShaderCode);
+
+        onBeforeBindObservable.addOnce([this]() {
+            compile();
+        });
     }
 
     void compile() {
@@ -66,8 +70,9 @@ public:
     }
 
     virtual void bind() {
+        onBeforeBindObservable.notifyObservers();
         glUseProgram(_program);
-        onBindObservable.notifyObservers();
+        onAfterBindObservable.notifyObservers();
     }
 
     virtual void unbind() {}
@@ -102,7 +107,8 @@ public:
         _vertexShaderCode = "#define " + std::string(defineName) + "\n" + _vertexShaderCode;
     }
 
-    Observable<> onBindObservable{};
+    Observable<> onBeforeBindObservable{};
+    Observable<> onAfterBindObservable{};
 private:
     GLuint _program{};
     std::string _vertexShaderCode{};
