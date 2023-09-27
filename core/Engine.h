@@ -39,8 +39,12 @@ public:
     }
 
     void start() {
-        PostProcessing postProcessing(800, 600, "./assets/shaders/invertPostProcess/vertex.glsl",
-                                  "./assets/shaders/invertPostProcess/fragment.glsl");
+        int width, height;
+        glfwGetWindowSize(window, &width, &height);
+        PostProcessing postProcessing(width, height, "./assets/shaders/invertPostProcess/");
+        this->onWindowResizeObservable.add([this, &postProcessing](int width, int height) {
+            postProcessing.resize(width, height);
+        });
 
         while (!glfwWindowShouldClose(window)) {
             postProcessing.StartProcessing();

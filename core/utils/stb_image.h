@@ -137,14 +137,14 @@ RECENT REVISION HISTORY:
 //    int x,y,n;
 //    unsigned char *data = stbi_load(filename, &x, &y, &n, 0);
 //    // ... process data if not NULL ...
-//    // ... x = width, y = height, n = # 8-bit components per pixel ...
+//    // ... x = _width, y = _height, n = # 8-bit components per pixel ...
 //    // ... replace '0' with '1'..'4' to force that many components per pixel
 //    // ... but 'n' will always be the number that it would have been if you said 0
 //    stbi_image_free(data)
 //
 // Standard parameters:
-//    int *x                 -- outputs image width in pixels
-//    int *y                 -- outputs image height in pixels
+//    int *x                 -- outputs image _width in pixels
+//    int *y                 -- outputs image _height in pixels
 //    int *channels_in_file  -- outputs # of image components in image file
 //    int desired_channels   -- if non-zero, # of image components requested in result
 //
@@ -179,7 +179,7 @@ RECENT REVISION HISTORY:
 //
 // Paletted PNG, BMP, GIF, and PIC images are automatically depalettized.
 //
-// To query the width, height and component count of an image without having to
+// To query the _width, _height and component count of an image without having to
 // decode the full file, you can use the stbi_info family of functions:
 //
 //   int x,y,n,ok;
@@ -356,7 +356,7 @@ RECENT REVISION HISTORY:
 //     want the zlib decoder to be available, #define STBI_SUPPORT_ZLIB
 //
 //  - If you define STBI_MAX_DIMENSIONS, stb_image will reject images greater
-//    than that size (in either width or height) without further processing.
+//    than that size (in either _width or _height) without further processing.
 //    This is to let programs in the wild set an upper bound to prevent
 //    denial-of-service attacks on untrusted data, as one could generate a
 //    valid image of gigantic dimensions and force stb_image to allocate a
@@ -3232,8 +3232,8 @@ static int stbi__process_frame_header(stbi__jpeg *z, int scan)
    int Lf,p,i,q, h_max=1,v_max=1,c;
    Lf = stbi__get16be(s);         if (Lf < 11) return stbi__err("bad SOF len","Corrupt JPEG"); // JPEG
    p  = stbi__get8(s);            if (p != 8) return stbi__err("only 8-bit","JPEG format not supported: 8-bit only"); // JPEG baseline
-   s->img_y = stbi__get16be(s);   if (s->img_y == 0) return stbi__err("no header height", "JPEG format not supported: delayed height"); // Legal, but we don't handle it--but neither does IJG
-   s->img_x = stbi__get16be(s);   if (s->img_x == 0) return stbi__err("0 width","Corrupt JPEG"); // JPEG requires
+   s->img_y = stbi__get16be(s);   if (s->img_y == 0) return stbi__err("no header _height", "JPEG format not supported: delayed _height"); // Legal, but we don't handle it--but neither does IJG
+   s->img_x = stbi__get16be(s);   if (s->img_x == 0) return stbi__err("0 _width","Corrupt JPEG"); // JPEG requires
    if (s->img_y > STBI_MAX_DIMENSIONS) return stbi__err("too large","Very large image (corrupt?)");
    if (s->img_x > STBI_MAX_DIMENSIONS) return stbi__err("too large","Very large image (corrupt?)");
    c = stbi__get8(s);
@@ -3289,7 +3289,7 @@ static int stbi__process_frame_header(stbi__jpeg *z, int scan)
       z->img_comp[i].y = (s->img_y * z->img_comp[i].v + v_max-1) / v_max;
       // to simplify generation, we'll allocate enough memory to decode
       // the bogus oversized data from using interleaved MCUs and their
-      // big blocks (e.g. a 16x16 iMCU on an image of width 33); we won't
+      // big blocks (e.g. a 16x16 iMCU on an image of _width 33); we won't
       // discard the extra data until colorspace conversion
       //
       // img_mcu_x, img_mcu_y: <=17 bits; comp[i].h and .v are <=4 (checked earlier)
@@ -3381,7 +3381,7 @@ static int stbi__decode_jpeg_image(stbi__jpeg *j)
          int Ld = stbi__get16be(j->s);
          stbi__uint32 NL = stbi__get16be(j->s);
          if (Ld != 4) return stbi__err("bad DNL len", "Corrupt JPEG");
-         if (NL != j->s->img_y) return stbi__err("bad DNL height", "Corrupt JPEG");
+         if (NL != j->s->img_y) return stbi__err("bad DNL _height", "Corrupt JPEG");
       } else {
          if (!stbi__process_marker(j, m)) return 0;
       }
@@ -4626,7 +4626,7 @@ static int stbi__create_png_image_raw(stbi__png *a, stbi_uc *raw, stbi__uint32 r
          return stbi__err("invalid filter","Corrupt PNG");
 
       if (depth < 8) {
-         if (img_width_bytes > x) return stbi__err("invalid width","Corrupt PNG");
+         if (img_width_bytes > x) return stbi__err("invalid _width","Corrupt PNG");
          cur += x*out_n - img_width_bytes; // store output to the rightmost img_len bytes, so we can decode in place
          filter_bytes = 1;
          width = img_width_bytes;
@@ -4723,7 +4723,7 @@ static int stbi__create_png_image_raw(stbi__png *a, stbi_uc *raw, stbi__uint32 r
          stbi_uc *cur = a->out + stride*j;
          stbi_uc *in  = a->out + stride*j + x*out_n - img_width_bytes;
          // unpack 1/2/4-bit into a 8-bit buffer. allows us to keep the common 8-bit path optimal at minimal cost for 1/2/4-bit
-         // png guarante byte alignment, if width is not multiple of 8/4/2 we'll decode dummy trailing data that will be skipped in the later loop
+         // png guarante byte alignment, if _width is not multiple of 8/4/2 we'll decode dummy trailing data that will be skipped in the later loop
          stbi_uc scale = (color == 0) ? stbi__depth_scale_table[depth] : 1; // scale grayscale values to 0..255 range
 
          // note that the final byte might overshoot and write more data than desired.
@@ -5709,12 +5709,12 @@ static int stbi__tga_info(stbi__context *s, int *x, int *y, int *comp)
     tga_w = stbi__get16le(s);
     if( tga_w < 1 ) {
         stbi__rewind(s);
-        return 0;   // test width
+        return 0;   // test _width
     }
     tga_h = stbi__get16le(s);
     if( tga_h < 1 ) {
         stbi__rewind(s);
-        return 0;   // test height
+        return 0;   // test _height
     }
     tga_bits_per_pixel = stbi__get8(s); // bits per pixel
     stbi__get8(s); // ignore alpha bits
@@ -5757,8 +5757,8 @@ static int stbi__tga_test(stbi__context *s)
       if ( (sz != 2) && (sz != 3) && (sz != 10) && (sz != 11) ) goto errorEnd; // only RGB or grey allowed, +/- RLE
       stbi__skip(s,9); // skip colormap specification and image x/y origin
    }
-   if ( stbi__get16le(s) < 1 ) goto errorEnd;      //   test width
-   if ( stbi__get16le(s) < 1 ) goto errorEnd;      //   test height
+   if ( stbi__get16le(s) < 1 ) goto errorEnd;      //   test _width
+   if ( stbi__get16le(s) < 1 ) goto errorEnd;      //   test _height
    sz = stbi__get8(s);   //   bits per pixel
    if ( (tga_color_type == 1) && (sz != 8) && (sz != 16) ) goto errorEnd; // for colormapped images, bpp is size of an index
    if ( (sz != 8) && (sz != 15) && (sz != 16) && (sz != 24) && (sz != 32) ) goto errorEnd;
@@ -6784,7 +6784,7 @@ static stbi_uc *stbi__gif_load_next(stbi__context *s, stbi__gif *g, int *comp, i
             g->cur_x   = g->start_x;
             g->cur_y   = g->start_y;
 
-            // if the width of the specified rectangle is 0, that means
+            // if the _width of the specified rectangle is 0, that means
             // we may not see *any* pixels or the image is malformed;
             // to make sure this is caught, move the current y down to
             // max_y (which is what out_gif_code checks).
@@ -7105,7 +7105,7 @@ static float *stbi__hdr_load(stbi__context *s, int *x, int *y, int *comp, int re
 
    if (!valid)    return stbi__errpf("unsupported format", "Unsupported HDR format");
 
-   // Parse width and height
+   // Parse _width and _height
    // can't use sscanf() if we're not using stdio!
    token = stbi__hdr_gettoken(s,buffer);
    if (strncmp(token, "-Y ", 3))  return stbi__errpf("unsupported data layout", "Unsupported HDR format");
@@ -7515,10 +7515,10 @@ static int      stbi__pnm_info(stbi__context *s, int *x, int *y, int *comp)
    c = (char) stbi__get8(s);
    stbi__pnm_skip_whitespace(s, &c);
 
-   *x = stbi__pnm_getinteger(s, &c); // read width
+   *x = stbi__pnm_getinteger(s, &c); // read _width
    stbi__pnm_skip_whitespace(s, &c);
 
-   *y = stbi__pnm_getinteger(s, &c); // read height
+   *y = stbi__pnm_getinteger(s, &c); // read _height
    stbi__pnm_skip_whitespace(s, &c);
 
    maxv = stbi__pnm_getinteger(s, &c);  // read max value

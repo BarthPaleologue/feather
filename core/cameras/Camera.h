@@ -49,7 +49,7 @@ protected:
     glm::mat4 _viewMatrix{};
     glm::mat4 _projectionMatrix{};
     float _fov = 45.f;        // Field of view, in degrees
-    float _aspectRatio = 1.f; // Ratio between the width and the height of the image
+    float _aspectRatio = 1.f; // Ratio between the _width and the _height of the image
     float _near = 0.1f; // Distance before which geometry is excluded from the rasterization process
     float _far = 100.f; // Distance after which the geometry is excluded from the rasterization process
 };

@@ -10,39 +10,28 @@
 #include "utils.h"
 #include "Shader.h"
 
-class PostProcessing_Shader {
-private:
-    GLuint _program;
-
-    void addShader(GLuint theProgram, const char *shaderCode, GLenum shaderType);
-
-    void compile(const char *vShaderCode, const char *fShaderCode);
-
+class PostProcessingShader : public Shader {
 public:
-    PostProcessing_Shader();
-
-    // Create a _program program using vertex and fragment shaders
-    void CreateProgram(std::string vShader, std::string fShader);
+    explicit PostProcessingShader(const char *shaderFolder) : Shader(shaderFolder) {};
 
     // Using a _program program
-    void bind() {
-        glUseProgram(this->_program);
+    void bind() override {
+        Shader::bind();
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
-    GLuint program() { return this->_program; }
-
-    ~PostProcessing_Shader();
+    ~PostProcessingShader() = default;
 };
 
 class PostProcessing {
 private:
-    int width, height;
+    int _width, _height;
 
     unsigned int FBO;
+    unsigned int RBO;
     unsigned int framebufferTexture;
 
-    PostProcessing_Shader *framebuffer_shader;
+    PostProcessingShader *framebuffer_shader;
 
     GLuint uniformScreenResolution;
 
@@ -50,13 +39,15 @@ private:
 
     unsigned int rectVAO;
 public:
-    PostProcessing(int _width, int _height, const char *vShader_Path, const char *fShader_Path);
+    PostProcessing(int _width, int _height, const char *shaderFolder);
 
     void StartProcessing();
 
     void EndProcessing();
 
-    ~PostProcessing();
+    void resize(int width, int height);
+
+    ~PostProcessing() = default;
 };
 
 #endif //FEATHERGL_POSTPROCESSING_H

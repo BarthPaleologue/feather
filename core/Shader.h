@@ -41,7 +41,28 @@ public:
         compileShader(versionedVertexShaderCode, GL_VERTEX_SHADER);
         compileShader(versionedFragmentShaderCode, GL_FRAGMENT_SHADER);
 
+        GLint result = 0;
+        GLchar errLog[1024] = { 0 };
+
         glLinkProgram(_program);
+        glGetProgramiv(_program, GL_LINK_STATUS, &result);
+
+        if (!result)
+        {
+            glGetProgramInfoLog(_program, sizeof(errLog), NULL, errLog);
+            std::cerr << "Error linking program: '" << errLog << "'\n";
+            return;
+        }
+
+        glValidateProgram(_program);
+        glGetProgramiv(_program, GL_VALIDATE_STATUS, &result);
+
+        if (!result)
+        {
+            glGetProgramInfoLog(_program, sizeof(errLog), NULL, errLog);
+            std::cerr << "Error validating program: '" << errLog << "'\n";
+            return;
+        }
     }
 
     virtual void bind() {
@@ -100,7 +121,7 @@ private:
         glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
         if (!success) {
             glGetShaderInfoLog(fs, 512, nullptr, infoLog);
-            throw std::runtime_error("ERROR in compiling GL_FRAGMENT_SHADER\n" + std::string(infoLog));
+            throw std::runtime_error("ERROR in compiling shader\n" + std::string(infoLog) + "\n" + shaderCode);
         }
 
         glAttachShader(_program, fs);
