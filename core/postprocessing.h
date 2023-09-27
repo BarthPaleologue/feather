@@ -41,8 +41,6 @@ private:
 public:
     PostProcessing(int _width, int _height, const char *shaderFolder);
 
-    void StartProcessing();
-
     void RenderTo(unsigned int targetFrameBuffer);
 
     void RenderToScreen() {

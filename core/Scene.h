@@ -19,6 +19,10 @@ public:
         _engine->onWindowResizeObservable.add([this](int width, int height) {
             this->_activeCamera->setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
         });
+
+        // Create Frame Buffer Object
+        glGenFramebuffers(1, &FBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     }
 
     void addMesh(Mesh *mesh);
@@ -46,6 +50,8 @@ public:
 
 private:
     Engine *_engine;
+
+    unsigned int FBO{};
 
     std::vector<PointLight *> _pointLights;
     std::vector<Mesh *> _meshes;

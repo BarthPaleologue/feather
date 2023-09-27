@@ -58,10 +58,6 @@ PostProcessing::PostProcessing(int _width, int _height, const char *shaderFolder
     uniformScreenResolution = glGetUniformLocation(_shader->program(), "screenResolution");
 }
 
-void PostProcessing::StartProcessing() {
-    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-}
-
 void PostProcessing::RenderTo(unsigned int targetFramebuffer) {
     // Bind the default framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, targetFramebuffer);
