@@ -21,6 +21,22 @@ int main() {
     scene.setActiveCamera(&camera);
 
     PointLight light("sun");
+    scene.addPointLight(&light);
+
+    PointLight light2("light2");
+    light2.setColor(1, 0, 0);
+    light2.setPosition(0.0f, 0.0f, 10.0f);
+    scene.addPointLight(&light2);
+
+    PointLight light3("light3");
+    light3.setColor(0, 1, 0);
+    light3.setPosition(0.0f, 0.0f, -10.0f);
+    scene.addPointLight(&light3);
+
+    PointLight light4("light4");
+    light4.setColor(0, 0, 1);
+    light4.setPosition(10.0f, 0.0f, 0.0f);
+    scene.addPointLight(&light4);
 
     StandardMaterial sunMaterial;
     Texture sunMap("assets/textures/sun.jpg");
@@ -89,8 +105,8 @@ int main() {
         camera.update();
     });
 
-    engine.onExecuteLoopObservable.add([&scene, &light] {
-        scene.render(light);
+    engine.onExecuteLoopObservable.add([&scene] {
+        scene.render();
     });
 
     engine.start();

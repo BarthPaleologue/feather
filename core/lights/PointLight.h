@@ -11,11 +11,17 @@
 
 class PointLight : public Light {
 public:
-    PointLight(const char *name);
+    explicit PointLight(const char *name);
 
-    inline const glm::vec3 * getPosition() { return &_position; }
+    const glm::vec3 *getPosition() { return &_position; }
 
-    inline void setPosition(glm::vec3 position) { _position = position; }
+    void setPosition(float x, float y, float z) {
+        _position.x = x;
+        _position.y = y;
+        _position.z = z;
+    }
+
+    void setPosition(glm::vec3 position) { _position = position; }
 
 private:
     glm::vec3 _position;

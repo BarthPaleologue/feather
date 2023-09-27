@@ -8,12 +8,12 @@ void Scene::addMesh(Mesh *mesh) {
     _meshes.push_back(mesh);
 }
 
-void Scene::render(PointLight &light) {
+void Scene::render() {
     onBeforeRenderObservable.notifyObservers();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     for (Mesh* _drawable: _meshes) {
-        _drawable->render(*_activeCamera, light);
+        _drawable->render(_activeCamera, _pointLights);
     }
 
     onAfterRenderObservable.notifyObservers();

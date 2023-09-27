@@ -9,8 +9,14 @@ varying vec2 vUV;
 
 uniform mat4 world;
 
-uniform vec3 lightPosition;
-uniform vec3 lightColor;
+uniform int pointLightCount;
+struct PointLight {
+    vec3 position;
+    vec3 color;
+    float intensity;
+};
+uniform PointLight pointLights[MAX_POINT_LIGHTS];
+
 uniform vec3 cameraPosition;
 
 uniform vec3 diffuseColor;
@@ -22,18 +28,30 @@ uniform sampler2D ambientTexture;
 
 void main() {
     vec3 color = vec3(0.0);
+
     vec3 diffuseColor = diffuseColor;
     #ifdef DIFFUSE_TEXTURE
     diffuseColor = texture2D(diffuseTexture, vUV).rgb;
     #endif
 
     #ifdef ALPHA_COLOR
-    if(diffuseColor == alphaColor) discard;
+    if (diffuseColor == alphaColor) discard;
     #endif
 
-    float ndl = max(dot(vNormalW, normalize(lightPosition - vPositionW)), 0.0);
+    vec3 diffuseLightContributions = vec3(0.0);
+    vec3 specularLightContributions = vec3(0.0);
+    for (int i = 0; i < pointLightCount; i++) {
+        float ndl = max(dot(vNormalW, normalize(pointLights[i].position - vPositionW)), 0.0);
+        diffuseLightContributions += diffuseColor * pointLights[i].color * ndl * pointLights[i].intensity;
 
-    color += diffuseColor * lightColor * ndl;
+        vec3 lightRayW = normalize(pointLights[i].position - vPositionW);
+        vec3 viewDirW = normalize(cameraPosition - vPositionW);
+        vec3 angleW = normalize(viewDirW + lightRayW);
+        float specComp = max(0., dot(normalize(vec3(world * vec4(vNormal, 0.0))), angleW));
+        specularLightContributions += pow(specComp, 32.0) * pointLights[i].color * pointLights[i].intensity;
+    }
+
+    color += diffuseColor * diffuseLightContributions + specularLightContributions;
 
     vec3 ambientColor = ambientColor;
     #ifdef AMBIENT_TEXTURE
@@ -41,18 +59,10 @@ void main() {
     #endif
 
     #ifdef ALPHA_COLOR
-    if(ambientColor == alphaColor) discard;
+    if (ambientColor == alphaColor) discard;
     #endif
 
     color += ambientColor;
-
-    vec3 lightRayW = normalize(lightPosition - vPositionW);
-    vec3 viewDirW = normalize(cameraPosition - vPositionW);
-    vec3 angleW = normalize(viewDirW + lightRayW);
-    float specComp = max(0., dot(normalize(vec3(world * vec4(vNormal, 0.0))), angleW));
-    specComp = pow(specComp, max(1.0, 64.0));
-
-    color += lightColor * specComp;
 
     frag_color = vec4(color, 1.0);
 }

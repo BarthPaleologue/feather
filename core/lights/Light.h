@@ -21,8 +21,12 @@ public:
 
     inline glm::vec3 *getColor() { return _color; };
 
+    float intensity() const { return _intensity; };
+
 private:
     std::string _name;
+
+    float _intensity = 1.0f;
 
     glm::vec3 *_color = new glm::vec3(1.0f);
 };

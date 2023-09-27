@@ -4,7 +4,9 @@
 
 #include "StandardMaterial.h"
 
-StandardMaterial::StandardMaterial() : Material("./assets/shaders/standard") {}
+StandardMaterial::StandardMaterial() : Material("./assets/shaders/standard") {
+    setDefine("MAX_POINT_LIGHTS 128");
+}
 
 StandardMaterial::StandardMaterial(const char *diffuseTexturePath) : Material("./assets/shaders/standard") {
     setDiffuseTextureFromFile(diffuseTexturePath);

@@ -18,13 +18,27 @@ public:
         _engine->onWindowResizeObservable.add([this](int width, int height) {
             this->_activeCamera->setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
         });
+
+        onBeforeRenderObservable.addOnce([this]() {
+            compileShaders();
+        });
     }
 
     void addMesh(Mesh *mesh);
 
+    void addPointLight(PointLight *light) {
+        _pointLights.push_back(light);
+    }
+
     void setActiveCamera(Camera *camera);
 
-    void render(PointLight &light);
+    void render();
+
+    void compileShaders() {
+        for (auto mesh: _meshes) {
+            mesh->material()->compile();
+        }
+    }
 
     Observable<> onBeforeRenderObservable{};
     Observable<> onAfterRenderObservable{};
@@ -32,6 +46,7 @@ public:
 private:
     Engine *_engine;
 
+    std::vector<PointLight *> _pointLights;
     std::vector<Mesh *> _meshes;
     Camera *_activeCamera = nullptr;
 };

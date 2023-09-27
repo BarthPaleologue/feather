@@ -18,8 +18,6 @@ Material::Material(const char *shaderFolder) {
 
     loadFileToBuffer(vertexPath.c_str(), _vertexShaderCode);
     loadFileToBuffer(fragmentPath.c_str(), _fragmentShaderCode);
-    _program = glCreateProgram();
-    compile();
 }
 
 void Material::compile() {
@@ -91,9 +89,12 @@ void Material::unbind() {}
 void Material::setDefine(const char *defineName) {
     _fragmentShaderCode = "#define " + std::string(defineName) + "\n" + _fragmentShaderCode;
     _vertexShaderCode = "#define " + std::string(defineName) + "\n" + _vertexShaderCode;
-    compile();
 }
 
 void Material::setInt(const char *uniformName, int integer) const {
     glUniform1i(glGetUniformLocation(_program, uniformName), integer);
+}
+
+void Material::setFloat(const char *uniformName, float value) const {
+    glUniform1f(glGetUniformLocation(_program, uniformName), value);
 }

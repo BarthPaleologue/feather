@@ -62,11 +62,11 @@ void Mesh::setMaterial(Material *material) {
     _material = material;
 }
 
-void Mesh::render(Camera &camera, PointLight &light) {
+void Mesh::render(Camera *camera, std::vector<PointLight *> &lights) {
     _material->bind();
 
-    const glm::mat4 viewMatrix = camera.getViewMatrix();
-    const glm::mat4 projMatrix = camera.getProjectionMatrix();
+    const glm::mat4 viewMatrix = camera->getViewMatrix();
+    const glm::mat4 projMatrix = camera->getProjectionMatrix();
     const glm::mat4 world = transform()->computeWorldMatrix();
     const glm::mat4 normalMatrix = glm::transpose(glm::inverse(world));
 
@@ -75,9 +75,14 @@ void Mesh::render(Camera &camera, PointLight &light) {
     _material->setMat4("world", &world);
     _material->setMat4("normalMatrix", &normalMatrix);
 
-    _material->setVec3("lightPosition", light.getPosition());
-    _material->setVec3("lightColor", light.getColor());
-    _material->setVec3("cameraPosition", camera.getPosition());
+    _material->setInt("pointLightCount", (int) lights.size());
+    for(int i = 0; i < lights.size(); i++) {
+        _material->setVec3(("pointLights[" + std::to_string(i) + "].position").c_str(), lights[i]->getPosition());
+        _material->setVec3(("pointLights[" + std::to_string(i) + "].color").c_str(), lights[i]->getColor());
+        _material->setFloat(("pointLights[" + std::to_string(i) + "].intensity").c_str(), lights[i]->intensity());
+    }
+
+    _material->setVec3("cameraPosition", camera->getPosition());
 
     glBindVertexArray(_vao);
     glDrawElements(GL_TRIANGLES, (int) _vertexData.indices.size(), GL_UNSIGNED_INT, nullptr);

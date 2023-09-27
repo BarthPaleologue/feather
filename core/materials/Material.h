@@ -28,6 +28,8 @@ public:
 
     void setInt(const char *uniformName, int integer) const;
 
+    void setFloat(const char *uniformName, float value) const;
+
     void bindTexture(const char *uniformName, Texture *texture, int id) const;
 
     void setDefine(const char *defineName);

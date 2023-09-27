@@ -26,7 +26,7 @@ public:
 
     void setVertexData(VertexData &vertexData);
 
-    void render(Camera &camera, PointLight &light);
+    void render(Camera *camera, std::vector<PointLight*> &lights);
 
 private:
     const char *_name;
