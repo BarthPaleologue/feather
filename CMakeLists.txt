@@ -18,7 +18,9 @@ add_executable(featherGL ${SRCS}
         core/Transformable.h
         core/Settings.h
         core/Settings.cpp
-        core/lights/DebugLight.h)
+        core/lights/DebugLight.h
+        core/PostProcess.h
+        core/Shader.h)
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 

@@ -11,30 +11,13 @@
 #include "glm/ext/matrix_float4x4.hpp"
 #include "Texture.h"
 #include "Observable.h"
+#include "Shader.h"
 
-class Material {
+class Material : public Shader {
 public:
     explicit Material(const char *shaderFolder);
 
-    void compile();
-
-    virtual void bind();
-
-    virtual void unbind();
-
-    void setMat4(const char *uniformName, const glm::mat4 *matrix) const;
-
-    void setVec3(const char *uniformName, const glm::vec3 *vector) const;
-
-    void setInt(const char *uniformName, int integer) const;
-
-    void setFloat(const char *uniformName, float value) const;
-
-    void setBool(const char *uniformName, bool value) const;
-
-    void bindTexture(const char *uniformName, Texture *texture, int id) const;
-
-    void setDefine(const char *defineName);
+    void bind() override;
 
     bool setWireframe(bool enabled) {
         _isWireframe = enabled;
@@ -52,13 +35,7 @@ public:
         _isBackFaceCullingEnabled = enabled;
     }
 
-    Observable<> onBindObservable{};
-
 private:
-    GLuint _program;
-    std::string _vertexShaderCode;
-    std::string _fragmentShaderCode;
-
     bool _isWireframe = false;
     bool _isBackFaceCullingEnabled = true;
 };
