@@ -4,7 +4,6 @@
 #include "StandardMaterial.h"
 #include "CelestialBody.h"
 #include "Engine.h"
-#include "FreeCamera.h"
 #include "MeshBuilder.h"
 
 const int WINDOW_WIDTH = 1000;
@@ -49,7 +48,7 @@ int main() {
     CelestialBody venus("venus", 0.45, -0.1, 8, 7, &venusMat, scene);
 
     CelestialBody earth("earth", 0.5, 10, 10, 10, &earthMat, scene);
-    earth.getMesh()->setRotationX(0.3);
+    earth.getMesh()->transform()->setRotationX(0.3);
     CelestialBody moon("moon", 0.25, 5, 5, 2, &moonMat, scene);
 
     CelestialBody mars("mars", 0.35, 10, 12, 13, &marsMat, scene);
@@ -57,8 +56,8 @@ int main() {
     CelestialBody *currentTarget = &sun;
 
     Mesh *plane = MeshBuilder::makePlane("plane", scene, 64);
-    plane->setPosition(0, -2, 0);
-    plane->setScale(40);
+    plane->transform()->setPosition(0, -2, 0);
+    plane->transform()->setScale(40);
     plane->material()->setWireframe(true);
     plane->material()->setBackFaceCullingEnabled(false);
 
@@ -81,10 +80,10 @@ int main() {
         venus.update(elapsedTime);
         earth.update(elapsedTime);
         moon.update(elapsedTime);
-        moon.getMesh()->translate(*earth.getMesh()->getPosition());
+        moon.getMesh()->transform()->translate(*earth.getMesh()->transform()->getPosition());
         mars.update(elapsedTime);
 
-        camera.setTarget(currentTarget->getMesh()->getPosition());
+        camera.setTarget(currentTarget->getMesh()->transform()->getPosition());
         camera.setMinRadius(currentTarget->getRadius());
 
         camera.update();

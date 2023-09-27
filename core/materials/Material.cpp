@@ -69,6 +69,8 @@ void Material::bind() {
     }
 
     glPolygonMode(GL_FRONT_AND_BACK, _isWireframe ? GL_LINE : GL_FILL);
+
+    onBindObservable.notifyObservers();
 }
 
 void Material::setMat4(const char *uniformName, const glm::mat4 *matrix) const {

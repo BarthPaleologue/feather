@@ -10,6 +10,7 @@
 #include "glad/glad.h"
 #include "glm/ext/matrix_float4x4.hpp"
 #include "Texture.h"
+#include "Observable.h"
 
 class Material {
 public:
@@ -46,6 +47,8 @@ public:
     bool setBackFaceCullingEnabled(bool enabled) {
         _isBackFaceCullingEnabled = enabled;
     }
+
+    Observable<> onBindObservable{};
 
 private:
     GLuint _program;

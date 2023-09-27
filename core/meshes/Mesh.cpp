@@ -6,7 +6,7 @@
 #include "../materials/DefaultMaterial.h"
 #include <iostream>
 
-Mesh::Mesh(const char *name) : Transform(), _name(name), _vao(0), _vbo(0) {
+Mesh::Mesh(const char *name) : Transformable(), _name(name), _vao(0), _vbo(0) {
     _material = new DefaultMaterial();
 }
 
@@ -67,7 +67,7 @@ void Mesh::render(Camera &camera, PointLight &light) {
 
     const glm::mat4 viewMatrix = camera.getViewMatrix();
     const glm::mat4 projMatrix = camera.getProjectionMatrix();
-    const glm::mat4 world = computeWorldMatrix();
+    const glm::mat4 world = transform()->computeWorldMatrix();
     const glm::mat4 normalMatrix = glm::transpose(glm::inverse(world));
 
     _material->setMat4("projection", &projMatrix);
@@ -85,7 +85,7 @@ void Mesh::render(Camera &camera, PointLight &light) {
     _material->unbind();
 }
 
-Mesh* Mesh::FromVertexData(const char *name, VertexData &vertexData) {
+Mesh *Mesh::FromVertexData(const char *name, VertexData &vertexData) {
     Mesh *mesh = new Mesh(name);
     mesh->setVertexData(vertexData);
     return mesh;

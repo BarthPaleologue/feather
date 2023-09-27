@@ -8,11 +8,11 @@
 #include <vector>
 #include "../materials/Material.h"
 #include "cameras/Camera.h"
-#include "Transform.h"
+#include "Transformable.h"
 #include "lights/PointLight.h"
 #include "VertexData.h"
 
-class Mesh : public Transform {
+class Mesh : public Transformable {
 public:
     explicit Mesh(const char *name);
 
