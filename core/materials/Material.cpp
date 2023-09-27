@@ -98,3 +98,7 @@ void Material::setInt(const char *uniformName, int integer) const {
 void Material::setFloat(const char *uniformName, float value) const {
     glUniform1f(glGetUniformLocation(_program, uniformName), value);
 }
+
+void Material::setBool(const char *uniformName, bool value) const {
+    glUniform1i(glGetUniformLocation(_program, uniformName), value);
+}

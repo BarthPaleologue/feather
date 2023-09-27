@@ -77,12 +77,13 @@ void Mesh::render(Camera *camera, std::vector<PointLight *> &lights) {
 
     _material->setInt("pointLightCount", (int) lights.size());
     for(int i = 0; i < lights.size(); i++) {
-        _material->setVec3(("pointLights[" + std::to_string(i) + "].position").c_str(), lights[i]->getPosition());
-        _material->setVec3(("pointLights[" + std::to_string(i) + "].color").c_str(), lights[i]->getColor());
+        _material->setVec3(("pointLights[" + std::to_string(i) + "].position").c_str(),
+                           lights[i]->transform()->position());
+        _material->setVec3(("pointLights[" + std::to_string(i) + "].color").c_str(), lights[i]->color());
         _material->setFloat(("pointLights[" + std::to_string(i) + "].intensity").c_str(), lights[i]->intensity());
     }
 
-    _material->setVec3("cameraPosition", camera->getPosition());
+    _material->setVec3("cameraPosition", camera->position());
 
     glBindVertexArray(_vao);
     glDrawElements(GL_TRIANGLES, (int) _vertexData.indices.size(), GL_UNSIGNED_INT, nullptr);

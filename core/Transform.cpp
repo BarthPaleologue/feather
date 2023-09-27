@@ -13,7 +13,7 @@ void Transform::setPosition(float x, float y, float z) {
     _position->z = z;
 }
 
-glm::vec3 *Transform::getPosition() {
+glm::vec3 *Transform::position() {
     return _position;
 }
 

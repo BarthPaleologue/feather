@@ -19,6 +19,8 @@ uniform PointLight pointLights[MAX_POINT_LIGHTS];
 
 uniform vec3 cameraPosition;
 
+uniform bool lightingEnabled;
+
 uniform vec3 diffuseColor;
 uniform vec3 ambientColor;
 uniform vec3 alphaColor;
@@ -29,29 +31,32 @@ uniform sampler2D ambientTexture;
 void main() {
     vec3 color = vec3(0.0);
 
-    vec3 diffuseColor = diffuseColor;
-    #ifdef DIFFUSE_TEXTURE
-    diffuseColor = texture2D(diffuseTexture, vUV).rgb;
-    #endif
+    if (lightingEnabled) {
+        vec3 diffuseColor = diffuseColor;
+        #ifdef DIFFUSE_TEXTURE
 
-    #ifdef ALPHA_COLOR
-    if (diffuseColor == alphaColor) discard;
-    #endif
+        diffuseColor = texture2D(diffuseTexture, vUV).rgb;
+        #endif
 
-    vec3 diffuseLightContributions = vec3(0.0);
-    vec3 specularLightContributions = vec3(0.0);
-    for (int i = 0; i < pointLightCount; i++) {
-        float ndl = max(dot(vNormalW, normalize(pointLights[i].position - vPositionW)), 0.0);
-        diffuseLightContributions += diffuseColor * pointLights[i].color * ndl * pointLights[i].intensity;
+        #ifdef ALPHA_COLOR
+        if (diffuseColor == alphaColor) discard;
+        #endif
 
-        vec3 lightRayW = normalize(pointLights[i].position - vPositionW);
-        vec3 viewDirW = normalize(cameraPosition - vPositionW);
-        vec3 angleW = normalize(viewDirW + lightRayW);
-        float specComp = max(0., dot(normalize(vec3(world * vec4(vNormal, 0.0))), angleW));
-        specularLightContributions += pow(specComp, 32.0) * pointLights[i].color * pointLights[i].intensity;
+        vec3 diffuseLightContributions = vec3(0.0);
+        vec3 specularLightContributions = vec3(0.0);
+        for (int i = 0; i < pointLightCount; i++) {
+            float ndl = max(dot(vNormalW, normalize(pointLights[i].position - vPositionW)), 0.0);
+            diffuseLightContributions += diffuseColor * pointLights[i].color * ndl * pointLights[i].intensity;
+
+            vec3 lightRayW = normalize(pointLights[i].position - vPositionW);
+            vec3 viewDirW = normalize(cameraPosition - vPositionW);
+            vec3 angleW = normalize(viewDirW + lightRayW);
+            float specComp = max(0., dot(normalize(vec3(world * vec4(vNormal, 0.0))), angleW));
+            specularLightContributions += pow(specComp, 32.0) * pointLights[i].color * pointLights[i].intensity;
+        }
+
+        color += diffuseColor * diffuseLightContributions + specularLightContributions;
     }
-
-    color += diffuseColor * diffuseLightContributions + specularLightContributions;
 
     vec3 ambientColor = ambientColor;
     #ifdef AMBIENT_TEXTURE

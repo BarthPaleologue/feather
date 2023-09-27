@@ -11,21 +11,28 @@
 class StandardMaterial : public Material {
 public:
     StandardMaterial();
-    StandardMaterial(const char* diffuseTexturePath);
+
+    StandardMaterial(const char *diffuseTexturePath);
 
     void setDiffuseTexture(Texture *texture);
 
-    void setDiffuseTextureFromFile(const char* filePath);
+    void setDiffuseTextureFromFile(const char *filePath);
 
     void setAmbientTexture(Texture *texture);
 
-    void setAmbientTextureFromFile(const char* filePath);
+    void setAmbientTextureFromFile(const char *filePath);
 
     void setDiffuseColor(float r, float g, float b);
 
     void setAlphaColor(float r, float g, float b);
 
+    void setAmbientColor(glm::vec3 *color) {
+        *_ambientColor = *color;
+    }
+
     void setAmbientColor(float r, float g, float b);
+
+    void setLightingEnabled(bool enabled) { _lightingEnabled = enabled; }
 
     void bind() override;
 
@@ -37,6 +44,8 @@ private:
     glm::vec3 *_alphaColor = nullptr;
     glm::vec3 *_diffuseColor = new glm::vec3(0.0);
     glm::vec3 *_ambientColor = new glm::vec3(0.0);
+
+    bool _lightingEnabled = true;
 };
 
 

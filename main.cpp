@@ -5,6 +5,7 @@
 #include "CelestialBody.h"
 #include "Engine.h"
 #include "MeshBuilder.h"
+#include "DebugLight.h"
 
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
@@ -25,17 +26,20 @@ int main() {
 
     PointLight light2("light2");
     light2.setColor(1, 0, 0);
-    light2.setPosition(0.0f, 0.0f, 10.0f);
+    light2.transform()->setPosition(0.0f, 0.0f, 10.0f);
+    DebugLight::CreateDebugPointLightMesh(&light2, scene);
     scene.addPointLight(&light2);
 
     PointLight light3("light3");
     light3.setColor(0, 1, 0);
-    light3.setPosition(0.0f, 0.0f, -10.0f);
+    light3.transform()->setPosition(0.0f, 0.0f, -10.0f);
+    DebugLight::CreateDebugPointLightMesh(&light3, scene);
     scene.addPointLight(&light3);
 
     PointLight light4("light4");
     light4.setColor(0, 0, 1);
-    light4.setPosition(10.0f, 0.0f, 0.0f);
+    light4.transform()->setPosition(10.0f, 0.0f, 0.0f);
+    DebugLight::CreateDebugPointLightMesh(&light4, scene);
     scene.addPointLight(&light4);
 
     StandardMaterial sunMaterial;
@@ -96,10 +100,10 @@ int main() {
         venus.update(elapsedTime);
         earth.update(elapsedTime);
         moon.update(elapsedTime);
-        moon.getMesh()->transform()->translate(*earth.getMesh()->transform()->getPosition());
+        moon.getMesh()->transform()->translate(*earth.getMesh()->transform()->position());
         mars.update(elapsedTime);
 
-        camera.setTarget(currentTarget->getMesh()->transform()->getPosition());
+        camera.setTarget(currentTarget->getMesh()->transform()->position());
         camera.setMinRadius(currentTarget->getRadius());
 
         camera.update();

@@ -36,6 +36,7 @@ void StandardMaterial::bind() {
     setVec3("diffuseColor", _diffuseColor);
     setVec3("ambientColor", _ambientColor);
     if (_alphaColor != nullptr) setVec3("alphaColor", _alphaColor);
+    setBool("lightingEnabled", _lightingEnabled);
 }
 
 void StandardMaterial::unbind() {

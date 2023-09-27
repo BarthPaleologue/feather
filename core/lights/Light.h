@@ -19,7 +19,7 @@ public:
         _color->z = b;
     }
 
-    inline glm::vec3 *getColor() { return _color; };
+    inline glm::vec3 *color() { return _color; };
 
     float intensity() const { return _intensity; };
 

@@ -30,6 +30,8 @@ public:
 
     void setFloat(const char *uniformName, float value) const;
 
+    void setBool(const char *uniformName, bool value) const;
+
     void bindTexture(const char *uniformName, Texture *texture, int id) const;
 
     void setDefine(const char *defineName);

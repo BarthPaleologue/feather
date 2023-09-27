@@ -8,23 +8,11 @@
 #include <string>
 #include "Light.h"
 #include "glm/vec3.hpp"
+#include "Transformable.h"
 
-class PointLight : public Light {
+class PointLight : public Light, public Transformable {
 public:
     explicit PointLight(const char *name);
-
-    const glm::vec3 *getPosition() { return &_position; }
-
-    void setPosition(float x, float y, float z) {
-        _position.x = x;
-        _position.y = y;
-        _position.z = z;
-    }
-
-    void setPosition(glm::vec3 position) { _position = position; }
-
-private:
-    glm::vec3 _position;
 };
 
 
