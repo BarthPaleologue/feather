@@ -8,7 +8,6 @@
 #include <fstream>
 #include <iostream>
 #include "utils.h"
-#include "glad/glad.h"
 #include "stb_image.h"
 
 void loadFileToBuffer(const char *filename, std::string &stringBuffer) {

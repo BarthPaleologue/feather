@@ -6,6 +6,7 @@
 #define FEATHERGL_ENGINE_H
 
 #include "Observable.h"
+#include "postprocessing.h"
 #include <GLFW/glfw3.h>
 #include <map>
 
@@ -38,9 +39,15 @@ public:
     }
 
     void start() {
+        PostProcessing postProcessing;
+        postProcessing.Initialize(800, 600, "./assets/shaders/invertPostProcess/vertex.glsl",
+                                  "./assets/shaders/invertPostProcess/fragment.glsl");
+
         while (!glfwWindowShouldClose(window)) {
+            postProcessing.StartProcessing();
             onExecuteLoopObservable.notifyObservers();
             glfwPollEvents();
+            postProcessing.EndProcessing();
             glfwSwapBuffers(window);
         }
 

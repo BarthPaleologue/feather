@@ -1,15 +1,13 @@
-layout(location=0) in vec3 position;
-layout(location=2) in vec3 normal;
-layout(location=1) in vec3 vColor;
-layout(location=3) in vec2 uv;
+#version 330 core
 
-out vec2 vUV;
+layout (location = 0) in vec2 inPos;
+layout (location = 1) in vec2 inTexCoords;
 
-uniform mat4 projection;
-uniform mat4 view;
-uniform mat4 world;
+out vec2 texCoords;
 
-void main() {
-    vUV = uv;
-    gl_Position = projection * view * world * vec4(position, 1.0);
+void main()
+{
+    gl_Position = vec4(inPos.x, inPos.y, 0.0, 1.0);
+
+    texCoords = inTexCoords;
 }

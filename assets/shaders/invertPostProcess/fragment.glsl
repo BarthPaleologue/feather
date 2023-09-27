@@ -1,10 +1,13 @@
-out vec4 frag_color;
-in vec2 vUV;
+#version 330 core
+
+out vec4 fragColor;
+in vec2 texCoords;
 
 uniform sampler2D screenTexture;
 
-void main() {
-    vec4 screenColor = texture(screenTexture, vUV);
-    vec3 color = vec3(1.0) - screenColor.rgb;
-    frag_color = vec4(color, screenColor.a);
+uniform vec2 screenResolution;
+
+void main()
+{
+    fragColor = vec4(1.0f) - texture(screenTexture, texCoords);
 }

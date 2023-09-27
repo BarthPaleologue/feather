@@ -2,7 +2,6 @@
 // Created by barth on 27/09/2022.
 //
 
-#include <GLFW/glfw3.h>
 #include "FreeCamera.h"
 
 FreeCamera::FreeCamera(Engine *engine) : Camera(engine) {}

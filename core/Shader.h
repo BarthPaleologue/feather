@@ -38,34 +38,9 @@ public:
         std::string versionedVertexShaderCode = "#version 400\n" + _vertexShaderCode;
         std::string versionedFragmentShaderCode = "#version 400\n" + _fragmentShaderCode;
 
+        compileShader(versionedVertexShaderCode, GL_VERTEX_SHADER);
+        compileShader(versionedFragmentShaderCode, GL_FRAGMENT_SHADER);
 
-        GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-        const char *vertexShaderCString = versionedVertexShaderCode.c_str();
-        glShaderSource(vs, 1, &vertexShaderCString, nullptr);
-        glCompileShader(vs);
-
-        GLint success;
-        GLchar infoLog[512];
-        glGetShaderiv(vs, GL_COMPILE_STATUS, &success);
-        if (!success) {
-            glGetShaderInfoLog(vs, 512, nullptr, infoLog);
-            std::cout << "ERROR in compiling GL_VERTEX_SHADER\n" << infoLog << std::endl;
-        }
-
-
-        GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-        const char *fragmentShaderCString = versionedFragmentShaderCode.c_str();
-        glShaderSource(fs, 1, &fragmentShaderCString, nullptr);
-        glCompileShader(fs);
-
-        glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
-        if (!success) {
-            glGetShaderInfoLog(fs, 512, nullptr, infoLog);
-            std::cout << "ERROR in compiling GL_FRAGMENT_SHADER\n" << infoLog << std::endl;
-        }
-
-        glAttachShader(_program, fs);
-        glAttachShader(_program, vs);
         glLinkProgram(_program);
     }
 
@@ -107,9 +82,32 @@ public:
         _vertexShaderCode = "#define " + std::string(defineName) + "\n" + _vertexShaderCode;
     }
 
+    GLuint program() const {
+        return _program;
+    }
+
     Observable<> onBeforeBindObservable{};
     Observable<> onAfterBindObservable{};
 private:
+    GLuint compileShader(std::string &shaderCode, GLenum shaderType) const {
+        GLuint fs = glCreateShader(shaderType);
+        const char *fragmentShaderCString = shaderCode.c_str();
+        glShaderSource(fs, 1, &fragmentShaderCString, nullptr);
+        glCompileShader(fs);
+
+        GLint success;
+        GLchar infoLog[512];
+        glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
+        if (!success) {
+            glGetShaderInfoLog(fs, 512, nullptr, infoLog);
+            throw std::runtime_error("ERROR in compiling GL_FRAGMENT_SHADER\n" + std::string(infoLog));
+        }
+
+        glAttachShader(_program, fs);
+
+        return fs;
+    }
+
     GLuint _program{};
     std::string _vertexShaderCode{};
     std::string _fragmentShaderCode{};
