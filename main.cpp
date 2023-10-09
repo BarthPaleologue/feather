@@ -48,10 +48,10 @@ int main() {
     DebugLight::CreateDebugPointLightMesh(&light5, scene);
     scene.addPointLight(&light5);
 
-    PostProcessing postProcessing1("./assets/shaders/invertPostProcess/", &engine);
-    PostProcessing postProcessing2("./assets/shaders/invertPostProcess/", &engine);
+    PostProcessing postProcessing1("./assets/shaders/colorCorrection", &engine);
+    //PostProcessing postProcessing2("./assets/shaders/invertPostProcess", &engine);
     scene.addPostProcess(&postProcessing1);
-    scene.addPostProcess(&postProcessing2);
+    //scene.addPostProcess(&postProcessing2);
 
     StandardMaterial sunMaterial;
     Texture sunMap("assets/textures/sun.jpg");
@@ -105,6 +105,12 @@ int main() {
     });
 
     scene.onBeforeRenderObservable.add([&]() {
+        postProcessing1.shader()->setFloat("gamma", 1.0f / 2.2f);
+        postProcessing1.shader()->setFloat("exposure", 1.0f);
+        postProcessing1.shader()->setFloat("contrast", 1.0f);
+        postProcessing1.shader()->setFloat("saturation", 1.0f);
+        postProcessing1.shader()->setFloat("brightness", 0.0f);
+
         auto elapsedTime = engine.getElapsedTime();
 
         mercury.update(elapsedTime);

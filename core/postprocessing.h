@@ -40,7 +40,7 @@ private:
 
     unsigned int rectVAO;
 public:
-    explicit PostProcessing(const char *shaderFolder, Engine* engine);
+    explicit PostProcessing(const char *shaderFolder, Engine *engine);
 
     void RenderTo(unsigned int targetFrameBuffer);
 
@@ -57,6 +57,10 @@ public:
     }
 
     void resize(int width, int height);
+
+    PostProcessingShader *shader() {
+        return _shader;
+    }
 
     ~PostProcessing() = default;
 };

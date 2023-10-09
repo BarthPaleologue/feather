@@ -1,28 +1,51 @@
 out vec4 fragColor;
 
-in float exposure;
-in float gamma;
-in float contrast;
-in float saturation;
-in float brightness;
+uniform float exposure;
+uniform float gamma;
+uniform float contrast;
+uniform float saturation;
+uniform float brightness;
 
 uniform sampler2D screenTexture;
 
 in vec2 vUV;
 
+vec3 saturate(vec3 color) {
+    if (color.r > 1.0) {
+        color.r = 1.0;
+    }
+    if (color.g > 1.0) {
+        color.g = 1.0;
+    }
+    if (color.b > 1.0) {
+        color.b = 1.0;
+    }
+    if (color.r < 0.0) {
+        color.r = 0.0;
+    }
+    if (color.g < 0.0) {
+        color.g = 0.0;
+    }
+    if (color.b < 0.0) {
+        color.b = 0.0;
+    }
+    return color;
+}
+
 void main() {
-    vec3 color = texture2D(textureSampler, vUV).rgb;
-    float alpha = texture2D(textureSampler, vUV).a;
+    vec4 screenColor = texture2D(screenTexture, vUV);
+    vec3 color = screenColor.rgb;
+    float alpha = screenColor.a;
 
     color *= exposure;
-    color = clamp(color, 0.0, 1.0);
+    color = saturate(color);
 
     color = (color - 0.5) * contrast + 0.5 + brightness;
-    color = clamp(color, 0.0, 1.0);
+    color = saturate(color);
 
     vec3 grayscale = vec3(0.299, 0.587, 0.114) * color;
-    color = lerp(color, grayscale, saturation);
-    color = clamp(color, 0.0, 1.0);
+    color = mix(grayscale, color, saturation);
+    color = saturate(color);
 
     color = pow(color, vec3(gamma));
 
