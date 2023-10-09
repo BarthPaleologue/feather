@@ -25,6 +25,8 @@ public:
         });
 
         mesh->setMaterial(material);
+
+        return mesh;
     }
 };
 

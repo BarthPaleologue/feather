@@ -19,7 +19,7 @@ public:
 
     void bind() override;
 
-    bool setWireframe(bool enabled) {
+    void setWireframe(bool enabled) {
         _isWireframe = enabled;
     }
 
@@ -31,7 +31,7 @@ public:
         return _isBackFaceCullingEnabled;
     }
 
-    bool setBackFaceCullingEnabled(bool enabled) {
+    void setBackFaceCullingEnabled(bool enabled) {
         _isBackFaceCullingEnabled = enabled;
     }
 
