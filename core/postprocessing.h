@@ -62,6 +62,8 @@ public:
         return _shader;
     }
 
+    Observable<> onBeforeRenderObservable;
+
     ~PostProcessing() = default;
 };
 

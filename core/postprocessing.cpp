@@ -11,7 +11,7 @@ const float PostProcessing::rectangleVerts[] = {
         -1.0f, 1.0f, 0.0f, 1.0f
 };
 
-PostProcessing::PostProcessing(const char *shaderFolder, Engine* engine) {
+PostProcessing::PostProcessing(const char *shaderFolder, Engine *engine) {
     engine->windowSize(&_width, &_height);
 
     // Prepare framebuffer rectangle VBO and VAO
@@ -62,6 +62,8 @@ void PostProcessing::RenderTo(unsigned int targetFramebuffer) {
     glBindFramebuffer(GL_FRAMEBUFFER, targetFramebuffer);
     // Draw the framebuffer rectangle
     _shader->bind();
+
+    onBeforeRenderObservable.notifyObservers();
 
     // resize screen resolution uniform
     _shader->setVec2("screenResolution", (float) _width, (float) _height);
