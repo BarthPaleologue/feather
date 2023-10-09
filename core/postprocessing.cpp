@@ -51,7 +51,7 @@ PostProcessing::PostProcessing(const char *shaderFolder, Engine *engine) {
     if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "Framebuffer error: " << fboStatus << std::endl;
 
-    _shader = new PostProcessingShader(shaderFolder);
+    _shader = new Shader(shaderFolder);
 
     // get screen resolution uniform locations
     uniformScreenResolution = glGetUniformLocation(_shader->program(), "screenResolution");
@@ -68,6 +68,7 @@ void PostProcessing::RenderTo(unsigned int targetFramebuffer) {
     // resize screen resolution uniform
     _shader->setVec2("screenResolution", (float) _width, (float) _height);
 
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glBindVertexArray(rectVAO);
     glDisable(GL_DEPTH_TEST); // prevents framebuffer rectangle from being discarded
     glBindTexture(GL_TEXTURE_2D, outputTexture);
