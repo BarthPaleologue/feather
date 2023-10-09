@@ -5,13 +5,13 @@
 #ifndef FEATHERGL_CELESTIALBODY_H
 #define FEATHERGL_CELESTIALBODY_H
 
-#include "StandardMaterial.h"
+#include "PhongMaterial.h"
 #include "Scene.h"
 
 class CelestialBody {
 public:
     CelestialBody(const char *name, float radius, float rotationPeriod, float orbitPeriod, float orbitRadius,
-                  StandardMaterial *material, Scene &scene);
+                  PhongMaterial *material, Scene &scene);
 
     inline float getRadius() { return _radius; }
 

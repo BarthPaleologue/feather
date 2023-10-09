@@ -2,17 +2,17 @@
 // Created by barth on 03/10/2022.
 //
 
-#ifndef FEATHERGL_STANDARDMATERIAL_H
-#define FEATHERGL_STANDARDMATERIAL_H
+#ifndef FEATHERGL_PHONGMATERIAL_H
+#define FEATHERGL_PHONGMATERIAL_H
 
 #include "Material.h"
 #include "Texture.h"
 
-class StandardMaterial : public Material {
+class PhongMaterial : public Material {
 public:
-    StandardMaterial();
+    PhongMaterial();
 
-    StandardMaterial(const char *diffuseTexturePath);
+    PhongMaterial(const char *diffuseTexturePath);
 
     void setDiffuseTexture(Texture *texture);
 
@@ -49,4 +49,4 @@ private:
 };
 
 
-#endif //FEATHERGL_STANDARDMATERIAL_H
+#endif //FEATHERGL_PHONGMATERIAL_H

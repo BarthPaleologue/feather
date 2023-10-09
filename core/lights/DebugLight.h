@@ -8,7 +8,7 @@
 #include "Mesh.h"
 #include "Scene.h"
 #include "MeshBuilder.h"
-#include "StandardMaterial.h"
+#include "PhongMaterial.h"
 
 class DebugLight {
 public:
@@ -17,7 +17,7 @@ public:
         mesh->transform()->setScale(0.3f);
         mesh->transform()->setParent(light->transform());
 
-        auto material = new StandardMaterial();
+        auto material = new PhongMaterial();
         material->setLightingEnabled(false);
         material->setAmbientColor(light->color());
         light->onColorChanged.add([material](float r, float g, float b) {

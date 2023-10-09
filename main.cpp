@@ -1,7 +1,7 @@
 #include "Scene.h"
 #include "cameras/OrbitCamera.h"
 #include "lights/PointLight.h"
-#include "StandardMaterial.h"
+#include "PhongMaterial.h"
 #include "CelestialBody.h"
 #include "Engine.h"
 #include "MeshBuilder.h"
@@ -61,25 +61,25 @@ int main() {
     scene.addPostProcess(&colorCorrection);
     //scene.addPostProcess(&postProcessing2);
 
-    StandardMaterial sunMaterial;
+    PhongMaterial sunMaterial;
     Texture sunMap("assets/textures/sun.jpg");
     sunMaterial.setAmbientTexture(&sunMap);
 
-    StandardMaterial mercuryMat;
+    PhongMaterial mercuryMat;
     mercuryMat.setDiffuseTextureFromFile("./assets/textures/mercury.jpg");
 
-    StandardMaterial venusMat;
+    PhongMaterial venusMat;
     venusMat.setDiffuseTextureFromFile("./assets/textures/venus.jpg");
 
-    StandardMaterial earthMat;
+    PhongMaterial earthMat;
     earthMat.setDiffuseTextureFromFile("./assets/textures/earth.jpg");
     earthMat.setAmbientColor(0, 0.02, 0);
 
-    StandardMaterial moonMat;
+    PhongMaterial moonMat;
     moonMat.setDiffuseTextureFromFile("./assets/textures/moon.jpg");
     moonMat.setAmbientColor(0, 0, 0.02);
 
-    StandardMaterial marsMat;
+    PhongMaterial marsMat;
     marsMat.setDiffuseTextureFromFile("./assets/textures/mars.jpg");
 
     CelestialBody sun("sun", 1, 100, 10, 0, &sunMaterial, scene);
