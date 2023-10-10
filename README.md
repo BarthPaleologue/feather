@@ -4,9 +4,7 @@ Feather is a small opengl engine written in c++ inspired by BabylonJS aiming at 
 
 It features a demo of a small simple solar system made using the engine.
 
-<img src="./coverImages/cover1.png">
-
-<img src="./coverImages/cover2.png">
+![Many Point Lights](./coverImages/cover0.png)
 
 <img src="./coverImages/cover3.png">
 
