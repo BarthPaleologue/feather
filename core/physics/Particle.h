@@ -22,13 +22,21 @@ struct Particle {
         this->startIndex = startIndex;
     }
 
+    glm::vec3 forces() {
+        glm::vec3 result = glm::vec3(0, 0, 0);
+        for (auto force: _forces) {
+            result += force;
+        }
+        return result;
+    }
+
     float mass;
     float invMass;
     glm::vec3 position{};
     glm::vec3 predictedPosition{};
     glm::vec3 velocity{};
     unsigned long startIndex;
-    std::vector<glm::vec3> forces{};
+    std::vector<glm::vec3> _forces{};
 };
 
 #endif //FEATHERGL_PARTICLE_H

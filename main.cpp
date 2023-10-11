@@ -47,6 +47,7 @@ int main() {
     sphere->material()->setWireframe(true);
 
     solver.addMesh(sphere, 1.0f);
+    solver.applyForce(sphere, glm::vec3(0, -9.8, 0));
 
     Mesh *cloth = MeshBuilder::makePlane("cloth", scene, 32);
 
@@ -57,7 +58,8 @@ int main() {
 
     cloth->material()->setBackFaceCullingEnabled(false);
     cloth->material()->setWireframe(true);
-    //solver.addMesh(cloth, 0.1f);
+
+    solver.addMesh(cloth, 0.1f);
 
     Mesh *plane = MeshBuilder::makePlane("plane", scene, 64);
     plane->transform()->setPosition(0, -2, 0);

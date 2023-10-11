@@ -24,9 +24,11 @@ public:
         }
     }
 
-    void addMesh(Mesh *mesh, float mass) {
+    PhysicsBody *addMesh(Mesh *mesh, float mass) {
         auto physicsBody = new PhysicsBody(mesh, mass);
         _physicsBodies.push_back(physicsBody);
+
+        return physicsBody;
     }
 
     void removeMesh(Mesh *mesh) {
@@ -41,10 +43,21 @@ public:
         }
     }
 
+    void applyForce(Mesh *mesh, glm::vec3 force) {
+        for (auto body: _physicsBodies) {
+            if (body->mesh() == mesh) {
+                for (auto particle: body->particles()) {
+                    particle->_forces.push_back(force);
+                }
+                break;
+            }
+        }
+    }
+
     void solve(float deltaTime) {
         for (auto body: _physicsBodies) {
             for (auto particle: body->particles()) {
-                particle->velocity += deltaTime * particle->invMass * glm::vec3(0, -9.81, 0);
+                particle->velocity += deltaTime * particle->invMass * particle->forces();
             }
         }
 
