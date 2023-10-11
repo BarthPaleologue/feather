@@ -31,8 +31,36 @@ public:
         }
     }
 
-    void solve() {
+    void solve(float deltaTime) {
+        for (auto &particles: _particles) {
+            for (auto &particle: particles) {
+                particle.velocity += deltaTime / particle.mass;
+            }
+        }
 
+        for (auto &particles: _particles) {
+            for (auto &particle: particles) {
+                particle.position += deltaTime * particle.velocity;
+            }
+        }
+
+        for (auto &particles: _particles) {
+            for (auto &particle: particles) {
+                // generate collision constraints
+            }
+        }
+
+        for (unsigned int i = 0; i < _iterations; i++) {
+            // project constraints
+        }
+
+        for (auto &particles: _particles) {
+            for (auto &particle: particles) {
+                // final update
+                //particle.velocity = (particle.position - particle.oldPosition) / deltaTime;
+                //particle.oldPosition = particle.position;
+            }
+        }
     }
 
 private:
@@ -44,6 +72,7 @@ private:
         }
     }
 
+    int _iterations = 1;
     std::vector<Mesh> _meshes;
     std::vector<std::vector<Particle>> _particles;
 };
