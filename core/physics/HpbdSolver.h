@@ -25,10 +25,7 @@ public:
 private:
     void makeParticles(Mesh *mesh, float mass) {
         for (int i = 0; i < mesh->vertexData().positions.size(); i += 3) {
-            _particles.emplace_back(mass, mesh->vertexData().positions[i],
-                                    mesh->vertexData().positions[i + 1],
-                                    mesh->vertexData().positions[i + 2]
-            );
+            _particles.emplace_back(mass, mesh->vertexData().positions, i);
         }
     }
 

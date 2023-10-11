@@ -6,17 +6,20 @@
 #define FEATHERGL_PARTICLE_H
 
 #include <glm/vec3.hpp>
+#include <vector>
 
 struct Particle {
-    Particle(float mass, float x0, float y0, float z0) {
+    Particle(float mass, std::vector<float> &positions, int startIndex) {
         this->mass = mass;
-        position = glm::vec3(x0, y0, z0);
+        position = glm::vec3(positions[startIndex], positions[startIndex + 1], positions[startIndex + 2]);
         velocity = glm::vec3(0, 0, 0);
+        this->startIndex = startIndex;
     }
 
     float mass;
     glm::vec3 position;
     glm::vec3 velocity;
+    int startIndex;
 };
 
 #endif //FEATHERGL_PARTICLE_H
