@@ -13,6 +13,14 @@ class HpbdSolver {
 public:
     HpbdSolver() = default;
 
+    ~HpbdSolver() {
+        for (auto &particles: _particles) {
+            for (auto &particle: particles) {
+                delete particle;
+            }
+        }
+    }
+
     void addMesh(Mesh *mesh, float mass) {
         _meshes.push_back(*mesh);
         makeParticles(mesh, mass);
@@ -34,13 +42,13 @@ public:
     void solve(float deltaTime) {
         for (auto &particles: _particles) {
             for (auto &particle: particles) {
-                particle.velocity += deltaTime / particle.mass;
+                particle->velocity += deltaTime / particle->mass;
             }
         }
 
         for (auto &particles: _particles) {
             for (auto &particle: particles) {
-                particle.predictedPosition = particle.position + deltaTime * particle.velocity;
+                particle->predictedPosition = particle->position + deltaTime * particle->velocity;
             }
         }
 
@@ -56,8 +64,8 @@ public:
 
         for (auto &particles: _particles) {
             for (auto &particle: particles) {
-                particle.velocity = (particle.predictedPosition - particle.position) / deltaTime;
-                particle.position = particle.predictedPosition;
+                particle->velocity = (particle->predictedPosition - particle->position) / deltaTime;
+                particle->position = particle->predictedPosition;
             }
         }
     }
@@ -67,13 +75,13 @@ private:
         _particles.emplace_back();
         unsigned long lastIndex = _particles.size() - 1;
         for (unsigned int i = 0; i < mesh->vertexData().positions.size(); i += 3) {
-            _particles[lastIndex].emplace_back(mass, mesh->vertexData().positions, i);
+            _particles[lastIndex].emplace_back(new Particle(mass, mesh->vertexData().positions, i));
         }
     }
 
     int _iterations = 8;
     std::vector<Mesh> _meshes;
-    std::vector<std::vector<Particle>> _particles;
+    std::vector<std::vector<Particle *>> _particles;
 };
 
 #endif //FEATHERGL_HPBDSOLVER_H

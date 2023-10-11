@@ -6,6 +6,7 @@
 #define FEATHERGL_CONSTRAINT_H
 
 #include <functional>
+#include "Particle.h"
 
 enum ConstraintType {
     UNILATERAL,
@@ -16,14 +17,6 @@ class Constraint {
 public:
     int cardinality() const {
         return _cardinality;
-    }
-
-    std::function<float(float, float, float)> constraintFunction() const {
-        return _constraintFunction;
-    }
-
-    const std::vector<int> *const indices() const {
-        return &_indices;
     }
 
     float stiffness() const {
@@ -37,17 +30,18 @@ public:
     bool isSatisfied() const {
         switch (_type) {
             case UNILATERAL:
-                return _constraintFunction(0, 0, 0) >= 0;
+                return evaluate() >= 0;
             case BILATERAL:
-                return _constraintFunction(0, 0, 0) == 0;
+                return evaluate() == 0;
         }
     }
 
 private:
+    virtual float evaluate() const = 0;
+
     int _cardinality;
-    //FIXME: the signature of the function is incorrect (it should be float(3*cardinality float))
-    std::function<float(float, float, float)> _constraintFunction;
-    std::vector<int> _indices;
+    
+    std::vector<Particle *> _particles;
 
     /// Stiffness of the constraint (between 0 and 1)
     float _stiffness;

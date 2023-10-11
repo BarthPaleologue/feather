@@ -9,17 +9,17 @@
 #include <vector>
 
 struct Particle {
-    Particle(float mass, std::vector<float> &positions, int startIndex) {
+    Particle(float mass, std::vector<float> &positions, unsigned long startIndex) {
         this->mass = mass;
         position = glm::vec3(positions[startIndex], positions[startIndex + 1], positions[startIndex + 2]);
         this->startIndex = startIndex;
     }
 
     float mass;
-    glm::vec3 position;
+    glm::vec3 position{};
     glm::vec3 predictedPosition{};
     glm::vec3 velocity{};
-    int startIndex;
+    unsigned long startIndex;
 };
 
 #endif //FEATHERGL_PARTICLE_H
