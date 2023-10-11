@@ -18,6 +18,12 @@ public:
         }
     };
 
+    void applyForce(glm::vec3 force) {
+        for (auto particle: _particles) {
+            particle->_forces.push_back(force);
+        }
+    }
+
     std::vector<Particle *> &particles() {
         return _particles;
     }

@@ -46,9 +46,7 @@ public:
     void applyForce(Mesh *mesh, glm::vec3 force) {
         for (auto body: _physicsBodies) {
             if (body->mesh() == mesh) {
-                for (auto particle: body->particles()) {
-                    particle->_forces.push_back(force);
-                }
+                body->applyForce(force);
                 break;
             }
         }
