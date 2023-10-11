@@ -100,7 +100,7 @@ public:
     }
 
 private:
-    int _iterations = 8;
+    int _iterations = 32;
     std::vector<PhysicsBody *> _physicsBodies;
 };
 
