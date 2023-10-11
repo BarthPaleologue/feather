@@ -48,6 +48,15 @@ public:
 
     void setScale(float scale);
 
+    /**
+     * Reset the transform to its default values (position: 0,0,0, rotation: 0,0,0, scale: 1)
+     */
+    void reset() {
+        setPosition(0, 0, 0);
+        setRotation(0, 0, 0);
+        setScale(1);
+    }
+
 protected:
     glm::vec3 *_position = new glm::vec3(0.0);
     glm::vec3 *_scaling = new glm::vec3(1.0);

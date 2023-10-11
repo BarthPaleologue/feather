@@ -133,8 +133,6 @@ void Mesh::bakeTransformIntoVertexData() {
 
     updateVertexData();
 
-    transform()->setPosition(0, 0, 0);
-    transform()->setRotation(0, 0, 0);
-    transform()->setScale(1);
+    transform()->reset();
 }
 
