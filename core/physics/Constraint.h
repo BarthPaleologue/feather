@@ -34,7 +34,18 @@ public:
 
 protected:
     virtual void computeGradient() = 0;
+
     virtual float evaluate() const = 0;
+
+    void computeLambda() {
+        float numerator = -evaluate();
+        float denominator = 0;
+        for (unsigned int i = 0; i < _particles.size(); i++) {
+            denominator += _particles[i]->invMass * _gradient.col(i).dot(_gradient.col(i));
+        }
+
+        _lambda = numerator / denominator;
+    }
 
     /// Number of particles involved in the constraint
     unsigned int _cardinality{};
@@ -44,6 +55,8 @@ protected:
 
     /// Stiffness of the constraint (between 0 and 1)
     float _stiffness{};
+
+    float _lambda{};
 
     ConstraintType _type;
 
