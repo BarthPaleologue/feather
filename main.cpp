@@ -6,6 +6,7 @@
 #include "MeshLoader.h"
 #include "DebugLight.h"
 #include "physics/HpbdSolver.h"
+#include "physics/Cloth.h"
 
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
@@ -59,7 +60,9 @@ int main() {
     cloth->material()->setBackFaceCullingEnabled(false);
     cloth->material()->setWireframe(true);
 
-    solver.addMesh(cloth, 0.1f);
+    auto clothPhysics = new Cloth(cloth, 0.1f);
+
+    solver.addBody(clothPhysics);
 
     Mesh *plane = MeshBuilder::makePlane("plane", scene, 64);
     plane->transform()->setPosition(0, -2, 0);

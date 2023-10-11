@@ -43,6 +43,11 @@ public:
         }
     }
 
+
+    void addBody(PhysicsBody *pBody) {
+        _physicsBodies.push_back(pBody);
+    }
+
     void applyForce(Mesh *mesh, glm::vec3 force) {
         for (auto body: _physicsBodies) {
             if (body->mesh() == mesh) {
