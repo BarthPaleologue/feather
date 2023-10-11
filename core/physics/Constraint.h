@@ -39,7 +39,7 @@ public:
 protected:
     virtual float evaluate() const = 0;
 
-    int _cardinality;
+    unsigned int _cardinality;
 
     std::vector<Particle *> _particles;
 
