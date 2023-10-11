@@ -37,7 +37,7 @@ public:
         computeLambda();
         for (unsigned int i = 0; i < _particles.size(); i++) {
             glm::vec3 gradient = glm::vec3(_gradient.col(i).x(), _gradient.col(i).y(), _gradient.col(i).z());
-            _particles[i]->predictedPosition += -_lambda * gradient; //FIXME: why a - here?
+            _particles[i]->position += _lambda * gradient;
         }
     }
 
