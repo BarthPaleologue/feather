@@ -26,18 +26,22 @@ public:
     bool isSatisfied() const {
         switch (_type) {
             case UNILATERAL:
-                return evaluate() >= 0;
+                // >= 0
+                return evaluate() >= 1e-6;
             case BILATERAL:
-                return evaluate() == 0;
+                // == 0
+                return fabsf(evaluate()) <= 1e-6;
         }
     }
 
     void solve() {
+        if (isSatisfied()) return;
+
         computeGradient();
         computeLambda();
         for (unsigned int i = 0; i < _particles.size(); i++) {
             glm::vec3 gradient = glm::vec3(_gradient.col(i).x(), _gradient.col(i).y(), _gradient.col(i).z());
-            _particles[i]->position += _lambda * gradient;
+            _particles[i]->predictedPosition += -_lambda * _particles[i]->invMass * gradient;
         }
     }
 
