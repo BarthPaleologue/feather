@@ -9,9 +9,15 @@
 #include <vector>
 
 struct Particle {
+    /**
+     * @brief Construct a new Particle object
+     * @param mass The mass of the particle. (0 for static particles)
+     * @param positions
+     * @param startIndex
+     */
     Particle(float mass, std::vector<float> &positions, unsigned long startIndex) {
         this->mass = mass;
-        this->invMass = 1 / mass;
+        this->invMass = mass == 0 ? 0 : 1 / mass;
         position = glm::vec3(positions[startIndex], positions[startIndex + 1], positions[startIndex + 2]);
         this->startIndex = startIndex;
     }
