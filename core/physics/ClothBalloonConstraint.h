@@ -10,11 +10,8 @@
 
 class ClothBalloonConstraint : public Constraint {
 public:
-    ClothBalloonConstraint(const std::vector<Particle *> &particles, float pressure, float volume) {
-        _particles = particles;
-        _cardinality = (unsigned int) particles.size();
-        _stiffness = 1;
-        _type = BILATERAL;
+    ClothBalloonConstraint(const std::vector<Particle *> &particles, float pressure, float volume) : Constraint(
+            particles, 1, BILATERAL) {
         _pressure = pressure;
         _volume = volume;
     }

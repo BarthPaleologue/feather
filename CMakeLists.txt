@@ -30,3 +30,6 @@ message(STATUS "GLM included")
 
 target_sources(${PROJECT_NAME} PRIVATE glad/src/glad.c)
 target_include_directories(${PROJECT_NAME} PRIVATE glad/include/)
+
+target_sources(${PROJECT_NAME} PRIVATE Eigen/Dense)
+target_include_directories(${PROJECT_NAME} PRIVATE Eigen/)

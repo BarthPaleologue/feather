@@ -10,12 +10,7 @@
 
 class StretchConstraint : public Constraint {
 public:
-    StretchConstraint(Particle *p1, Particle *p2, float l0) {
-        _particles.push_back(p1);
-        _particles.push_back(p2);
-        _cardinality = 2;
-        _stiffness = 1;
-        _type = BILATERAL;
+    StretchConstraint(Particle *p1, Particle *p2, float l0) : Constraint({p1, p2}, 1, BILATERAL) {
         _l0 = l0;
     }
 

@@ -6,7 +6,9 @@
 #define FEATHERGL_CONSTRAINT_H
 
 #include <functional>
+#include <utility>
 #include "Particle.h"
+#include "Core"
 
 enum ConstraintType {
     UNILATERAL,
@@ -15,6 +17,12 @@ enum ConstraintType {
 
 class Constraint {
 public:
+    Constraint(std::vector<Particle *> particles, float stiffness, ConstraintType type) : _particles(
+            std::move(particles)), _stiffness(stiffness), _type(type) {
+        _cardinality = _particles.size();
+        _jacobian = Eigen::MatrixXf::Zero(3, _cardinality);
+    }
+
     int cardinality() const {
         return _cardinality;
     }
@@ -39,14 +47,16 @@ public:
 protected:
     virtual float evaluate() const = 0;
 
-    unsigned int _cardinality;
+    unsigned int _cardinality{};
 
     std::vector<Particle *> _particles;
 
     /// Stiffness of the constraint (between 0 and 1)
-    float _stiffness;
+    float _stiffness{};
 
     ConstraintType _type;
+
+    Eigen::MatrixXf _jacobian;
 };
 
 #endif //FEATHERGL_CONSTRAINT_H

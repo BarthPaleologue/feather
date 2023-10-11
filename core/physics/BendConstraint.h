@@ -10,16 +10,8 @@
 
 class BendConstraint : public Constraint {
 public:
-    BendConstraint(Particle *p1, Particle *p2, Particle *p3, Particle *p4, float phi) {
-        _particles.push_back(p1);
-        _particles.push_back(p2);
-        _particles.push_back(p3);
-        _particles.push_back(p4);
-        _cardinality = 4;
-        _stiffness = 1;
-        _type = BILATERAL;
-        _phi = phi;
-    }
+    BendConstraint(Particle *p1, Particle *p2, Particle *p3, Particle *p4, float phi) : Constraint(
+            {p1, p2, p3, p4}, 1, BILATERAL), _phi(phi) {};
 
 private:
     float _phi;

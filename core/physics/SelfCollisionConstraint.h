@@ -10,14 +10,8 @@
 
 class SelfCollisionConstraint : public Constraint {
 public:
-    SelfCollisionConstraint(Particle *q, Particle *p1, Particle *p2, Particle *p3, float thickness) {
-        _particles.push_back(q);
-        _particles.push_back(p1);
-        _particles.push_back(p2);
-        _particles.push_back(p3);
-        _cardinality = 4;
-        _stiffness = 1;
-        _type = UNILATERAL;
+    SelfCollisionConstraint(Particle *q, Particle *p1, Particle *p2, Particle *p3, float thickness) : Constraint(
+            {q, p1, p2, p3}, 1, UNILATERAL) {
         _thickness = thickness;
     }
 

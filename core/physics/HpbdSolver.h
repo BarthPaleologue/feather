@@ -8,6 +8,7 @@
 #include <vector>
 #include "Mesh.h"
 #include "Particle.h"
+#include "Constraint.h"
 
 class HpbdSolver {
 public:
@@ -90,6 +91,8 @@ private:
     int _iterations = 8;
     std::vector<Mesh *> _meshes;
     std::vector<std::vector<Particle *>> _particles;
+
+    std::vector<Constraint *> _fixedConstraints;
 };
 
 #endif //FEATHERGL_HPBDSOLVER_H
