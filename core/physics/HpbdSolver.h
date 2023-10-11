@@ -42,7 +42,7 @@ public:
     void solve(float deltaTime) {
         for (auto &particles: _particles) {
             for (auto &particle: particles) {
-                particle->velocity += deltaTime / particle->mass;
+                particle->velocity += deltaTime * particle->invMass;
             }
         }
 
