@@ -50,19 +50,18 @@ int main() {
     solver.addMesh(sphere, 1.0f);
     solver.applyForce(sphere, glm::vec3(0, -9.8, 0));
 
-    Mesh *cloth = MeshBuilder::makePlane("cloth", scene, 32);
+    PhysicsBody *cloth = new Cloth("cloth", scene, 32, 0.1f);
 
     cloth->transform()->setRotationX(3.14 / 2.0);
     cloth->transform()->setScale(10);
-    cloth->bakeTransformIntoVertexData();
+    cloth->mesh()->bakeTransformIntoVertexData();
+    cloth->syncWithMesh();
     cloth->transform()->setPosition(0, 5, -6);
 
-    cloth->material()->setBackFaceCullingEnabled(false);
-    cloth->material()->setWireframe(true);
+    cloth->mesh()->material()->setBackFaceCullingEnabled(false);
+    cloth->mesh()->material()->setWireframe(true);
 
-    auto clothPhysics = new Cloth(cloth, 0.1f);
-
-    solver.addBody(clothPhysics);
+    solver.addBody(cloth);
 
     Mesh *plane = MeshBuilder::makePlane("plane", scene, 64);
     plane->transform()->setPosition(0, -2, 0);

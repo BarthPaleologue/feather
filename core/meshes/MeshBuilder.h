@@ -195,7 +195,7 @@ public:
         return mesh;
     }
 
-    static Mesh *makePlane(const char *name, Scene &scene, int nbSubdivisions) {
+    static Mesh *makePlane(const char *name, Scene &scene, unsigned int nbSubdivisions) {
         VertexData vertexData = VertexData();
         vertexData.positions = std::vector<GLfloat>(nbSubdivisions * nbSubdivisions * 3);
         vertexData.indices = std::vector<GLint>((nbSubdivisions - 1) * (nbSubdivisions - 1) * 3 * 2);

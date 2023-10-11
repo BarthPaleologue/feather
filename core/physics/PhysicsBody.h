@@ -18,6 +18,15 @@ public:
         }
     };
 
+    void syncWithMesh() {
+        for (unsigned int i = 0; i < _particles.size(); i++) {
+            auto particlePosition = glm::vec3(_mesh->vertexData().positions[i * 3],
+                                              _mesh->vertexData().positions[i * 3 + 1],
+                                              _mesh->vertexData().positions[i * 3 + 2]);
+            _particles[i]->position = particlePosition;
+        }
+    }
+
     void applyForce(glm::vec3 force) {
         for (auto particle: _particles) {
             particle->_forces.push_back(force);
@@ -32,7 +41,11 @@ public:
         return _mesh;
     }
 
-private:
+    Transform *transform() {
+        return _mesh->transform();
+    }
+
+protected:
     Mesh *_mesh;
     std::vector<Particle *> _particles;
     std::vector<Constraint *> _constraints;
