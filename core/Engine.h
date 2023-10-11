@@ -37,6 +37,10 @@ public:
         return (float) glfwGetTime();
     }
 
+    float getDeltaTime() const {
+        return deltaTime;
+    }
+
     void setClearColor(float r, float g, float b, float a) {
         glClearColor(r, g, b, a);
     }
@@ -47,6 +51,10 @@ public:
         onWindowResizeObservable.notifyObservers(width, height);
 
         while (!glfwWindowShouldClose(window)) {
+            float newFrameTime = getElapsedTime();
+            deltaTime = newFrameTime - lastFrameTime;
+            lastFrameTime = newFrameTime;
+
             onExecuteLoopObservable.notifyObservers();
             glfwPollEvents();
             glfwSwapBuffers(window);
@@ -69,6 +77,9 @@ public:
 private:
     double mouseX{};
     double mouseY{};
+
+    float lastFrameTime{};
+    float deltaTime{};
 
     std::map<int, bool> _keyStates{};
 
