@@ -23,18 +23,6 @@ public:
         _jacobian = Eigen::MatrixXf::Zero(3, _cardinality);
     }
 
-    int cardinality() const {
-        return _cardinality;
-    }
-
-    float stiffness() const {
-        return _stiffness;
-    }
-
-    ConstraintType type() const {
-        return _type;
-    }
-
     bool isSatisfied() const {
         switch (_type) {
             case UNILATERAL:
@@ -47,8 +35,10 @@ public:
 protected:
     virtual float evaluate() const = 0;
 
+    /// Number of particles involved in the constraint
     unsigned int _cardinality{};
 
+    /// Particles involved in the constraint
     std::vector<Particle *> _particles;
 
     /// Stiffness of the constraint (between 0 and 1)
