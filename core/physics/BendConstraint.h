@@ -16,6 +16,10 @@ public:
 private:
     float _phi;
 
+    void computeGradient() override {
+        //TODO: implement
+    }
+
     float evaluate() const override {
         glm::vec3 p1 = _particles[0]->predictedPosition;
         glm::vec3 p2 = _particles[1]->predictedPosition;

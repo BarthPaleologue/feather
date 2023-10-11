@@ -20,6 +20,10 @@ private:
     float _pressure;
     float _volume;
 
+    void computeGradient() override {
+        //TODO: implement
+    }
+
     float evaluate() const override {
         float volume = 0;
         for (int i = 0; i < _particles.size(); i++) {
