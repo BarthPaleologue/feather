@@ -58,44 +58,48 @@ public:
     }
 
     void solve(float deltaTime) {
-        for (auto body: _physicsBodies) {
-            for (auto particle: body->particles()) {
-                particle->velocity += deltaTime * particle->invMass * particle->forces();
-            }
-        }
-
-        for (auto body: _physicsBodies) {
-            for (auto particle: body->particles()) {
-                particle->predictedPosition = particle->position + deltaTime * particle->velocity;
-            }
-        }
-
-        for (auto body: _physicsBodies) {
-            for (auto particle: body->particles()) {
-                // generate collision constraints
-            }
-        }
-
+        // this is coming from XPBD where the time step is divided into sub time steps at the top level
+        float subTimeStep = deltaTime / (float) _iterations;
         for (unsigned int i = 0; i < _iterations; i++) {
+            for (auto body: _physicsBodies) {
+                for (auto particle: body->particles()) {
+                    particle->velocity += subTimeStep * particle->invMass * particle->forces();
+                }
+            }
+
+            for (auto body: _physicsBodies) {
+                for (auto particle: body->particles()) {
+                    particle->predictedPosition = particle->position + subTimeStep * particle->velocity;
+                }
+            }
+
+            for (auto body: _physicsBodies) {
+                for (auto particle: body->particles()) {
+                    // generate collision constraints
+                }
+            }
+
+            //for (unsigned int i = 0; i < _iterations; i++) {
             for (auto body: _physicsBodies) {
                 for (auto constraint: body->constraints()) {
                     constraint->solve();
                 }
             }
-        }
+            //}
 
-        for (auto body: _physicsBodies) {
-            for (auto particle: body->particles()) {
-                particle->velocity = (particle->predictedPosition - particle->position) / deltaTime;
-                particle->position = particle->predictedPosition;
+            for (auto body: _physicsBodies) {
+                for (auto particle: body->particles()) {
+                    particle->velocity = (particle->predictedPosition - particle->position) / subTimeStep;
+                    particle->position = particle->predictedPosition;
 
-                // update actual mesh vertex data
-                body->mesh()->vertexData().positions[particle->startIndex] = particle->position.x;
-                body->mesh()->vertexData().positions[particle->startIndex + 1] = particle->position.y;
-                body->mesh()->vertexData().positions[particle->startIndex + 2] = particle->position.z;
+                    // update actual mesh vertex data
+                    body->mesh()->vertexData().positions[particle->startIndex] = particle->position.x;
+                    body->mesh()->vertexData().positions[particle->startIndex + 1] = particle->position.y;
+                    body->mesh()->vertexData().positions[particle->startIndex + 2] = particle->position.z;
+                }
+
+                body->mesh()->updateVertexData();
             }
-
-            body->mesh()->updateVertexData();
         }
     }
 
