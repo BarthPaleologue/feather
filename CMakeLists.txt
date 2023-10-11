@@ -13,7 +13,8 @@ file(GLOB SRCS ./*.h ./*.cpp
         core/utils/*.cpp core/utils/*.h
         core/physics/*.cpp core/physics/*.h
 )
-add_executable(featherGL ${SRCS})
+add_executable(featherGL ${SRCS}
+        core/physics/StretchConstraint.h)
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 

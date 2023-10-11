@@ -36,11 +36,11 @@ public:
         }
     }
 
-private:
+protected:
     virtual float evaluate() const = 0;
 
     int _cardinality;
-    
+
     std::vector<Particle *> _particles;
 
     /// Stiffness of the constraint (between 0 and 1)
