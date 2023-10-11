@@ -10,7 +10,7 @@
 
 class DistanceConstraint : public Constraint {
 public:
-    DistanceConstraint(Particle *p1, Particle *p2, float l0) : Constraint({p1, p2}, 0.8, BILATERAL) {
+    DistanceConstraint(Particle *p1, Particle *p2, float l0) : Constraint({p1, p2}, 0.8, EQUALITY) {
         _l0 = l0;
     }
 
@@ -21,7 +21,7 @@ private:
         glm::vec3 p1 = _particles[0]->predictedPosition;
         glm::vec3 p2 = _particles[1]->predictedPosition;
 
-        glm::vec3 g1 = glm::normalize(p2 - p1);
+        glm::vec3 g1 = glm::normalize(p1 - p2);
         glm::vec3 g2 = -g1;
 
         _gradient.col(0) = Eigen::Vector3f(g1.x, g1.y, g1.z);

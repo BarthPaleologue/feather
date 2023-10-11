@@ -19,9 +19,10 @@ int main() {
     Scene scene(&engine);
 
     OrbitCamera camera(&engine);
-    camera.setPosition(0, 0, 20);
     camera.setRadius(20.0);
-    camera.rotateTheta(-3.0f);
+    camera.setTarget(glm::vec3(0, 3, 0));
+    camera.rotateTheta(-3.14 / 4.0);
+    camera.rotatePhi(3.14 / 3.0);
     scene.setActiveCamera(&camera);
 
     PointLight light("sun");
@@ -39,40 +40,36 @@ int main() {
 
     scene.addPostProcess(&colorCorrection);
 
-    PhongMaterial sphereMaterial;
-    sphereMaterial.setDiffuseColor(1.0, 1.0, 1.0);
+    PhysicsBody *cloth = new Cloth("cloth", scene, 16, 0.1f);
 
-    Mesh *sphere = MeshBuilder::makeSphere("sphere", scene, 32);
-    sphere->transform()->setPosition(0, 5, 0);
-    sphere->setMaterial(&sphereMaterial);
-    sphere->material()->setWireframe(true);
-
-    solver.addMesh(sphere, 1.0f);
-    solver.applyForce(sphere, glm::vec3(0, -9.8, 0));
-
-    PhysicsBody *cloth = new Cloth("cloth", scene, 32, 0.1f);
-
-    cloth->transform()->setRotationX(3.14 / 2.0);
-    cloth->mesh()->bakeTransformIntoVertexData();
-    cloth->syncWithMesh();
+    cloth->transform()->setRotationZ(-3.14 / 2.0);
+    cloth->transform()->setRotationZ(-3.14 / 2.0);
+    cloth->bakeTransformIntoVertexData();
     cloth->transform()->setScale(10);
-    cloth->transform()->setPosition(0, 5, -6);
+    cloth->transform()->setPosition(0, 5, 0);
 
-    cloth->mesh()->material()->setBackFaceCullingEnabled(false);
-    cloth->mesh()->material()->setWireframe(true);
+    auto *clothMaterial = new PhongMaterial();
+    clothMaterial->setAmbientColor(1.0, 0.2, 0.2);
+    clothMaterial->setBackFaceCullingEnabled(false);
+    clothMaterial->setWireframe(true);
+    cloth->mesh()->setMaterial(clothMaterial);
 
     solver.addBody(cloth);
+    solver.applyForce(cloth->mesh(), glm::vec3(0, -9.81, 0));
 
-    Mesh *plane = MeshBuilder::makePlane("plane", scene, 64);
-    plane->transform()->setPosition(0, -2, 0);
-    plane->transform()->setScale(40);
-    plane->material()->setWireframe(true);
-    plane->material()->setBackFaceCullingEnabled(false);
+    Mesh *ground = MeshBuilder::makePlane("ground", scene, 64);
+    ground->transform()->setPosition(0, -2, 0);
+    ground->transform()->setScale(40);
+
+    auto *groundMaterial = new PhongMaterial();
+    groundMaterial->setDiffuseColor(0.5, 0.5, 0.5);
+    groundMaterial->setBackFaceCullingEnabled(false);
+    ground->setMaterial(groundMaterial);
 
     bool realTimePhysics = false;
 
     engine.onKeyPressObservable.add([&](int key) {
-        if (key == GLFW_KEY_W) plane->material()->setWireframe(!plane->material()->wireframe());
+        if (key == GLFW_KEY_W) ground->material()->setWireframe(!ground->material()->wireframe());
         if (key == GLFW_KEY_SPACE) realTimePhysics = !realTimePhysics;
         if (!realTimePhysics && key == GLFW_KEY_ENTER) solver.solve(1.0f / 60.0f);
     });

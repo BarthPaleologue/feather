@@ -43,10 +43,10 @@ void OrbitCamera::zoom(float amount) {
     _radius = std::max(_radius - amount, _minRadius);
 }
 
-void OrbitCamera::setTarget(glm::vec3 *target) {
-    _target.x = target->x;
-    _target.y = target->y;
-    _target.z = target->z;
+void OrbitCamera::setTarget(glm::vec3 target) {
+    _target.x = target.x;
+    _target.y = target.y;
+    _target.z = target.z;
 }
 
 void OrbitCamera::setRadius(float radius) {

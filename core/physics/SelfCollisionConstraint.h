@@ -11,7 +11,7 @@
 class SelfCollisionConstraint : public Constraint {
 public:
     SelfCollisionConstraint(Particle *q, Particle *p1, Particle *p2, Particle *p3, float thickness) : Constraint(
-            {q, p1, p2, p3}, 1, UNILATERAL) {
+            {q, p1, p2, p3}, 1, INEQUALITY) {
         _thickness = thickness;
     }
 

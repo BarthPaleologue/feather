@@ -13,7 +13,7 @@ public:
 
     glm::mat4 computeViewMatrix() override;
 
-    void setTarget(glm::vec3 *target);
+    void setTarget(glm::vec3 target);
 
     void setRadius(float radius);
 

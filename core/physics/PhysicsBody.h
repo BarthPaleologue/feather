@@ -8,6 +8,8 @@
 #include "Mesh.h"
 #include "Particle.h"
 #include "Constraint.h"
+#include "DistanceConstraint.h"
+#include "FixedConstraint.h"
 
 class PhysicsBody {
 public:
@@ -18,7 +20,18 @@ public:
         }
     };
 
-    void syncWithMesh() {
+    void bakeTransformIntoVertexData() {
+        auto worldMatrix = transform()->computeWorldMatrix();
+        for (auto fixedConstraint: _fixedConstraints) {
+            std::cout << fixedConstraint->targetPosition().x << ", " << fixedConstraint->targetPosition().y << ", "
+                      << fixedConstraint->targetPosition().z << std::endl;
+            fixedConstraint->setTargetPosition(worldMatrix * glm::vec4(fixedConstraint->targetPosition(), 1.0f));
+            std::cout << fixedConstraint->targetPosition().x << ", " << fixedConstraint->targetPosition().y << ", "
+                      << fixedConstraint->targetPosition().z << std::endl;
+        }
+
+        mesh()->bakeTransformIntoVertexData();
+
         for (unsigned int i = 0; i < _particles.size(); i++) {
             auto particlePosition = glm::vec3(_mesh->vertexData().positions[i * 3],
                                               _mesh->vertexData().positions[i * 3 + 1],
@@ -53,6 +66,8 @@ protected:
     Mesh *_mesh;
     std::vector<Particle *> _particles;
     std::vector<Constraint *> _constraints;
+
+    std::vector<FixedConstraint *> _fixedConstraints;
 };
 
 #endif //FEATHERGL_PHYSICSBODY_H

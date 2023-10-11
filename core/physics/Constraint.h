@@ -11,8 +11,8 @@
 #include "Core"
 
 enum ConstraintType {
-    UNILATERAL,
-    BILATERAL
+    INEQUALITY,
+    EQUALITY
 };
 
 class Constraint {
@@ -25,10 +25,10 @@ public:
 
     bool isSatisfied() const {
         switch (_type) {
-            case UNILATERAL:
+            case INEQUALITY:
                 // >= 0
                 return evaluate() >= 1e-6;
-            case BILATERAL:
+            case EQUALITY:
                 // == 0
                 return fabsf(evaluate()) <= 1e-6;
         }
@@ -41,7 +41,7 @@ public:
         computeLambda();
         for (unsigned int i = 0; i < _particles.size(); i++) {
             glm::vec3 gradient = glm::vec3(_gradient.col(i).x(), _gradient.col(i).y(), _gradient.col(i).z());
-            _particles[i]->predictedPosition += -_lambda * _particles[i]->invMass * gradient;
+            _particles[i]->predictedPosition += _lambda * _particles[i]->invMass * gradient;
         }
     }
 

@@ -9,12 +9,22 @@
 #include "MeshBuilder.h"
 #include "DistanceConstraint.h"
 #include "BendConstraint.h"
+#include "FixedConstraint.h"
 
 class Cloth : public PhysicsBody {
 public:
     Cloth(const char *name, Scene &scene, unsigned int nbSubdivisions, float mass) : PhysicsBody(
             MeshBuilder::makePlane(name, scene, nbSubdivisions), mass) {
         // courtesy of myself https://github.com/BarthPaleologue/ClothSimulation/blob/master/src/ts/cloth.ts
+
+        // fixed particles
+        auto topLeft = new FixedConstraint(_particles[0], _particles[0]->position);
+        _constraints.push_back(topLeft);
+        _fixedConstraints.push_back(topLeft);
+
+        auto topRight = new FixedConstraint(_particles[nbSubdivisions - 1], _particles[nbSubdivisions - 1]->position);
+        _constraints.push_back(topRight);
+        _fixedConstraints.push_back(topRight);
 
         // horizontal stretch
         for (unsigned int x = 0; x < nbSubdivisions; x++) {
