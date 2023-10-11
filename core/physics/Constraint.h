@@ -53,6 +53,9 @@ protected:
     void computeLambda() {
         float numerator = -evaluate();
         float denominator = 0;
+        if (_particles.size() != _gradient.cols()) {
+            throw std::runtime_error("Gradient and particles size mismatch");
+        }
         for (unsigned int i = 0; i < _particles.size(); i++) {
             denominator += _particles[i]->invMass * _gradient.col(i).dot(_gradient.col(i));
         }
