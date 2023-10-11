@@ -22,6 +22,7 @@ struct Particle {
     glm::vec3 predictedPosition{};
     glm::vec3 velocity{};
     unsigned long startIndex;
+    std::vector<glm::vec3> forces{};
 };
 
 #endif //FEATHERGL_PARTICLE_H
