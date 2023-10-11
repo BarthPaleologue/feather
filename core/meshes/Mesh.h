@@ -34,6 +34,8 @@ public:
         return _material;
     }
 
+    void bakeTransformIntoVertexData();
+
     void setVertexData(VertexData &vertexData);
 
     void updateVertexData();

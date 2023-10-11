@@ -28,13 +28,23 @@ public:
 
     glm::vec3 getAbsolutePosition();
 
-    inline void setRotationX(float angle) { _rotation->x = angle; };
+    void setRotationX(float angle) { _rotation->x = angle; };
 
-    inline void setRotationY(float angle) { _rotation->y = angle; };
+    void setRotationY(float angle) { _rotation->y = angle; };
 
-    inline void setRotationZ(float angle) { _rotation->z = angle; };
+    void setRotationZ(float angle) { _rotation->z = angle; };
+
+    void setRotation(float x, float y, float z) {
+        setRotationX(x);
+        setRotationY(y);
+        setRotationZ(z);
+    }
 
     glm::mat4 computeWorldMatrix();
+
+    glm::mat4 computeNormalMatrix() {
+        return glm::transpose(glm::inverse(computeWorldMatrix()));
+    }
 
     void setScale(float scale);
 

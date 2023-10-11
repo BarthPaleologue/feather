@@ -48,6 +48,17 @@ int main() {
 
     solver.addMesh(sphere, 1.0f);
 
+    Mesh *cloth = MeshBuilder::makePlane("cloth", scene, 32);
+
+    cloth->transform()->setRotationX(3.14 / 2.0);
+    cloth->transform()->setScale(10);
+    cloth->bakeTransformIntoVertexData();
+    cloth->transform()->setPosition(0, 5, -6);
+
+    cloth->material()->setBackFaceCullingEnabled(false);
+    cloth->material()->setWireframe(true);
+    //solver.addMesh(cloth, 0.1f);
+
     Mesh *plane = MeshBuilder::makePlane("plane", scene, 64);
     plane->transform()->setPosition(0, -2, 0);
     plane->transform()->setScale(40);

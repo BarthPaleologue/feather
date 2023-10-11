@@ -20,9 +20,8 @@ void Mesh::setVertexData(VertexData &vertexData) {
     glVertexAttribPointer(vertexLayoutIndex, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
     glEnableVertexAttribArray(vertexLayoutIndex);
 
-    GLuint ibo = 0;
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glGenBuffers(1, &_ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, _vertexData.indices.size() * sizeof(float), _vertexData.indices.data(),
                  GL_DYNAMIC_READ);
 
@@ -84,7 +83,7 @@ void Mesh::render(Camera *camera, std::vector<PointLight *> &lights) {
     const glm::mat4 viewMatrix = camera->getViewMatrix();
     const glm::mat4 projMatrix = camera->getProjectionMatrix();
     const glm::mat4 world = transform()->computeWorldMatrix();
-    const glm::mat4 normalMatrix = glm::transpose(glm::inverse(world));
+    const glm::mat4 normalMatrix = transform()->computeNormalMatrix();
 
     _material->setMat4("projection", &projMatrix);
     _material->setMat4("view", &viewMatrix);
@@ -111,5 +110,31 @@ Mesh *Mesh::FromVertexData(const char *name, VertexData &vertexData) {
     Mesh *mesh = new Mesh(name);
     mesh->setVertexData(vertexData);
     return mesh;
+}
+
+void Mesh::bakeTransformIntoVertexData() {
+    auto worldMatrix = transform()->computeWorldMatrix();
+    auto normalMatrix = transform()->computeNormalMatrix();
+    for (int i = 0; i < _vertexData.positions.size(); i += 3) {
+        glm::vec4 position = glm::vec4(_vertexData.positions[i], _vertexData.positions[i + 1],
+                                       _vertexData.positions[i + 2], 1.0f);
+        glm::vec4 transformedPosition = worldMatrix * position;
+        _vertexData.positions[i] = transformedPosition.x;
+        _vertexData.positions[i + 1] = transformedPosition.y;
+        _vertexData.positions[i + 2] = transformedPosition.z;
+
+        glm::vec4 normal = glm::vec4(_vertexData.normals[i], _vertexData.normals[i + 1],
+                                     _vertexData.normals[i + 2], 1.0f);
+        glm::vec4 transformedNormal = normalMatrix * normal;
+        _vertexData.normals[i] = transformedNormal.x;
+        _vertexData.normals[i + 1] = transformedNormal.y;
+        _vertexData.normals[i + 2] = transformedNormal.z;
+    }
+
+    updateVertexData();
+
+    transform()->setPosition(0, 0, 0);
+    transform()->setRotation(0, 0, 0);
+    transform()->setScale(1);
 }
 
