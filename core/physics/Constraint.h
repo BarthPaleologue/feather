@@ -20,7 +20,7 @@ public:
     Constraint(std::vector<Particle *> particles, float stiffness, ConstraintType type) : _particles(
             std::move(particles)), _stiffness(stiffness), _type(type) {
         _cardinality = _particles.size();
-        _jacobian = Eigen::MatrixXf::Zero(3, _cardinality);
+        _gradient = Eigen::MatrixXf::Zero(3, _cardinality);
     }
 
     bool isSatisfied() const {
@@ -33,6 +33,7 @@ public:
     }
 
 protected:
+    virtual void computeGradient() = 0;
     virtual float evaluate() const = 0;
 
     /// Number of particles involved in the constraint
@@ -46,7 +47,7 @@ protected:
 
     ConstraintType _type;
 
-    Eigen::MatrixXf _jacobian;
+    Eigen::MatrixXf _gradient;
 };
 
 #endif //FEATHERGL_CONSTRAINT_H

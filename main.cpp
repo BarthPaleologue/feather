@@ -53,9 +53,9 @@ int main() {
     PhysicsBody *cloth = new Cloth("cloth", scene, 32, 0.1f);
 
     cloth->transform()->setRotationX(3.14 / 2.0);
-    cloth->transform()->setScale(10);
     cloth->mesh()->bakeTransformIntoVertexData();
     cloth->syncWithMesh();
+    cloth->transform()->setScale(10);
     cloth->transform()->setPosition(0, 5, -6);
 
     cloth->mesh()->material()->setBackFaceCullingEnabled(false);

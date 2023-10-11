@@ -14,21 +14,34 @@ class Cloth : public PhysicsBody {
 public:
     Cloth(const char *name, Scene &scene, unsigned int nbSubdivisions, float mass) : PhysicsBody(
             MeshBuilder::makePlane(name, scene, nbSubdivisions), mass) {
-        for (int i = 0; i < _particles.size(); i++) {
-            // vertical stretch
-            if (i < _particles.size() - 1) {
-                _constraints.push_back(new StretchConstraint(_particles[i], _particles[i + 1], 1.0));
-            }
+        // courtesy of myself https://github.com/BarthPaleologue/ClothSimulation/blob/master/src/ts/cloth.ts
 
-            // horizontal stretch
-            if (i < _particles.size() - nbSubdivisions) {
-                _constraints.push_back(new StretchConstraint(_particles[i], _particles[i + nbSubdivisions], 1.0));
+        // horizontal stretch
+        for (unsigned int x = 0; x < nbSubdivisions; x++) {
+            for (unsigned int y = 0; y < nbSubdivisions - 1; y++) {
+                auto particle1 = _particles[x * nbSubdivisions + y];
+                auto particle2 = _particles[x * nbSubdivisions + y + 1];
+                _constraints.push_back(new StretchConstraint(particle1, particle2, 1.0f / (float) nbSubdivisions));
             }
+        }
 
-            // bending
-            if (i < _particles.size() - nbSubdivisions - 1) {
-                _constraints.push_back(new BendConstraint(_particles[i], _particles[i + nbSubdivisions + 1],
-                                                          _particles[i + nbSubdivisions], _particles[i + 1], 1.0));
+        // vertical stretch
+        for (unsigned int x = 0; x < nbSubdivisions - 1; x++) {
+            for (unsigned int y = 0; y < nbSubdivisions; y++) {
+                auto particle1 = _particles[x * nbSubdivisions + y];
+                auto particle2 = _particles[(x + 1) * nbSubdivisions + y];
+                _constraints.push_back(new StretchConstraint(particle1, particle2, 1.0f / (float) nbSubdivisions));
+            }
+        }
+
+        // bend
+        for (unsigned int x = 0; x < nbSubdivisions; x++) {
+            for (unsigned int y = 0; y < (nbSubdivisions - 2); y++) {
+                auto particle1 = _particles[x * nbSubdivisions + y];
+                auto particle2 = _particles[x * nbSubdivisions + y + 2];
+                auto particle3 = _particles[(x + 1) * nbSubdivisions + y];
+                auto particle4 = _particles[(x + 1) * nbSubdivisions + y + 2];
+                _constraints.push_back(new BendConstraint(particle1, particle2, particle3, particle4, 3.14f / 2.0f));
             }
         }
     };
