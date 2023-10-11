@@ -71,7 +71,7 @@ private:
         }
     }
 
-    int _iterations = 1;
+    int _iterations = 8;
     std::vector<Mesh> _meshes;
     std::vector<std::vector<Particle>> _particles;
 };

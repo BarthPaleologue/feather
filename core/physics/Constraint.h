@@ -34,11 +34,24 @@ public:
         return _type;
     }
 
+    bool isSatisfied() const {
+        switch (_type) {
+            case UNILATERAL:
+                return _constraintFunction(0, 0, 0) >= 0;
+            case BILATERAL:
+                return _constraintFunction(0, 0, 0) == 0;
+        }
+    }
+
 private:
     int _cardinality;
+    //FIXME: the signature of the function is incorrect (it should be float(3*cardinality float))
     std::function<float(float, float, float)> _constraintFunction;
     std::vector<int> _indices;
+
+    /// Stiffness of the constraint (between 0 and 1)
     float _stiffness;
+
     ConstraintType _type;
 };
 
