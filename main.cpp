@@ -55,7 +55,7 @@ int main() {
     cloth->mesh()->setMaterial(clothMaterial);
 
     solver.addBody(cloth);
-    solver.applyForce(cloth->mesh(), glm::vec3(0, -9.81, 0));
+    solver.applyForce(cloth->mesh(), glm::vec3(-2, -9.81, 0));
 
     Mesh *ground = MeshBuilder::makePlane("ground", scene, 64);
     ground->transform()->setPosition(0, -2, 0);
