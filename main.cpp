@@ -1,10 +1,8 @@
 #include "Scene.h"
 #include "cameras/OrbitCamera.h"
 #include "lights/PointLight.h"
-#include "PhongMaterial.h"
 #include "CelestialBody.h"
 #include "Engine.h"
-#include "MeshBuilder.h"
 #include "MeshLoader.h"
 #include "DebugLight.h"
 
@@ -153,7 +151,6 @@ int main() {
         );
 
         camera.setTarget(currentTarget->getMesh()->transform()->position());
-        camera.setMinRadius(currentTarget->getRadius());
 
         camera.update();
     });

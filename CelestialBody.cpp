@@ -3,7 +3,6 @@
 //
 
 #include "CelestialBody.h"
-#include "MeshBuilder.h"
 
 CelestialBody::CelestialBody(const char *name, float radius, float rotationPeriod, float orbitPeriod, float orbitRadius,
                              PhongMaterial *material, Scene &scene) :

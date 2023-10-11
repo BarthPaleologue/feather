@@ -3,12 +3,7 @@
 //
 
 #include "Mesh.h"
-#include "../materials/DefaultMaterial.h"
 #include <iostream>
-
-Mesh::Mesh(const char *name) : Transformable(), _name(name), _vao(0), _vbo(0) {
-    _material = new DefaultMaterial();
-}
 
 void Mesh::setVertexData(VertexData &vertexData) {
     _vertexData = vertexData;
@@ -76,7 +71,7 @@ void Mesh::render(Camera *camera, std::vector<PointLight *> &lights) {
     _material->setMat4("normalMatrix", &normalMatrix);
 
     _material->setInt("pointLightCount", (int) lights.size());
-    for(int i = 0; i < lights.size(); i++) {
+    for (int i = 0; i < lights.size(); i++) {
         _material->setVec3(("pointLights[" + std::to_string(i) + "].position").c_str(),
                            lights[i]->transform()->position());
         _material->setVec3(("pointLights[" + std::to_string(i) + "].color").c_str(), lights[i]->color());

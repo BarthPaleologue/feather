@@ -11,20 +11,9 @@ file(GLOB SRCS ./*.h ./*.cpp
         core/meshes/*.cpp core/meshes/*.h
         core/materials/*.cpp core/materials/*.h
         core/utils/*.cpp core/utils/*.h
+        core/physics/*.cpp core/physics/*.h
 )
-add_executable(featherGL ${SRCS}
-        core/meshes/VertexData.h
-        core/meshes/MeshBuilder.h
-        core/Transformable.h
-        core/Settings.h
-        core/Settings.cpp
-        core/lights/DebugLight.h
-        core/Shader.h
-        core/postprocessing.cpp
-        core/meshes/MeshLoader.h
-        core/physics/Constraint.h
-        core/physics/HpbdSolver.h
-        core/physics/Particle.h)
+add_executable(featherGL ${SRCS})
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 

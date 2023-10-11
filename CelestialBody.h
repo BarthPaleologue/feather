@@ -7,13 +7,12 @@
 
 #include "PhongMaterial.h"
 #include "Scene.h"
+#include "MeshBuilder.h"
 
 class CelestialBody {
 public:
     CelestialBody(const char *name, float radius, float rotationPeriod, float orbitPeriod, float orbitRadius,
                   PhongMaterial *material, Scene &scene);
-
-    inline float getRadius() { return _radius; }
 
     Mesh *getMesh() { return _mesh; }
 
@@ -21,7 +20,6 @@ public:
 
 private:
     Mesh *_mesh;
-    float _radius;
     float _rotationPeriod;
     float _orbitPeriod;
     float _orbitRadius;

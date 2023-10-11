@@ -11,10 +11,20 @@
 #include "Transformable.h"
 #include "lights/PointLight.h"
 #include "VertexData.h"
+#include "DefaultMaterial.h"
+#include "../utils/Uuid.h"
 
 class Mesh : public Transformable {
 public:
-    explicit Mesh(const char *name);
+    explicit Mesh(const char *name) : Transformable(), _name(name), _vao(0), _vbo(0) {
+        _id = UUID::generate_uuid_v4();
+        _material = new DefaultMaterial();
+        std::cout << "Mesh " << _name << " _id: " << _id << " created" << std::endl;
+    }
+
+    bool operator==(const Mesh &other) const {
+        return _id == other._id;
+    }
 
     static Mesh *FromVertexData(const char *name, VertexData &vertexData);
 
@@ -34,6 +44,7 @@ public:
 
 private:
     const char *_name;
+    std::string _id;
     VertexData _vertexData;
     GLuint _vao;
     GLuint _vbo;
