@@ -40,7 +40,7 @@ public:
 
         for (auto &particles: _particles) {
             for (auto &particle: particles) {
-                particle.position += deltaTime * particle.velocity;
+                particle.predictedPosition = particle.position + deltaTime * particle.velocity;
             }
         }
 
@@ -56,9 +56,8 @@ public:
 
         for (auto &particles: _particles) {
             for (auto &particle: particles) {
-                // final update
-                //particle.velocity = (particle.position - particle.oldPosition) / deltaTime;
-                //particle.oldPosition = particle.position;
+                particle.velocity = (particle.predictedPosition - particle.position) / deltaTime;
+                particle.position = particle.predictedPosition;
             }
         }
     }

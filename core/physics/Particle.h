@@ -12,13 +12,13 @@ struct Particle {
     Particle(float mass, std::vector<float> &positions, int startIndex) {
         this->mass = mass;
         position = glm::vec3(positions[startIndex], positions[startIndex + 1], positions[startIndex + 2]);
-        velocity = glm::vec3(0, 0, 0);
         this->startIndex = startIndex;
     }
 
     float mass;
     glm::vec3 position;
-    glm::vec3 velocity;
+    glm::vec3 predictedPosition{};
+    glm::vec3 velocity{};
     int startIndex;
 };
 
