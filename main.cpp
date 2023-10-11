@@ -5,6 +5,7 @@
 #include "CelestialBody.h"
 #include "Engine.h"
 #include "MeshBuilder.h"
+#include "MeshLoader.h"
 #include "DebugLight.h"
 
 const int WINDOW_WIDTH = 1000;
@@ -93,6 +94,9 @@ int main() {
     CelestialBody mars("mars", 0.35, 10, 12, 13, &marsMat, scene);
 
     CelestialBody *currentTarget = &sun;
+
+    Mesh *banana = MeshLoader::loadObj("./assets/models/banana.obj", scene);
+    banana->material()->setWireframe(true);
 
     Mesh *plane = MeshBuilder::makePlane("plane", scene, 64);
     plane->transform()->setPosition(0, -2, 0);
