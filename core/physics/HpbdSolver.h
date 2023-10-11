@@ -77,7 +77,11 @@ public:
         }
 
         for (unsigned int i = 0; i < _iterations; i++) {
-            // project constraints
+            for (auto body: _physicsBodies) {
+                for (auto constraint: body->constraints()) {
+                    constraint->solve();
+                }
+            }
         }
 
         for (auto body: _physicsBodies) {

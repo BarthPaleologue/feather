@@ -69,14 +69,18 @@ int main() {
     plane->material()->setWireframe(true);
     plane->material()->setBackFaceCullingEnabled(false);
 
+    bool realTimePhysics = false;
+
     engine.onKeyPressObservable.add([&](int key) {
         if (key == GLFW_KEY_W) plane->material()->setWireframe(!plane->material()->wireframe());
+        if (key == GLFW_KEY_SPACE) realTimePhysics = !realTimePhysics;
+        if (!realTimePhysics && key == GLFW_KEY_ENTER) solver.solve(1.0f / 60.0f);
     });
 
     scene.onBeforeRenderObservable.add([&]() {
         float deltaTime = engine.getDeltaTime();
 
-        solver.solve(deltaTime);
+        if (realTimePhysics) solver.solve(deltaTime);
 
         camera.update();
     });

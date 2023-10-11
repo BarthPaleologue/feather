@@ -45,6 +45,10 @@ public:
         return _mesh->transform();
     }
 
+    std::vector<Constraint *> &constraints() {
+        return _constraints;
+    }
+
 protected:
     Mesh *_mesh;
     std::vector<Particle *> _particles;

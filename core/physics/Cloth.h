@@ -35,7 +35,7 @@ public:
         }
 
         // bend
-        for (unsigned int x = 0; x < nbSubdivisions; x++) {
+        /*for (unsigned int x = 0; x < nbSubdivisions; x++) {
             for (unsigned int y = 0; y < (nbSubdivisions - 2); y++) {
                 auto particle1 = _particles[x * nbSubdivisions + y];
                 auto particle2 = _particles[x * nbSubdivisions + y + 2];
@@ -43,7 +43,7 @@ public:
                 auto particle4 = _particles[(x + 1) * nbSubdivisions + y + 2];
                 _constraints.push_back(new BendConstraint(particle1, particle2, particle3, particle4, 3.14f / 2.0f));
             }
-        }
+        }*/
     };
 };
 
