@@ -11,7 +11,7 @@
 class BendConstraint : public Constraint {
 public:
     BendConstraint(Particle *p1, Particle *p2, Particle *p3, Particle *p4, float phi) : Constraint(
-            {p1, p2, p3, p4}, 1, BILATERAL), _phi(phi) {};
+            {p1, p2, p3, p4}, 0.7, BILATERAL), _phi(phi) {};
 
 private:
     float _phi;

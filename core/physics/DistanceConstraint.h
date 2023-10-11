@@ -2,15 +2,15 @@
 // Created by barth on 11/10/23.
 //
 
-#ifndef FEATHERGL_STRETCHCONSTRAINT_H
-#define FEATHERGL_STRETCHCONSTRAINT_H
+#ifndef FEATHERGL_DISTANCECONSTRAINT_H
+#define FEATHERGL_DISTANCECONSTRAINT_H
 
 #include <glm/geometric.hpp>
 #include "Constraint.h"
 
-class StretchConstraint : public Constraint {
+class DistanceConstraint : public Constraint {
 public:
-    StretchConstraint(Particle *p1, Particle *p2, float l0) : Constraint({p1, p2}, 0.8, BILATERAL) {
+    DistanceConstraint(Particle *p1, Particle *p2, float l0) : Constraint({p1, p2}, 0.8, BILATERAL) {
         _l0 = l0;
     }
 
@@ -33,4 +33,4 @@ private:
     }
 };
 
-#endif //FEATHERGL_STRETCHCONSTRAINT_H
+#endif //FEATHERGL_DISTANCECONSTRAINT_H

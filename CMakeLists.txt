@@ -14,12 +14,13 @@ file(GLOB SRCS ./*.h ./*.cpp
         core/physics/*.cpp core/physics/*.h
 )
 add_executable(featherGL ${SRCS}
-        core/physics/StretchConstraint.h
+        core/physics/DistanceConstraint.h
         core/physics/BendConstraint.h
         core/physics/SelfCollisionConstraint.h
         core/physics/ClothBalloonConstraint.h
         core/physics/Cloth.h
-        core/physics/PhysicsBody.h)
+        core/physics/PhysicsBody.h
+        core/physics/FixedConstraint.h)
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
