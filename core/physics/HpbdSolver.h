@@ -22,7 +22,7 @@ public:
     }
 
     void addMesh(Mesh *mesh, float mass) {
-        _meshes.push_back(*mesh);
+        _meshes.push_back(mesh);
         makeParticles(mesh, mass);
     }
 
@@ -30,7 +30,7 @@ public:
         // find index of mesh in meshes then erase in _meshes and _particles
         unsigned long index = 0;
         for (auto &m: _meshes) {
-            if (m == *mesh) {
+            if (m == mesh) {
                 _meshes.erase(_meshes.begin() + index);
                 _particles.erase(_particles.begin() + index);
                 break;
@@ -62,11 +62,19 @@ public:
             // project constraints
         }
 
-        for (auto &particles: _particles) {
-            for (auto &particle: particles) {
+        for (unsigned int i = 0; i < _particles.size(); i++) {
+            auto mesh = _meshes[i];
+            for (auto &particle: _particles[i]) {
                 particle->velocity = (particle->predictedPosition - particle->position) / deltaTime;
                 particle->position = particle->predictedPosition;
+
+                // update actual mesh vertex data
+                mesh->vertexData().positions[particle->startIndex] = particle->position.x;
+                mesh->vertexData().positions[particle->startIndex + 1] = particle->position.y;
+                mesh->vertexData().positions[particle->startIndex + 2] = particle->position.z;
             }
+
+            mesh->updateVertexData();
         }
     }
 
@@ -80,7 +88,7 @@ private:
     }
 
     int _iterations = 8;
-    std::vector<Mesh> _meshes;
+    std::vector<Mesh *> _meshes;
     std::vector<std::vector<Particle *>> _particles;
 };
 

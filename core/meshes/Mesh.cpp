@@ -27,30 +27,51 @@ void Mesh::setVertexData(VertexData &vertexData) {
                  GL_DYNAMIC_READ);
 
     int normalLayoutIndex = 2;
-    GLuint normalVbo = 0;
-    glGenBuffers(1, &normalVbo);
-    glBindBuffer(GL_ARRAY_BUFFER, normalVbo);
+    glGenBuffers(1, &_normalVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, _normalVbo);
     glBufferData(GL_ARRAY_BUFFER, _vertexData.normals.size() * sizeof(float), _vertexData.normals.data(),
                  GL_DYNAMIC_READ);
     glVertexAttribPointer(normalLayoutIndex, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
     glEnableVertexAttribArray(normalLayoutIndex);
 
     int uvLayoutIndex = 3;
-    GLuint uvVbo = 0;
-    glGenBuffers(1, &uvVbo);
-    glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+    glGenBuffers(1, &_uvVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, _uvVbo);
     glBufferData(GL_ARRAY_BUFFER, _vertexData.uvs.size() * sizeof(float), _vertexData.uvs.data(), GL_DYNAMIC_READ);
     glVertexAttribPointer(uvLayoutIndex, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), nullptr);
     glEnableVertexAttribArray(uvLayoutIndex);
 
     int colorLayoutIndex = 1;
-    GLuint colVbo = 0;
-    glGenBuffers(1, &colVbo);
-    glBindBuffer(GL_ARRAY_BUFFER, colVbo);
+    glGenBuffers(1, &_colVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, _colVbo);
     glBufferData(GL_ARRAY_BUFFER, _vertexData.colors.size() * sizeof(float), _vertexData.colors.data(),
                  GL_DYNAMIC_READ);
     glVertexAttribPointer(colorLayoutIndex, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
     glEnableVertexAttribArray(colorLayoutIndex);
+}
+
+void Mesh::updateVertexData() {
+    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+    glBufferData(GL_ARRAY_BUFFER, _vertexData.positions.size() * sizeof(float), _vertexData.positions.data(),
+                 GL_DYNAMIC_READ);
+
+    glBindVertexArray(_vao);
+    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, _vertexData.indices.size() * sizeof(float), _vertexData.indices.data(),
+                 GL_DYNAMIC_READ);
+
+    glBindBuffer(GL_ARRAY_BUFFER, _normalVbo);
+    glBufferData(GL_ARRAY_BUFFER, _vertexData.normals.size() * sizeof(float), _vertexData.normals.data(),
+                 GL_DYNAMIC_READ);
+
+    glBindBuffer(GL_ARRAY_BUFFER, _uvVbo);
+    glBufferData(GL_ARRAY_BUFFER, _vertexData.uvs.size() * sizeof(float), _vertexData.uvs.data(), GL_DYNAMIC_READ);
+
+    glBindBuffer(GL_ARRAY_BUFFER, _colVbo);
+    glBufferData(GL_ARRAY_BUFFER, _vertexData.colors.size() * sizeof(float), _vertexData.colors.data(),
+                 GL_DYNAMIC_READ);
 }
 
 void Mesh::setMaterial(Material *material) {

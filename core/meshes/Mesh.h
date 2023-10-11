@@ -36,6 +36,8 @@ public:
 
     void setVertexData(VertexData &vertexData);
 
+    void updateVertexData();
+
     VertexData &vertexData() {
         return _vertexData;
     }
@@ -46,8 +48,13 @@ private:
     const char *_name;
     std::string _id;
     VertexData _vertexData;
+
     GLuint _vao;
     GLuint _vbo;
+    GLuint _ibo;
+    GLuint _normalVbo;
+    GLuint _uvVbo;
+    GLuint _colVbo;
 protected:
     Material *_material;
 };
