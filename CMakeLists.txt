@@ -22,7 +22,9 @@ add_executable(featherGL ${SRCS}
         core/Shader.h
         core/postprocessing.cpp
         core/meshes/MeshLoader.h
-        core/physics/Constraint.h)
+        core/physics/Constraint.h
+        core/physics/HpbdSolver.h
+        core/physics/Particle.h)
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
