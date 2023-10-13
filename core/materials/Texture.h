@@ -11,6 +11,8 @@ class Texture {
 public:
     explicit Texture(const char *filepath);
 
+    explicit Texture(int id) : _id(id) {};
+
     void bind(int texShaderId);
 
     void unbind();
