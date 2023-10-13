@@ -22,7 +22,7 @@ add_executable(featherGL ${SRCS}
         core/physics/PhysicsBody.h
         core/physics/FixedConstraint.h
         core/utils/ComputeShader.h
-        core/ComputePostProcess.h)
+)
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
