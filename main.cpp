@@ -16,10 +16,10 @@ int main() {
     Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Solar System");
 
     // initialise compute stuff
-    ComputeShader compute_shader("./assets/shaders/compute/test.glsl", glm::uvec2(10, 1));
+    ComputeShader compute_shader("./assets/shaders/compute/test.glsl", glm::uvec2(3, 3));
     compute_shader.use();
-    float values[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    compute_shader.set_values(values);
+    //float values[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    //compute_shader.set_values(values);
 
     engine.onExecuteLoopObservable.add([&compute_shader]() {
         // inside the main render loop
