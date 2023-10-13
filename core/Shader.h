@@ -35,8 +35,8 @@ public:
     void compile() {
         _program = glCreateProgram();
 
-        std::string versionedVertexShaderCode = "#version 400\n" + _vertexShaderCode;
-        std::string versionedFragmentShaderCode = "#version 400\n" + _fragmentShaderCode;
+        std::string versionedVertexShaderCode = "#version 430 core\n" + _vertexShaderCode;
+        std::string versionedFragmentShaderCode = "#version 430 core\n" + _fragmentShaderCode;
 
         compileShader(versionedVertexShaderCode, GL_VERTEX_SHADER);
         compileShader(versionedFragmentShaderCode, GL_FRAGMENT_SHADER);

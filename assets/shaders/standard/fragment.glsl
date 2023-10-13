@@ -1,11 +1,11 @@
 out vec4 frag_color;
 in vec3 fColor;
 
-varying vec3 vPosition;
-varying vec3 vPositionW;
-varying vec3 vNormal;
-varying vec3 vNormalW;
-varying vec2 vUV;
+in vec3 vPosition;
+in vec3 vPositionW;
+in vec3 vNormal;
+in vec3 vNormalW;
+in vec2 vUV;
 
 uniform mat4 world;
 
@@ -35,7 +35,7 @@ void main() {
         vec3 diffuseColor = diffuseColor;
         #ifdef DIFFUSE_TEXTURE
 
-        diffuseColor = texture2D(diffuseTexture, vUV).rgb;
+        diffuseColor = texture(diffuseTexture, vUV).rgb;
         #endif
 
         #ifdef ALPHA_COLOR
@@ -60,7 +60,7 @@ void main() {
 
     vec3 ambientColor = ambientColor;
     #ifdef AMBIENT_TEXTURE
-    ambientColor = texture2D(ambientTexture, vUV).rgb;
+    ambientColor = texture(ambientTexture, vUV).rgb;
     #endif
 
     #ifdef ALPHA_COLOR

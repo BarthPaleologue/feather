@@ -33,7 +33,7 @@ vec3 saturate(vec3 color) {
 }
 
 void main() {
-    vec4 screenColor = texture2D(screenTexture, vUV);
+    vec4 screenColor = texture(screenTexture, vUV);
     vec3 color = screenColor.rgb;
     float alpha = screenColor.a;
 
