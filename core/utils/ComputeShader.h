@@ -65,7 +65,7 @@ public:
         glBindTexture(GL_TEXTURE_2D, outputTexture.handle());
     }
 
-    void dispatch() {
+    void dispatch() const {
         // just keep it simple, 2d work group
         glDispatchCompute(work_size.x, work_size.y, 1);
     }
@@ -74,7 +74,7 @@ public:
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
     }
 
-private:
+protected:
     GLuint id;
     glm::ivec2 work_size;
 

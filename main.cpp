@@ -4,10 +4,10 @@
 #include "CelestialBody.h"
 #include "Engine.h"
 #include "MeshLoader.h"
-#include "DebugLight.h"
 #include "physics/HpbdSolver.h"
 #include "physics/Cloth.h"
 #include "ComputeShader.h"
+#include "ComputePostProcess.h"
 
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
@@ -16,7 +16,7 @@ int main() {
     Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Solar System");
 
     // initialise compute stuff
-    ComputeShader compute_shader("./assets/shaders/compute/test.glsl", glm::uvec2(3, 3));
+    ComputePostProcess compute_shader("./assets/shaders/compute/test.glsl", glm::uvec2(3, 3));
     compute_shader.use();
     //float values[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     //compute_shader.set_values(values);
@@ -31,6 +31,10 @@ int main() {
             std::cout << d << " ";
         }
         std::cout << std::endl;
+    });
+
+    engine.onWindowResizeObservable.add([&compute_shader](int width, int height) {
+        compute_shader.resize(width, height);
     });
 
 
