@@ -11,6 +11,7 @@
 #include <iostream>
 #include "glad/glad.h"
 #include "utils.h"
+#include "Texture.h"
 
 class ComputeShader {
 public:
@@ -40,15 +41,8 @@ public:
         glDeleteShader(compute_shader_id);
 
         // generate texture
-        glGenTextures(1, &out_tex);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, out_tex);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_FLOAT, NULL);
-        glBindImageTexture(0, out_tex, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+        outputTexture = new Texture(size.x, size.y);
+        out_tex = outputTexture->handle();
     }
 
     ~ComputeShader() {
@@ -88,6 +82,8 @@ private:
     GLuint id;
     GLuint out_tex;
     glm::ivec2 work_size;
+
+    Texture *outputTexture;
 };
 
 #endif //FEATHERGL_COMPUTESHADER_H

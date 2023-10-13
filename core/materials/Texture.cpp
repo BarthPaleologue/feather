@@ -5,16 +5,12 @@
 #include "Texture.h"
 
 Texture::Texture(const char *filepath) {
-    _id = loadTextureFromFileToGPU(filepath);
-}
-
-int Texture::getId() {
-    return _id;
+    _handle = loadTextureFromFileToGPU(filepath);
 }
 
 void Texture::bind(int texShaderId) {
     glActiveTexture(GL_TEXTURE0 + texShaderId);
-    glBindTexture(GL_TEXTURE_2D, _id);
+    glBindTexture(GL_TEXTURE_2D, _handle);
 }
 
 void Texture::unbind() {
