@@ -81,7 +81,7 @@ public:
     }
 
     void wait() {
-        glMemoryBarrier(GL_ALL_BARRIER_BITS);
+        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
     }
 
 private:
