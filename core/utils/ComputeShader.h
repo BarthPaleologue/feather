@@ -15,7 +15,7 @@
 
 class ComputeShader {
 public:
-    ComputeShader(const char *shaderPath, glm::ivec2 size) : work_size(size) {
+    ComputeShader(const char *shaderPath, glm::ivec2 size) : work_size(size), outputTexture(Texture(size.x, size.y)) {
         // compile shader
         std::string shaderCode;
         loadFileToBuffer(shaderPath, shaderCode);
@@ -39,26 +39,22 @@ public:
 
         // clean up
         glDeleteShader(compute_shader_id);
-
-        // generate texture
-        outputTexture = new Texture(size.x, size.y);
-        out_tex = outputTexture->handle();
     }
 
     ~ComputeShader() {
         glDeleteProgram(id);
-        glDeleteTextures(1, &out_tex);
+        glDeleteTextures(1, &outputTexture.handlePtr());
     }
 
     void set_values(float *values) {
-        glBindTexture(GL_TEXTURE_2D, out_tex);
+        glBindTexture(GL_TEXTURE_2D, outputTexture.handle());
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, work_size.x, work_size.y, 0, GL_RGBA, GL_FLOAT, values);
     }
 
     std::vector<float> get_values() {
         unsigned int collection_size = work_size.x * work_size.y * 4;
         std::vector<float> compute_data(collection_size);
-        glBindTexture(GL_TEXTURE_2D, out_tex);
+        glBindTexture(GL_TEXTURE_2D, outputTexture.handle());
         glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, compute_data.data());
         return compute_data;
     }
@@ -66,7 +62,7 @@ public:
     void use() {
         glUseProgram(id);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, out_tex);
+        glBindTexture(GL_TEXTURE_2D, outputTexture.handle());
     }
 
     void dispatch() {
@@ -80,10 +76,9 @@ public:
 
 private:
     GLuint id;
-    GLuint out_tex;
     glm::ivec2 work_size;
 
-    Texture *outputTexture;
+    Texture outputTexture;
 };
 
 #endif //FEATHERGL_COMPUTESHADER_H

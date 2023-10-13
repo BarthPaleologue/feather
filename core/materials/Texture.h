@@ -39,6 +39,10 @@ public:
         return _handle;
     }
 
+    unsigned int &handlePtr() {
+        return _handle;
+    }
+
 private:
     unsigned int _handle;
 };
