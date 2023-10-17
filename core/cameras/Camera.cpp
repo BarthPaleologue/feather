@@ -15,4 +15,5 @@ Camera::Camera(Engine *engine) : Transform(), _engine(engine) {
 void Camera::update() {
     _projectionMatrix = computeProjectionMatrix();
     _viewMatrix = computeViewMatrix();
+    _projectionViewMatrix = _projectionMatrix * _viewMatrix;
 }

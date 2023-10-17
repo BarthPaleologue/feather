@@ -9,14 +9,11 @@
 #include "Material.h"
 #include "Texture.h"
 
-class DefaultMaterial: public Material {
+class DefaultMaterial : public Material {
 public:
     DefaultMaterial();
-    void bind() override;
-    void unbind() override;
 
 private:
-    Texture *_texture;
 };
 
 

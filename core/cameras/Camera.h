@@ -15,32 +15,34 @@ class Camera : public Transform {
 public:
     explicit Camera(Engine *engine);
 
-    inline float getFov() const { return _fov; }
+    float getFov() const { return _fov; }
 
-    inline void setFoV(const float f) { _fov = f; }
+    void setFoV(const float f) { _fov = f; }
 
-    inline float getAspectRatio() const { return _aspectRatio; }
+    float getAspectRatio() const { return _aspectRatio; }
 
-    inline void setAspectRatio(const float a) { _aspectRatio = a; }
+    void setAspectRatio(const float a) { _aspectRatio = a; }
 
-    inline float getNear() const { return _near; }
+    float getNear() const { return _near; }
 
-    inline void setNear(const float n) { _near = n; }
+    void setNear(const float n) { _near = n; }
 
-    inline float getFar() const { return _far; }
+    float getFar() const { return _far; }
 
-    inline void setFar(const float n) { _far = n; }
+    void setFar(const float n) { _far = n; }
 
-    virtual inline glm::mat4 computeViewMatrix() = 0;
+    virtual glm::mat4 computeViewMatrix() = 0;
 
-    inline glm::mat4 getViewMatrix() { return _viewMatrix; }
+    glm::mat4 getViewMatrix() { return _viewMatrix; }
 
     // Returns the projection matrix stemming from the camera intrinsic parameter.
-    inline glm::mat4 computeProjectionMatrix() {
+    glm::mat4 computeProjectionMatrix() const {
         return glm::perspective(glm::radians(_fov), _aspectRatio, _near, _far);
     }
 
-    inline glm::mat4 getProjectionMatrix() { return _projectionMatrix; }
+    glm::mat4 getProjectionMatrix() { return _projectionMatrix; }
+
+    glm::mat4 getProjectionViewMatrix() { return _projectionViewMatrix; }
 
     virtual void update();
 
@@ -48,6 +50,7 @@ protected:
     Engine *_engine;
     glm::mat4 _viewMatrix{};
     glm::mat4 _projectionMatrix{};
+    glm::mat4 _projectionViewMatrix{};
     float _fov = 45.f;        // Field of view, in degrees
     float _aspectRatio = 1.f; // Ratio between the _width and the _height of the image
     float _near = 0.1f; // Distance before which geometry is excluded from the rasterization process

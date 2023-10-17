@@ -81,13 +81,12 @@ void
 Mesh::render(Camera *camera, std::vector<PointLight *> &lights, std::vector<DirectionalLight *> &directionalLights) {
     _material->bind();
 
-    const glm::mat4 viewMatrix = camera->getViewMatrix();
-    const glm::mat4 projMatrix = camera->getProjectionMatrix();
+    const glm::mat4 projectionViewMatrix = camera->getProjectionViewMatrix();
+
     const glm::mat4 world = transform()->computeWorldMatrix();
     const glm::mat4 normalMatrix = transform()->computeNormalMatrix();
 
-    _material->setMat4("projection", &projMatrix);
-    _material->setMat4("view", &viewMatrix);
+    _material->setMat4("projectionView", &projectionViewMatrix);
     _material->setMat4("world", &world);
     _material->setMat4("normalMatrix", &normalMatrix);
 
