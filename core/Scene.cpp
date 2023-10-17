@@ -11,6 +11,15 @@ void Scene::addMesh(Mesh *mesh) {
 void Scene::render() {
     onBeforeRenderObservable.notifyObservers();
 
+    // Shadow pass
+    for (auto shadowRenderer: _shadowRenderers) {
+        shadowRenderer->bind();
+        for (Mesh *_drawable: _meshes) {
+            _drawable->render(_activeCamera, _pointLights, _directionalLights);
+        }
+        shadowRenderer->unbind();
+    }
+
     if (!_postProcesses.empty()) {
         glBindFramebuffer(GL_FRAMEBUFFER, _postProcesses[0]->getFBO());
     } else {
@@ -19,7 +28,7 @@ void Scene::render() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     for (Mesh *_drawable: _meshes) {
-        _drawable->render(_activeCamera, _pointLights);
+        _drawable->render(_activeCamera, _pointLights, _directionalLights);
     }
 
     if (!_postProcesses.empty()) {
@@ -34,4 +43,8 @@ void Scene::render() {
 
 void Scene::setActiveCamera(Camera *camera) {
     _activeCamera = camera;
+}
+
+void Scene::addDirectionalLight(DirectionalLight *pLight) {
+    _directionalLights.push_back(pLight);
 }

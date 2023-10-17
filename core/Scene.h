@@ -10,6 +10,8 @@
 #include "cameras/Camera.h"
 #include "lights/PointLight.h"
 #include "postprocessing.h"
+#include "shadows/ShadowRenderer.h"
+#include "DirectionalLight.h"
 
 class Scene {
 public:
@@ -47,12 +49,16 @@ public:
     Observable<> onBeforeRenderObservable{};
     Observable<> onAfterRenderObservable{};
 
+    void addDirectionalLight(DirectionalLight *pLight);
+
 private:
     Engine *_engine;
 
-    std::vector<PointLight *> _pointLights;
-    std::vector<Mesh *> _meshes;
-    std::vector<PostProcessing *> _postProcesses;
+    std::vector<PointLight *> _pointLights{};
+    std::vector<DirectionalLight *> _directionalLights{};
+    std::vector<Mesh *> _meshes{};
+    std::vector<ShadowRenderer *> _shadowRenderers{};
+    std::vector<PostProcessing *> _postProcesses{};
 
     Camera *_activeCamera = nullptr;
 };

@@ -8,6 +8,9 @@
 PhongMaterial::PhongMaterial() : Material("./assets/shaders/standard") {
     std::string maxPointLights = std::to_string(Settings::MAX_POINT_LIGHTS);
     setDefine((std::string("MAX_POINT_LIGHTS ") + maxPointLights).c_str());
+
+    std::string maxDirectionalLights = std::to_string(Settings::MAX_DIRECTIONAL_LIGHTS);
+    setDefine((std::string("MAX_DIRECTIONAL_LIGHTS ") + maxDirectionalLights).c_str());
 }
 
 PhongMaterial::PhongMaterial(const char *diffuseTexturePath) : Material("./assets/shaders/standard") {

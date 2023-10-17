@@ -77,7 +77,8 @@ void Mesh::setMaterial(Material *material) {
     _material = material;
 }
 
-void Mesh::render(Camera *camera, std::vector<PointLight *> &lights) {
+void
+Mesh::render(Camera *camera, std::vector<PointLight *> &lights, std::vector<DirectionalLight *> &directionalLights) {
     _material->bind();
 
     const glm::mat4 viewMatrix = camera->getViewMatrix();
@@ -96,6 +97,16 @@ void Mesh::render(Camera *camera, std::vector<PointLight *> &lights) {
                            lights[i]->transform()->position());
         _material->setVec3(("pointLights[" + std::to_string(i) + "].color").c_str(), lights[i]->color());
         _material->setFloat(("pointLights[" + std::to_string(i) + "].intensity").c_str(), lights[i]->intensity());
+    }
+
+    _material->setInt("directionalLightCount", (int) directionalLights.size());
+    for (int i = 0; i < directionalLights.size(); i++) {
+        _material->setVec3(("directionalLights[" + std::to_string(i) + "].direction").c_str(),
+                           directionalLights[i]->getDirection());
+        _material->setVec3(("directionalLights[" + std::to_string(i) + "].color").c_str(),
+                           directionalLights[i]->color());
+        _material->setFloat(("directionalLights[" + std::to_string(i) + "].intensity").c_str(),
+                            directionalLights[i]->intensity());
     }
 
     _material->setVec3("cameraPosition", camera->position());

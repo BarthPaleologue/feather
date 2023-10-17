@@ -8,6 +8,7 @@
 class Settings {
 public:
     static int MAX_POINT_LIGHTS;
+    static int MAX_DIRECTIONAL_LIGHTS;
 };
 
 #endif //FEATHERGL_SETTINGS_H

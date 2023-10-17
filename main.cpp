@@ -24,9 +24,8 @@ int main() {
     camera.rotatePhi(3.14 / 3.0);
     scene.setActiveCamera(&camera);
 
-    PointLight light("sun");
-    light.transform()->setPosition(50, 50, 0);
-    scene.addPointLight(&light);
+    DirectionalLight light("sun", -1.0, 1.0, 0.0);
+    scene.addDirectionalLight(&light);
 
     PostProcessing colorCorrection("./assets/shaders/colorCorrection", &engine);
     colorCorrection.onBeforeRenderObservable.add([&]() {

@@ -17,6 +17,14 @@ struct PointLight {
 };
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 
+uniform int directionalLightCount;
+struct DirectionalLight {
+    vec3 direction;
+    vec3 color;
+    float intensity;
+};
+uniform DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
+
 uniform vec3 cameraPosition;
 
 uniform bool lightingEnabled;
@@ -53,6 +61,17 @@ void main() {
             vec3 angleW = normalize(viewDirW + lightRayW);
             float specComp = max(0., dot(normalize(vec3(world * vec4(vNormal, 0.0))), angleW));
             specularLightContributions += pow(specComp, 32.0) * pointLights[i].color * pointLights[i].intensity;
+        }
+
+        for (int i = 0; i < directionalLightCount; i++) {
+            float ndl = max(dot(vNormalW, normalize(directionalLights[i].direction)), 0.0);
+            diffuseLightContributions += diffuseColor * directionalLights[i].color * ndl * directionalLights[i].intensity;
+
+            vec3 lightRayW = normalize(directionalLights[i].direction);
+            vec3 viewDirW = normalize(cameraPosition - vPositionW);
+            vec3 angleW = normalize(viewDirW + lightRayW);
+            float specComp = max(0., dot(normalize(vec3(world * vec4(vNormal, 0.0))), angleW));
+            specularLightContributions += pow(specComp, 32.0) * directionalLights[i].color * directionalLights[i].intensity;
         }
 
         color += diffuseColor * diffuseLightContributions + specularLightContributions;

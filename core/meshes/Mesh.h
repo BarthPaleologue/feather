@@ -13,6 +13,7 @@
 #include "VertexData.h"
 #include "DefaultMaterial.h"
 #include "../utils/Uuid.h"
+#include "DirectionalLight.h"
 
 class Mesh : public Transformable {
 public:
@@ -44,7 +45,7 @@ public:
         return _vertexData;
     }
 
-    void render(Camera *camera, std::vector<PointLight *> &lights);
+    void render(Camera *camera, std::vector<PointLight *> &lights, std::vector<DirectionalLight *> &directionalLights);
 
 private:
     const char *_name;
