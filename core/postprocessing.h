@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <memory>
 #include "utils.h"
 #include "Shader.h"
 #include "Engine.h"
@@ -19,7 +20,7 @@ private:
     unsigned int RBO;
     unsigned int outputTexture;
 
-    Shader *_shader;
+    std::shared_ptr<Shader> _shader;
 
     GLuint uniformScreenResolution;
 
@@ -45,7 +46,7 @@ public:
 
     void resize(int width, int height);
 
-    Shader *shader() {
+    std::shared_ptr<Shader> shader() {
         return _shader;
     }
 

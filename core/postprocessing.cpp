@@ -51,7 +51,7 @@ PostProcessing::PostProcessing(const char *shaderFolder, Engine *engine) {
     if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "Framebuffer error: " << fboStatus << std::endl;
 
-    _shader = new Shader(shaderFolder);
+    _shader = std::make_shared<Shader>(shaderFolder);
 
     // get screen resolution uniform locations
     uniformScreenResolution = glGetUniformLocation(_shader->program(), "screenResolution");
