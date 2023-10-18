@@ -27,6 +27,9 @@ int main() {
     DirectionalLight light("sun", -1.0, 1.0, 0.0);
     scene.addDirectionalLight(std::shared_ptr<DirectionalLight>(&light));
 
+    auto shadowRenderer = std::make_shared<ShadowRenderer>(std::shared_ptr<DirectionalLight>(&light));
+    scene.addShadowRenderer(shadowRenderer);
+
     PostProcessing colorCorrection("./assets/shaders/colorCorrection", &engine);
     colorCorrection.onBeforeRenderObservable.add([&]() {
         colorCorrection.shader()->setFloat("gamma", 1.0f / 2.2f);

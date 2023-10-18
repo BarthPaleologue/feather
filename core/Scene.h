@@ -36,6 +36,10 @@ public:
         });
     }
 
+    void addShadowRenderer(std::shared_ptr<ShadowRenderer> shadowRenderer) {
+        _shadowRenderers.push_back(shadowRenderer);
+    }
+
     void setActiveCamera(std::shared_ptr<Camera> camera);
 
     std::shared_ptr<Camera> activeCamera() { return _activeCamera; }

@@ -6,12 +6,14 @@
 #define FEATHERGL_SHADOWRENDERER_H
 
 #include "glad/glad.h"
+#include "DirectionalLight.h"
 
 class ShadowRenderer {
 public:
-    explicit ShadowRenderer(const unsigned int shadowMapWidth = 1024, const unsigned int shadowMapHeight = 1024)
+    explicit ShadowRenderer(std::shared_ptr<DirectionalLight> directionalLight,
+                            const unsigned int shadowMapWidth = 1024, const unsigned int shadowMapHeight = 1024)
             : _width(
-            shadowMapWidth), _height(shadowMapHeight) {
+            shadowMapWidth), _height(shadowMapHeight), _directionalLight(directionalLight) {
 
         glGenFramebuffers(1, &_depthMapFBO);
 
@@ -32,6 +34,12 @@ public:
     }
 
     void bind() {
+        // get original viewport size so that we can restore it once we're done
+        GLint dims[4] = {0};
+        glGetIntegerv(GL_VIEWPORT, dims);
+        _initialWidth = dims[2];
+        _initialHeight = dims[3];
+
         glViewport(0, 0, (int) _width, (int) _height);
         glBindFramebuffer(GL_FRAMEBUFFER, _depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -40,14 +48,20 @@ public:
     }
 
     void unbind() {
+        glViewport(0, 0, _initialWidth, _initialHeight);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
 private:
+    std::shared_ptr<DirectionalLight> _directionalLight;
+
     unsigned int _depthMapFBO{};
     unsigned int _depthMap{};
     unsigned int _width{};
     unsigned int _height{};
+
+    int _initialWidth{};
+    int _initialHeight{};
 };
 
 #endif //FEATHERGL_SHADOWRENDERER_H
