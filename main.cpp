@@ -25,7 +25,7 @@ int main() {
     scene.setActiveCamera(&camera);
 
     DirectionalLight light("sun", -1.0, 1.0, 0.0);
-    scene.addDirectionalLight(&light);
+    scene.addDirectionalLight(std::shared_ptr<DirectionalLight>(&light));
 
     PostProcessing colorCorrection("./assets/shaders/colorCorrection", &engine);
     colorCorrection.onBeforeRenderObservable.add([&]() {

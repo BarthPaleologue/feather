@@ -40,7 +40,7 @@ void PhongMaterial::bind() {
     if (_alphaColor != nullptr) setVec3("alphaColor", _alphaColor);
     setBool("lightingEnabled", _lightingEnabled);
 
-    std::vector<PointLight *> *pointLights = _scene->pointLights();
+    auto *pointLights = _scene->pointLights();
     setInt("pointLightCount", (int) pointLights->size());
     for (int i = 0; i < pointLights->size(); i++) {
         auto light = pointLights->at(i);
@@ -50,7 +50,7 @@ void PhongMaterial::bind() {
         setFloat(("pointLights[" + std::to_string(i) + "].intensity").c_str(), light->intensity());
     }
 
-    std::vector<DirectionalLight *> *directionalLights = _scene->directionalLights();
+    auto *directionalLights = _scene->directionalLights();
     setInt("directionalLightCount", (int) directionalLights->size());
     for (int i = 0; i < directionalLights->size(); i++) {
         auto light = directionalLights->at(i);

@@ -25,7 +25,7 @@ public:
 
     void addMesh(std::shared_ptr<Mesh> mesh);
 
-    void addPointLight(PointLight *light) {
+    void addPointLight(std::shared_ptr<PointLight> light) {
         _pointLights.push_back(light);
     }
 
@@ -40,11 +40,11 @@ public:
 
     Camera *activeCamera() { return _activeCamera; }
 
-    std::vector<PointLight *> *pointLights() {
+    std::vector<std::shared_ptr<PointLight>> *pointLights() {
         return &_pointLights;
     }
 
-    std::vector<DirectionalLight *> *directionalLights() {
+    std::vector<std::shared_ptr<DirectionalLight>> *directionalLights() {
         return &_directionalLights;
     }
 
@@ -59,13 +59,13 @@ public:
     Observable<> onBeforeRenderObservable{};
     Observable<> onAfterRenderObservable{};
 
-    void addDirectionalLight(DirectionalLight *pLight);
+    void addDirectionalLight(std::shared_ptr<DirectionalLight> pLight);
 
 private:
     Engine *_engine;
 
-    std::vector<PointLight *> _pointLights{};
-    std::vector<DirectionalLight *> _directionalLights{};
+    std::vector<std::shared_ptr<PointLight>> _pointLights{};
+    std::vector<std::shared_ptr<DirectionalLight>> _directionalLights{};
 
     std::vector<std::shared_ptr<Mesh>> _meshes{};
 

@@ -45,6 +45,6 @@ void Scene::setActiveCamera(Camera *camera) {
     _activeCamera = camera;
 }
 
-void Scene::addDirectionalLight(DirectionalLight *pLight) {
+void Scene::addDirectionalLight(std::shared_ptr<DirectionalLight> pLight) {
     _directionalLights.push_back(pLight);
 }
