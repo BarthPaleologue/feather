@@ -5,7 +5,7 @@
 #include "PhongMaterial.h"
 #include "Settings.h"
 
-PhongMaterial::PhongMaterial(Camera *camera) : Material("./assets/shaders/standard"), _camera(camera) {
+PhongMaterial::PhongMaterial(Scene *scene) : Material("./assets/shaders/standard"), _scene(scene) {
     std::string maxPointLights = std::to_string(Settings::MAX_POINT_LIGHTS);
     setDefine((std::string("MAX_POINT_LIGHTS ") + maxPointLights).c_str());
 
@@ -31,7 +31,7 @@ void PhongMaterial::setAmbientTexture(Texture *texture) {
 void PhongMaterial::bind() {
     Material::bind();
 
-    setVec3("cameraPosition", _camera->position());
+    setVec3("cameraPosition", _scene->activeCamera()->position());
 
     if (_diffuseTexture != nullptr) bindTexture("diffuseTexture", _diffuseTexture, 0);
     if (_ambientTexture != nullptr) bindTexture("ambientTexture", _ambientTexture, 1);
@@ -39,6 +39,28 @@ void PhongMaterial::bind() {
     setVec3("ambientColor", _ambientColor);
     if (_alphaColor != nullptr) setVec3("alphaColor", _alphaColor);
     setBool("lightingEnabled", _lightingEnabled);
+
+    std::vector<PointLight *> *pointLights = _scene->pointLights();
+    setInt("pointLightCount", (int) pointLights->size());
+    for (int i = 0; i < pointLights->size(); i++) {
+        auto light = pointLights->at(i);
+        setVec3(("pointLights[" + std::to_string(i) + "].position").c_str(),
+                light->transform()->position());
+        setVec3(("pointLights[" + std::to_string(i) + "].color").c_str(), light->color());
+        setFloat(("pointLights[" + std::to_string(i) + "].intensity").c_str(), light->intensity());
+    }
+
+    std::vector<DirectionalLight *> *directionalLights = _scene->directionalLights();
+    setInt("directionalLightCount", (int) directionalLights->size());
+    for (int i = 0; i < directionalLights->size(); i++) {
+        auto light = directionalLights->at(i);
+        setVec3(("directionalLights[" + std::to_string(i) + "].direction").c_str(),
+                light->getDirection());
+        setVec3(("directionalLights[" + std::to_string(i) + "].color").c_str(),
+                light->color());
+        setFloat(("directionalLights[" + std::to_string(i) + "].intensity").c_str(),
+                 light->intensity());
+    }
 }
 
 void PhongMaterial::unbind() {

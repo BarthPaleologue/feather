@@ -6,6 +6,7 @@
 #define FEATHERGL_VERTEXDATA_H
 
 #include <vector>
+#include <iostream>
 #include "glad/glad.h"
 
 struct VertexData {

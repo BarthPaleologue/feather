@@ -19,7 +19,7 @@ public:
         _engine = engine;
 
         _engine->onWindowResizeObservable.add([this](int width, int height) {
-            this->_activeCamera->setAspectRatio(static_cast<float>(width) / static_cast<float>(height));
+            this->_activeCamera->setAspectRatio((float) width / (float) height);
         });
     }
 
@@ -39,6 +39,14 @@ public:
     void setActiveCamera(Camera *camera);
 
     Camera *activeCamera() { return _activeCamera; }
+
+    std::vector<PointLight *> *pointLights() {
+        return &_pointLights;
+    }
+
+    std::vector<DirectionalLight *> *directionalLights() {
+        return &_directionalLights;
+    }
 
     void render();
 

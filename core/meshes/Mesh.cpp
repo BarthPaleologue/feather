@@ -78,8 +78,7 @@ void Mesh::setMaterial(Material *material) {
 }
 
 void
-Mesh::render(glm::mat4 projectionViewMatrix, std::vector<PointLight *> &lights,
-             std::vector<DirectionalLight *> &directionalLights) {
+Mesh::render(glm::mat4 projectionViewMatrix) {
     _material->bind();
 
     const glm::mat4 world = transform()->computeWorldMatrix();
@@ -88,24 +87,6 @@ Mesh::render(glm::mat4 projectionViewMatrix, std::vector<PointLight *> &lights,
     _material->setMat4("projectionView", &projectionViewMatrix);
     _material->setMat4("world", &world);
     _material->setMat4("normalMatrix", &normalMatrix);
-
-    _material->setInt("pointLightCount", (int) lights.size());
-    for (int i = 0; i < lights.size(); i++) {
-        _material->setVec3(("pointLights[" + std::to_string(i) + "].position").c_str(),
-                           lights[i]->transform()->position());
-        _material->setVec3(("pointLights[" + std::to_string(i) + "].color").c_str(), lights[i]->color());
-        _material->setFloat(("pointLights[" + std::to_string(i) + "].intensity").c_str(), lights[i]->intensity());
-    }
-
-    _material->setInt("directionalLightCount", (int) directionalLights.size());
-    for (int i = 0; i < directionalLights.size(); i++) {
-        _material->setVec3(("directionalLights[" + std::to_string(i) + "].direction").c_str(),
-                           directionalLights[i]->getDirection());
-        _material->setVec3(("directionalLights[" + std::to_string(i) + "].color").c_str(),
-                           directionalLights[i]->color());
-        _material->setFloat(("directionalLights[" + std::to_string(i) + "].intensity").c_str(),
-                            directionalLights[i]->intensity());
-    }
 
     glBindVertexArray(_vao);
     glDrawElements(GL_TRIANGLES, (int) _vertexData.indices.size(), GL_UNSIGNED_INT, nullptr);

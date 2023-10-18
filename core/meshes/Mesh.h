@@ -6,13 +6,10 @@
 #define FEATHERGL_MESH_H
 
 #include <vector>
-#include "../materials/Material.h"
 #include "Transformable.h"
-#include "lights/PointLight.h"
 #include "VertexData.h"
 #include "DefaultMaterial.h"
 #include "../utils/Uuid.h"
-#include "DirectionalLight.h"
 
 class Mesh : public Transformable {
 public:
@@ -44,8 +41,7 @@ public:
         return _vertexData;
     }
 
-    void render(glm::mat4 projectionViewMatrix, std::vector<PointLight *> &lights,
-                std::vector<DirectionalLight *> &directionalLights);
+    void render(glm::mat4 projectionViewMatrix);
 
 private:
     const char *_name;

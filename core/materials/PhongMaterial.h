@@ -8,10 +8,11 @@
 #include "Material.h"
 #include "Texture.h"
 #include "Camera.h"
+#include "Scene.h"
 
 class PhongMaterial : public Material {
 public:
-    PhongMaterial(Camera *camera);
+    PhongMaterial(Scene *scene);
 
     void setDiffuseTexture(Texture *texture);
 
@@ -44,7 +45,7 @@ private:
     glm::vec3 *_diffuseColor = new glm::vec3(0.0);
     glm::vec3 *_ambientColor = new glm::vec3(0.0);
 
-    Camera *_camera;
+    Scene *_scene;
 
     bool _lightingEnabled = true;
 };

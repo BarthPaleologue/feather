@@ -46,7 +46,7 @@ int main() {
     cloth->transform()->setScale(10);
     cloth->transform()->setPosition(0, 5, 0);
 
-    auto *clothMaterial = new PhongMaterial(scene.activeCamera());
+    auto *clothMaterial = new PhongMaterial(&scene);
     clothMaterial->setAmbientColor(1.0, 0.2, 0.2);
     clothMaterial->setBackFaceCullingEnabled(false);
     clothMaterial->setWireframe(true);
@@ -59,7 +59,7 @@ int main() {
     ground->transform()->setPosition(0, -2, 0);
     ground->transform()->setScale(40);
 
-    auto *groundMaterial = new PhongMaterial(scene.activeCamera());
+    auto *groundMaterial = new PhongMaterial(&scene);
     groundMaterial->setDiffuseColor(0.5, 0.5, 0.5);
     groundMaterial->setBackFaceCullingEnabled(false);
     ground->setMaterial(groundMaterial);
