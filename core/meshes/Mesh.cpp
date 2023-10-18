@@ -78,20 +78,21 @@ void Mesh::setMaterial(std::shared_ptr<Material> material) {
 }
 
 void
-Mesh::render(glm::mat4 projectionViewMatrix) {
-    _material->bind();
+Mesh::render(glm::mat4 projectionViewMatrix, std::shared_ptr<Material> materialOverride) {
+    auto material = materialOverride == nullptr ? _material : materialOverride;
+    material->bind();
 
     const glm::mat4 world = transform()->computeWorldMatrix();
     const glm::mat4 normalMatrix = transform()->computeNormalMatrix();
 
-    _material->setMat4("projectionView", &projectionViewMatrix);
-    _material->setMat4("world", &world);
-    _material->setMat4("normalMatrix", &normalMatrix);
+    material->setMat4("projectionView", &projectionViewMatrix);
+    material->setMat4("world", &world);
+    material->setMat4("normalMatrix", &normalMatrix);
 
     glBindVertexArray(_vao);
     glDrawElements(GL_TRIANGLES, (int) _vertexData.indices.size(), GL_UNSIGNED_INT, nullptr);
 
-    _material->unbind();
+    material->unbind();
 }
 
 std::shared_ptr<Mesh> Mesh::FromVertexData(const char *name, VertexData &vertexData) {

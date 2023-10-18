@@ -1,13 +1,11 @@
 out vec4 frag_color;
-in vec3 fColor;
 
+in vec3 vColor;
 in vec3 vPosition;
 in vec3 vPositionW;
 in vec3 vNormal;
 in vec3 vNormalW;
 in vec2 vUV;
-
-uniform mat4 world;
 
 void main() {
     vec3 color = vec3(0.0);

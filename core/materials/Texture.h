@@ -45,10 +45,6 @@ public:
         return _handle;
     }
 
-    void writeToFile(const char* filePath) const {
-        writeTextureFromGPUToFile(_handle, filePath);
-    }
-
 private:
     unsigned int _handle{};
 };

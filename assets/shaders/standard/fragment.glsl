@@ -1,6 +1,6 @@
 out vec4 frag_color;
-in vec3 fColor;
 
+in vec3 vColor;
 in vec3 vPosition;
 in vec3 vPositionW;
 in vec3 vNormal;

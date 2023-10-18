@@ -10,10 +10,10 @@
 #include <vector>
 #include <glm/vec4.hpp>
 #include "utils.h"
+
 #define STB_IMAGE_IMPLEMENTATION
+
 #include "stb_image.h"
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
 
 void loadFileToBuffer(const char *filename, std::string &stringBuffer) {
     stringBuffer = ""; // empty buffer first
@@ -54,22 +54,38 @@ GLuint loadTextureFromFileToGPU(const char *filename) {
     return texID;
 }
 
-void writeTextureFromGPUToFile(GLuint textureHandle, const char *filename) {
+void writeTextureToPPM(GLuint textureHandle, const char *filename) {
     glBindTexture(GL_TEXTURE_2D, textureHandle);
     int width, height;
     glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
     glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
     std::vector<glm::vec4> pixels(width * height);
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, pixels.data());
-    stbi_write_png(filename, width, height, 4, pixels.data(), width * 4);
+
+    std::ofstream ofs(filename, std::ios::out | std::ios::binary);
+    ofs << "P6\n" << width << " " << height << "\n255\n";
+    for (int i = 0; i < width * height; ++i) {
+        unsigned char r = static_cast<unsigned char>(pixels[i].r * 255);
+        unsigned char g = static_cast<unsigned char>(pixels[i].g * 255);
+        unsigned char b = static_cast<unsigned char>(pixels[i].b * 255);
+        ofs << r << g << b;
+    }
+    ofs.close();
 }
 
-void writeDepthTextureFromGPUToFile(GLuint textureHandle, const char* filename) {
+void writeDepthTextureToPPM(GLuint textureHandle, const char *filename) {
     glBindTexture(GL_TEXTURE_2D, textureHandle);
     int width, height;
     glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
     glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
     std::vector<float> pixels(width * height);
     glGetTexImage(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_FLOAT, pixels.data());
-    stbi_write_png(filename, width, height, 1, pixels.data(), width);
+
+    std::ofstream ofs(filename, std::ios::out | std::ios::binary);
+    ofs << "P5\n" << width << " " << height << "\n65535\n";
+    for (int i = 0; i < width * height; ++i) {
+        unsigned short depth = static_cast<unsigned short>(pixels[i] * 65535);
+        ofs.write((char *) &depth, sizeof(unsigned short));
+    }
+    ofs.close();
 }

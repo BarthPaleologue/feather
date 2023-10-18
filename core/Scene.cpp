@@ -3,6 +3,7 @@
 //
 
 #include "Scene.h"
+#include "DepthMaterial.h"
 
 void Scene::addMesh(std::shared_ptr<Mesh> mesh) {
     _meshes.push_back(mesh);
@@ -11,11 +12,14 @@ void Scene::addMesh(std::shared_ptr<Mesh> mesh) {
 void Scene::render() {
     onBeforeRenderObservable.notifyObservers();
 
+    auto depthMaterial = std::make_shared<DepthMaterial>();
+    auto defaultMaterial = std::make_shared<DefaultMaterial>();
+
     // Shadow pass
     for (auto shadowRenderer: _shadowRenderers) {
         shadowRenderer->bind();
-        for (auto _drawable: _meshes) {
-            _drawable->render(shadowRenderer->projectionViewMatrix());
+        for (auto drawable: _meshes) {
+            drawable->render(_activeCamera->projectionViewMatrix(), depthMaterial);
         }
         shadowRenderer->unbind();
     }
@@ -37,6 +41,8 @@ void Scene::render() {
         }
         _postProcesses[_postProcesses.size() - 1]->RenderToScreen();
     }
+
+    //writeTextureToPPM(_postProcesses[0]->outputTextureHandle(), "output.ppm");
 
     onAfterRenderObservable.notifyObservers();
 }

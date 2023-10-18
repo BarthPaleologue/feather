@@ -50,6 +50,10 @@ public:
         return _shader;
     }
 
+    GLuint outputTextureHandle() {
+        return outputTexture;
+    }
+
     Observable<> onBeforeRenderObservable;
 
     ~PostProcessing() = default;
