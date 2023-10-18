@@ -5,16 +5,12 @@
 #include "PhongMaterial.h"
 #include "Settings.h"
 
-PhongMaterial::PhongMaterial() : Material("./assets/shaders/standard") {
+PhongMaterial::PhongMaterial(Camera *camera) : Material("./assets/shaders/standard"), _camera(camera) {
     std::string maxPointLights = std::to_string(Settings::MAX_POINT_LIGHTS);
     setDefine((std::string("MAX_POINT_LIGHTS ") + maxPointLights).c_str());
 
     std::string maxDirectionalLights = std::to_string(Settings::MAX_DIRECTIONAL_LIGHTS);
     setDefine((std::string("MAX_DIRECTIONAL_LIGHTS ") + maxDirectionalLights).c_str());
-}
-
-PhongMaterial::PhongMaterial(const char *diffuseTexturePath) : Material("./assets/shaders/standard") {
-    setDiffuseTextureFromFile(diffuseTexturePath);
 }
 
 void PhongMaterial::setDiffuseTexture(Texture *texture) {
@@ -34,6 +30,9 @@ void PhongMaterial::setAmbientTexture(Texture *texture) {
 
 void PhongMaterial::bind() {
     Material::bind();
+
+    setVec3("cameraPosition", _camera->position());
+
     if (_diffuseTexture != nullptr) bindTexture("diffuseTexture", _diffuseTexture, 0);
     if (_ambientTexture != nullptr) bindTexture("ambientTexture", _ambientTexture, 1);
     setVec3("diffuseColor", _diffuseColor);

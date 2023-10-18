@@ -108,8 +108,6 @@ Mesh::render(Camera *camera, std::vector<PointLight *> &lights, std::vector<Dire
                             directionalLights[i]->intensity());
     }
 
-    _material->setVec3("cameraPosition", camera->position());
-
     glBindVertexArray(_vao);
     glDrawElements(GL_TRIANGLES, (int) _vertexData.indices.size(), GL_UNSIGNED_INT, nullptr);
 

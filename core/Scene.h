@@ -38,6 +38,8 @@ public:
 
     void setActiveCamera(Camera *camera);
 
+    Camera *activeCamera() { return _activeCamera; }
+
     void render();
 
     void compileShaders() {
@@ -56,7 +58,9 @@ private:
 
     std::vector<PointLight *> _pointLights{};
     std::vector<DirectionalLight *> _directionalLights{};
+
     std::vector<Mesh *> _meshes{};
+
     std::vector<ShadowRenderer *> _shadowRenderers{};
     std::vector<PostProcessing *> _postProcesses{};
 
