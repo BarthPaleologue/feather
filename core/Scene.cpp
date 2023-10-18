@@ -41,7 +41,7 @@ void Scene::render() {
     onAfterRenderObservable.notifyObservers();
 }
 
-void Scene::setActiveCamera(Camera *camera) {
+void Scene::setActiveCamera(std::shared_ptr<Camera> camera) {
     _activeCamera = camera;
 }
 

@@ -29,16 +29,16 @@ public:
         _pointLights.push_back(light);
     }
 
-    void addPostProcess(PostProcessing *postProcess) {
+    void addPostProcess(std::shared_ptr<PostProcessing> postProcess) {
         _postProcesses.push_back(postProcess);
         _engine->onWindowResizeObservable.add([postProcess](int width, int height) {
             postProcess->resize(width, height);
         });
     }
 
-    void setActiveCamera(Camera *camera);
+    void setActiveCamera(std::shared_ptr<Camera> camera);
 
-    Camera *activeCamera() { return _activeCamera; }
+    std::shared_ptr<Camera> activeCamera() { return _activeCamera; }
 
     std::vector<std::shared_ptr<PointLight>> *pointLights() {
         return &_pointLights;
@@ -69,10 +69,10 @@ private:
 
     std::vector<std::shared_ptr<Mesh>> _meshes{};
 
-    std::vector<ShadowRenderer *> _shadowRenderers{};
-    std::vector<PostProcessing *> _postProcesses{};
+    std::vector<std::shared_ptr<ShadowRenderer>> _shadowRenderers{};
+    std::vector<std::shared_ptr<PostProcessing>> _postProcesses{};
 
-    Camera *_activeCamera = nullptr;
+    std::shared_ptr<Camera> _activeCamera = nullptr;
 };
 
 

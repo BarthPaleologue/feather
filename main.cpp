@@ -22,7 +22,7 @@ int main() {
     camera.setTarget(glm::vec3(0, 3, 0));
     camera.rotateTheta(-3.14 / 4.0);
     camera.rotatePhi(3.14 / 3.0);
-    scene.setActiveCamera(&camera);
+    scene.setActiveCamera(std::shared_ptr<Camera>(&camera));
 
     DirectionalLight light("sun", -1.0, 1.0, 0.0);
     scene.addDirectionalLight(std::shared_ptr<DirectionalLight>(&light));
@@ -36,7 +36,7 @@ int main() {
         colorCorrection.shader()->setFloat("brightness", 0.0f);
     });
 
-    scene.addPostProcess(&colorCorrection);
+    scene.addPostProcess(std::shared_ptr<PostProcessing>(&colorCorrection));
 
     PhysicsBody *cloth = new Cloth("cloth", scene, 16, 0.1f);
 
