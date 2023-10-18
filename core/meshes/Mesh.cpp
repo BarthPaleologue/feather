@@ -78,10 +78,9 @@ void Mesh::setMaterial(Material *material) {
 }
 
 void
-Mesh::render(Camera *camera, std::vector<PointLight *> &lights, std::vector<DirectionalLight *> &directionalLights) {
+Mesh::render(glm::mat4 projectionViewMatrix, std::vector<PointLight *> &lights,
+             std::vector<DirectionalLight *> &directionalLights) {
     _material->bind();
-
-    const glm::mat4 projectionViewMatrix = camera->getProjectionViewMatrix();
 
     const glm::mat4 world = transform()->computeWorldMatrix();
     const glm::mat4 normalMatrix = transform()->computeNormalMatrix();

@@ -15,7 +15,7 @@ void Scene::render() {
     for (auto shadowRenderer: _shadowRenderers) {
         shadowRenderer->bind();
         for (Mesh *_drawable: _meshes) {
-            _drawable->render(_activeCamera, _pointLights, _directionalLights);
+            _drawable->render(_activeCamera->getProjectionViewMatrix(), _pointLights, _directionalLights);
         }
         shadowRenderer->unbind();
     }
@@ -28,7 +28,7 @@ void Scene::render() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     for (Mesh *_drawable: _meshes) {
-        _drawable->render(_activeCamera, _pointLights, _directionalLights);
+        _drawable->render(_activeCamera->getProjectionViewMatrix(), _pointLights, _directionalLights);
     }
 
     if (!_postProcesses.empty()) {

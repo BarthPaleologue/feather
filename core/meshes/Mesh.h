@@ -7,7 +7,6 @@
 
 #include <vector>
 #include "../materials/Material.h"
-#include "cameras/Camera.h"
 #include "Transformable.h"
 #include "lights/PointLight.h"
 #include "VertexData.h"
@@ -45,7 +44,8 @@ public:
         return _vertexData;
     }
 
-    void render(Camera *camera, std::vector<PointLight *> &lights, std::vector<DirectionalLight *> &directionalLights);
+    void render(glm::mat4 projectionViewMatrix, std::vector<PointLight *> &lights,
+                std::vector<DirectionalLight *> &directionalLights);
 
 private:
     const char *_name;
