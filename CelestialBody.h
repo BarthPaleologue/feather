@@ -12,7 +12,7 @@
 class CelestialBody {
 public:
     CelestialBody(const char *name, float radius, float rotationPeriod, float orbitPeriod, float orbitRadius,
-                  PhongMaterial *material, Scene &scene);
+                  std::shared_ptr<PhongMaterial> material, Scene &scene);
 
     std::shared_ptr<Mesh> getMesh() { return _mesh; }
 

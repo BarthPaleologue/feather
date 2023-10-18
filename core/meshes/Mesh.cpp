@@ -73,7 +73,7 @@ void Mesh::updateVertexData() {
                  GL_DYNAMIC_READ);
 }
 
-void Mesh::setMaterial(Material *material) {
+void Mesh::setMaterial(std::shared_ptr<Material> material) {
     _material = material;
 }
 

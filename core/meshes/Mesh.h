@@ -16,7 +16,7 @@ class Mesh : public Transformable {
 public:
     explicit Mesh(const char *name) : Transformable(), _name(name), _vao(0), _vbo(0) {
         _id = UUID::generate_uuid_v4();
-        _material = new DefaultMaterial();
+        _material = std::make_shared<DefaultMaterial>();
         std::cout << "Mesh " << _name << " _handle: " << _id << " created" << std::endl;
     }
 
@@ -26,9 +26,9 @@ public:
 
     static std::shared_ptr<Mesh> FromVertexData(const char *name, VertexData &vertexData);
 
-    void setMaterial(Material *material);
+    void setMaterial(std::shared_ptr<Material> material);
 
-    Material *material() const {
+    std::shared_ptr<Material> material() const {
         return _material;
     }
 
@@ -56,7 +56,7 @@ private:
     GLuint _uvVbo;
     GLuint _colVbo;
 protected:
-    Material *_material;
+    std::shared_ptr<Material> _material;
 };
 
 #endif //FEATHERGL_MESH_H
