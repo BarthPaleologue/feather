@@ -5,6 +5,8 @@
 #ifndef FEATHERGL_TEXTURE_H
 #define FEATHERGL_TEXTURE_H
 
+#include <vector>
+#include <glm/vec4.hpp>
 #include "../utils/utils.h"
 
 class Texture {
@@ -41,6 +43,10 @@ public:
 
     unsigned int &handlePtr() {
         return _handle;
+    }
+
+    void writeToFile(const char* filePath) const {
+        writeTextureFromGPUToFile(_handle, filePath);
     }
 
 private:

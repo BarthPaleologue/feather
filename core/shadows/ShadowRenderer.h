@@ -12,8 +12,8 @@ class ShadowRenderer {
 public:
     explicit ShadowRenderer(std::shared_ptr<DirectionalLight> directionalLight,
                             const unsigned int shadowMapWidth = 1024, const unsigned int shadowMapHeight = 1024)
-            : _width(
-            shadowMapWidth), _height(shadowMapHeight), _directionalLight(directionalLight) {
+            :
+            _width(shadowMapWidth), _height(shadowMapHeight), _directionalLight(directionalLight) {
 
         glGenFramebuffers(1, &_depthMapFBO);
 
@@ -43,20 +43,38 @@ public:
         glViewport(0, 0, (int) _width, (int) _height);
         glBindFramebuffer(GL_FRAMEBUFFER, _depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
-        //ConfigureShaderAndMatrices();
-        //RenderScene();
+        computeProjectionViewMatrix();
     }
 
     void unbind() {
+        //writeDepthTextureFromGPUToFile(_depthMap, "shadowMap.png");
         glViewport(0, 0, _initialWidth, _initialHeight);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    void computeProjectionViewMatrix() {
+        float near_plane = 1.0f, far_plane = 7.5f;
+        glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+
+        glm::mat4 lightView = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f),
+                                          glm::vec3(0.0f, 0.0f, 0.0f),
+                                          glm::vec3(0.0f, 1.0f, 0.0f));
+
+        _projectionViewMatrix = lightProjection * lightView;
+    }
+
+    glm::mat4 projectionViewMatrix() {
+        return _projectionViewMatrix;
     }
 
 private:
     std::shared_ptr<DirectionalLight> _directionalLight;
 
+    glm::mat4 _projectionViewMatrix;
+
     unsigned int _depthMapFBO{};
     unsigned int _depthMap{};
+
     unsigned int _width{};
     unsigned int _height{};
 

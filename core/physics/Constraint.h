@@ -32,6 +32,8 @@ public:
                 // == 0
                 return fabsf(evaluate()) <= 1e-6;
         }
+
+        throw std::runtime_error("Constraint type not handled");
     }
 
     void solve() {

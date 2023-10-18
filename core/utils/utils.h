@@ -17,4 +17,8 @@ void loadFileToBuffer(const char *filename, std::string &stringBuffer);
 
 GLuint loadTextureFromFileToGPU(const char *filename);
 
+void writeTextureFromGPUToFile(GLuint textureHandle, const char *filename);
+
+void writeDepthTextureFromGPUToFile(GLuint textureHandle, const char *filename);
+
 #endif //FEATHERGL_UTILS_H

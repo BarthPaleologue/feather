@@ -7,8 +7,13 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <vector>
+#include <glm/vec4.hpp>
 #include "utils.h"
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 
 void loadFileToBuffer(const char *filename, std::string &stringBuffer) {
     stringBuffer = ""; // empty buffer first
@@ -47,4 +52,24 @@ GLuint loadTextureFromFileToGPU(const char *filename) {
     //glBindTexture(GL_TEXTURE_2D, 0); // unbind the texture
 
     return texID;
+}
+
+void writeTextureFromGPUToFile(GLuint textureHandle, const char *filename) {
+    glBindTexture(GL_TEXTURE_2D, textureHandle);
+    int width, height;
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    std::vector<glm::vec4> pixels(width * height);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, pixels.data());
+    stbi_write_png(filename, width, height, 4, pixels.data(), width * 4);
+}
+
+void writeDepthTextureFromGPUToFile(GLuint textureHandle, const char* filename) {
+    glBindTexture(GL_TEXTURE_2D, textureHandle);
+    int width, height;
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    std::vector<float> pixels(width * height);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_FLOAT, pixels.data());
+    stbi_write_png(filename, width, height, 1, pixels.data(), width);
 }

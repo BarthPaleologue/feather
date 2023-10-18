@@ -33,16 +33,16 @@ public:
 
     virtual glm::mat4 computeViewMatrix() = 0;
 
-    glm::mat4 getViewMatrix() { return _viewMatrix; }
+    glm::mat4 viewMatrix() { return _viewMatrix; }
 
     // Returns the projection matrix stemming from the camera intrinsic parameter.
     glm::mat4 computeProjectionMatrix() const {
         return glm::perspective(glm::radians(_fov), _aspectRatio, _near, _far);
     }
 
-    glm::mat4 getProjectionMatrix() { return _projectionMatrix; }
+    glm::mat4 projectionMatrix() { return _projectionMatrix; }
 
-    glm::mat4 getProjectionViewMatrix() { return _projectionViewMatrix; }
+    glm::mat4 projectionViewMatrix() { return _projectionViewMatrix; }
 
     virtual void update();
 
