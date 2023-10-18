@@ -13,7 +13,7 @@
 
 class PhysicsBody {
 public:
-    PhysicsBody(Mesh *mesh, float mass) : _mesh(mesh) {
+    PhysicsBody(std::shared_ptr<Mesh> mesh, float mass) : _mesh(mesh) {
         _particles.reserve(mesh->vertexData().positions.size() / 3);
         for (unsigned int i = 0; i < mesh->vertexData().positions.size(); i += 3) {
             _particles.push_back(new Particle(mass, mesh->vertexData().positions, i));
@@ -50,7 +50,7 @@ public:
         return _particles;
     }
 
-    Mesh *mesh() {
+    std::shared_ptr<Mesh> mesh() {
         return _mesh;
     }
 
@@ -63,7 +63,7 @@ public:
     }
 
 protected:
-    Mesh *_mesh;
+    std::shared_ptr<Mesh> _mesh;
     std::vector<Particle *> _particles;
     std::vector<Constraint *> _constraints;
 

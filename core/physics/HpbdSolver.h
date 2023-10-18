@@ -24,14 +24,14 @@ public:
         }
     }
 
-    PhysicsBody *addMesh(Mesh *mesh, float mass) {
+    PhysicsBody *addMesh(std::shared_ptr<Mesh> mesh, float mass) {
         auto physicsBody = new PhysicsBody(mesh, mass);
         _physicsBodies.push_back(physicsBody);
 
         return physicsBody;
     }
 
-    void removeMesh(Mesh *mesh) {
+    void removeMesh(std::shared_ptr<Mesh> mesh) {
         // find index of mesh in meshes then erase in _meshes and _particles
         unsigned long index = 0;
         for (auto body: _physicsBodies) {
@@ -48,7 +48,7 @@ public:
         _physicsBodies.push_back(pBody);
     }
 
-    void applyForce(Mesh *mesh, glm::vec3 force) {
+    void applyForce(std::shared_ptr<Mesh> mesh, glm::vec3 force) {
         for (auto body: _physicsBodies) {
             if (body->mesh() == mesh) {
                 body->applyForce(force);

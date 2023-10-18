@@ -11,7 +11,7 @@
 
 class MeshLoader {
 public:
-    static Mesh *loadObj(const char *path, Scene &scene) {
+    static std::shared_ptr<Mesh> loadObj(const char *path, Scene &scene) {
         VertexData vertexData = VertexData();
 
         std::string s;

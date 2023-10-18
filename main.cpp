@@ -55,7 +55,7 @@ int main() {
     solver.addBody(cloth);
     solver.applyForce(cloth->mesh(), glm::vec3(-2, -9.81, 0));
 
-    Mesh *ground = MeshBuilder::makePlane("ground", scene, 64);
+    auto ground = MeshBuilder::makePlane("ground", scene, 64);
     ground->transform()->setPosition(0, -2, 0);
     ground->transform()->setScale(40);
 

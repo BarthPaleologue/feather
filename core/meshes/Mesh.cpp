@@ -94,8 +94,8 @@ Mesh::render(glm::mat4 projectionViewMatrix) {
     _material->unbind();
 }
 
-Mesh *Mesh::FromVertexData(const char *name, VertexData &vertexData) {
-    Mesh *mesh = new Mesh(name);
+std::shared_ptr<Mesh> Mesh::FromVertexData(const char *name, VertexData &vertexData) {
+    auto mesh = std::make_shared<Mesh>(name);
     mesh->setVertexData(vertexData);
     return mesh;
 }

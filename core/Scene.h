@@ -23,7 +23,7 @@ public:
         });
     }
 
-    void addMesh(Mesh *mesh);
+    void addMesh(std::shared_ptr<Mesh> mesh);
 
     void addPointLight(PointLight *light) {
         _pointLights.push_back(light);
@@ -67,7 +67,7 @@ private:
     std::vector<PointLight *> _pointLights{};
     std::vector<DirectionalLight *> _directionalLights{};
 
-    std::vector<Mesh *> _meshes{};
+    std::vector<std::shared_ptr<Mesh>> _meshes{};
 
     std::vector<ShadowRenderer *> _shadowRenderers{};
     std::vector<PostProcessing *> _postProcesses{};

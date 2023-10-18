@@ -6,6 +6,7 @@
 #define FEATHERGL_MESH_H
 
 #include <vector>
+#include <memory>
 #include "Transformable.h"
 #include "VertexData.h"
 #include "DefaultMaterial.h"
@@ -23,7 +24,7 @@ public:
         return _id == other._id;
     }
 
-    static Mesh *FromVertexData(const char *name, VertexData &vertexData);
+    static std::shared_ptr<Mesh> FromVertexData(const char *name, VertexData &vertexData);
 
     void setMaterial(Material *material);
 
@@ -57,6 +58,5 @@ private:
 protected:
     Material *_material;
 };
-
 
 #endif //FEATHERGL_MESH_H

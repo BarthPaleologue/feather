@@ -4,7 +4,7 @@
 
 #include "Scene.h"
 
-void Scene::addMesh(Mesh *mesh) {
+void Scene::addMesh(std::shared_ptr<Mesh> mesh) {
     _meshes.push_back(mesh);
 }
 
@@ -14,7 +14,7 @@ void Scene::render() {
     // Shadow pass
     for (auto shadowRenderer: _shadowRenderers) {
         shadowRenderer->bind();
-        for (Mesh *_drawable: _meshes) {
+        for (auto _drawable: _meshes) {
             _drawable->render(_activeCamera->getProjectionViewMatrix());
         }
         shadowRenderer->unbind();
@@ -27,7 +27,7 @@ void Scene::render() {
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    for (Mesh *_drawable: _meshes) {
+    for (auto _drawable: _meshes) {
         _drawable->render(_activeCamera->getProjectionViewMatrix());
     }
 

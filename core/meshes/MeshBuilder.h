@@ -11,7 +11,7 @@
 
 class MeshBuilder {
 public:
-    static Mesh *makeCube(const char *name, Scene &scene) {
+    static std::shared_ptr<Mesh> makeCube(const char *name, Scene &scene) {
         VertexData vertexData = VertexData();
         vertexData.positions = {
                 -1.0f, -1.0f, -1.0f,
@@ -74,7 +74,7 @@ public:
         return mesh;
     }
 
-    static Mesh *makeTriangle(const char *name, Scene &scene) {
+    static std::shared_ptr<Mesh> makeTriangle(const char *name, Scene &scene) {
         VertexData vertexData = VertexData();
         vertexData.positions = {
                 0.0f, 0.5f, 0.0f,
@@ -103,7 +103,7 @@ public:
         return mesh;
     }
 
-    static Mesh *makeSphere(const char *name, Scene &scene, int resolution) {
+    static std::shared_ptr<Mesh> makeSphere(const char *name, Scene &scene, int resolution) {
         std::vector<GLfloat> positions;
         std::vector<GLfloat> normals;
         std::vector<GLfloat> uvs;
@@ -195,7 +195,7 @@ public:
         return mesh;
     }
 
-    static Mesh *makePlane(const char *name, Scene &scene, unsigned int nbSubdivisions) {
+    static std::shared_ptr<Mesh> makePlane(const char *name, Scene &scene, unsigned int nbSubdivisions) {
         VertexData vertexData = VertexData();
         vertexData.positions = std::vector<GLfloat>(nbSubdivisions * nbSubdivisions * 3);
         vertexData.indices = std::vector<GLint>((nbSubdivisions - 1) * (nbSubdivisions - 1) * 3 * 2);
