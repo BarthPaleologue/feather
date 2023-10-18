@@ -5,7 +5,7 @@
 #include "PhongMaterial.h"
 #include "Settings.h"
 
-PhongMaterial::PhongMaterial(Scene *scene) : Material("./assets/shaders/standard"), _scene(scene) {
+PhongMaterial::PhongMaterial(std::shared_ptr<Scene> scene) : Material("./assets/shaders/standard"), _scene(scene) {
     std::string maxPointLights = std::to_string(Settings::MAX_POINT_LIGHTS);
     setDefine((std::string("MAX_POINT_LIGHTS ") + maxPointLights).c_str());
 

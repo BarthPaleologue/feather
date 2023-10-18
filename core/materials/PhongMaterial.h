@@ -12,7 +12,7 @@
 
 class PhongMaterial : public Material {
 public:
-    PhongMaterial(Scene *scene);
+    PhongMaterial(std::shared_ptr<Scene> scene);
 
     void setDiffuseTexture(Texture *texture);
 
@@ -45,7 +45,7 @@ private:
     glm::vec3 *_diffuseColor = new glm::vec3(0.0);
     glm::vec3 *_ambientColor = new glm::vec3(0.0);
 
-    Scene *_scene;
+    std::shared_ptr<Scene> _scene;
 
     bool _lightingEnabled = true;
 };
