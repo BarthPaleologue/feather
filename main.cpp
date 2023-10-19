@@ -16,7 +16,7 @@ int main() {
 
     HpbdSolver solver;
 
-    Scene scene(&engine);
+    Scene scene((std::shared_ptr<Engine>(&engine)));
 
     OrbitCamera camera(&engine);
     camera.setRadius(20.0);

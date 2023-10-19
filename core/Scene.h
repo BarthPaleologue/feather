@@ -15,7 +15,7 @@
 
 class Scene {
 public:
-    explicit Scene(Engine *engine) {
+    explicit Scene(std::shared_ptr<Engine> engine) {
         _engine = engine;
 
         _engine->onWindowResizeObservable.add([this](int width, int height) {
@@ -66,7 +66,7 @@ public:
     void addDirectionalLight(std::shared_ptr<DirectionalLight> pLight);
 
 private:
-    Engine *_engine;
+    std::shared_ptr<Engine> _engine;
 
     std::vector<std::shared_ptr<PointLight>> _pointLights{};
     std::vector<std::shared_ptr<DirectionalLight>> _directionalLights{};

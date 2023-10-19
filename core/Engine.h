@@ -13,6 +13,10 @@ class Engine {
 public:
     Engine(int windowWidth, int windowHeight, const char *name);
 
+    ~Engine() {
+        glfwDestroyWindow(window);
+    }
+
     void setCursorEnabled(bool enabled) {
         glfwSetInputMode(window, GLFW_CURSOR, enabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
     }
@@ -62,8 +66,6 @@ public:
 
         glfwTerminate();
     }
-
-    ~Engine();
 
     Observable<> onExecuteLoopObservable{};
 

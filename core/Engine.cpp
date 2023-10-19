@@ -87,5 +87,3 @@ Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Pr
     glEnable(GL_BLEND);
     glCullFace(GL_BACK); // Specifies the faces to cull (here the ones pointing away from the camera)
 }
-
-Engine::~Engine() = default;
