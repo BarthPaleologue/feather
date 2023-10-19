@@ -243,6 +243,34 @@ public:
         scene.addMesh(mesh);
         return mesh;
     }
+
+    static std::shared_ptr<Mesh> makeScreenQuad(const char *name) {
+        VertexData vertexData = VertexData();
+        vertexData.positions = {
+                -1.0f, -1.0f, 0.0f,
+                1.0f, -1.0f, 0.0f,
+                -1.0f, 1.0f, 0.0f,
+                1.0f, 1.0f, 0.0f
+        };
+        vertexData.indices = {
+                0, 1, 2,
+                1, 3, 2
+        };
+        vertexData.uvs = {
+                0.0f, 0.0f,
+                1.0f, 0.0f,
+                0.0f, 1.0f,
+                1.0f, 1.0f
+        };
+        vertexData.normals = {
+                0.0f, 0.0f, -1.0f,
+                0.0f, 0.0f, -1.0f,
+                0.0f, 0.0f, -1.0f,
+                0.0f, 0.0f, -1.0f
+        };
+
+        return Mesh::FromVertexData(name, vertexData);
+    }
 };
 
 #endif //FEATHERGL_MESHBUILDER_H

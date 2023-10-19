@@ -77,22 +77,25 @@ void Mesh::setMaterial(std::shared_ptr<Material> material) {
     _material = material;
 }
 
-void
-Mesh::render(glm::mat4 projectionViewMatrix, std::shared_ptr<Material> materialOverride) {
-    auto material = materialOverride == nullptr ? _material : materialOverride;
-    material->bind();
+void Mesh::render(glm::mat4 projectionViewMatrix, std::shared_ptr<Shader> shaderOverride) {
+    auto shader = shaderOverride == nullptr ? _material->shader() : shaderOverride;
+
+    if (shaderOverride == nullptr) _material->bind();
+    else shader->bind();
 
     const glm::mat4 world = transform()->computeWorldMatrix();
     const glm::mat4 normalMatrix = transform()->computeNormalMatrix();
 
-    material->setMat4("projectionView", &projectionViewMatrix);
-    material->setMat4("world", &world);
-    material->setMat4("normalMatrix", &normalMatrix);
+    shader->setMat4("projectionView", &projectionViewMatrix);
+    shader->setMat4("world", &world);
+    shader->setMat4("normalMatrix", &normalMatrix);
 
     glBindVertexArray(_vao);
-    glDrawElements(GL_TRIANGLES, (int) _vertexData.indices.size(), GL_UNSIGNED_INT, nullptr);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo);
+    glDrawElements(GL_TRIANGLES, _vertexData.indices.size(), GL_UNSIGNED_INT, nullptr);
 
-    material->unbind();
+    if (shaderOverride == nullptr) _material->unbind();
+    else shader->unbind();
 }
 
 std::shared_ptr<Mesh> Mesh::FromVertexData(const char *name, VertexData &vertexData) {

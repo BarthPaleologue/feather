@@ -7,14 +7,14 @@
 
 PhongMaterial::PhongMaterial(std::shared_ptr<Scene> scene) : Material("./assets/shaders/standard"), _scene(scene) {
     std::string maxPointLights = std::to_string(Settings::MAX_POINT_LIGHTS);
-    setDefine((std::string("MAX_POINT_LIGHTS ") + maxPointLights).c_str());
+    shader()->setDefine((std::string("MAX_POINT_LIGHTS ") + maxPointLights).c_str());
 
     std::string maxDirectionalLights = std::to_string(Settings::MAX_DIRECTIONAL_LIGHTS);
-    setDefine((std::string("MAX_DIRECTIONAL_LIGHTS ") + maxDirectionalLights).c_str());
+    shader()->setDefine((std::string("MAX_DIRECTIONAL_LIGHTS ") + maxDirectionalLights).c_str());
 }
 
 void PhongMaterial::setDiffuseTexture(Texture *texture) {
-    if (_diffuseTexture == nullptr) setDefine("DIFFUSE_TEXTURE");
+    if (_diffuseTexture == nullptr) shader()->setDefine("DIFFUSE_TEXTURE");
     _diffuseTexture = texture;
 }
 
@@ -24,42 +24,48 @@ void PhongMaterial::setDiffuseTextureFromFile(const char *filePath) {
 }
 
 void PhongMaterial::setAmbientTexture(Texture *texture) {
-    if (_ambientTexture == nullptr) setDefine("AMBIENT_TEXTURE");
+    if (_ambientTexture == nullptr) shader()->setDefine("AMBIENT_TEXTURE");
     _ambientTexture = texture;
+}
+
+void PhongMaterial::setShadowMap(Texture *texture) {
+    if (_shadowMap == nullptr) shader()->setDefine("SHADOW_MAP");
+    _shadowMap = texture;
 }
 
 void PhongMaterial::bind() {
     Material::bind();
 
-    setVec3("cameraPosition", _scene->activeCamera()->position());
+    shader()->setVec3("cameraPosition", _scene->activeCamera()->position());
 
-    if (_diffuseTexture != nullptr) bindTexture("diffuseTexture", _diffuseTexture, 0);
-    if (_ambientTexture != nullptr) bindTexture("ambientTexture", _ambientTexture, 1);
-    setVec3("diffuseColor", _diffuseColor);
-    setVec3("ambientColor", _ambientColor);
-    if (_alphaColor != nullptr) setVec3("alphaColor", _alphaColor);
-    setBool("lightingEnabled", _lightingEnabled);
+    if (_diffuseTexture != nullptr) shader()->bindTexture("diffuseTexture", _diffuseTexture, 0);
+    if (_ambientTexture != nullptr) shader()->bindTexture("ambientTexture", _ambientTexture, 1);
+    if (_shadowMap != nullptr) shader()->bindTexture("shadowMap", _shadowMap, 2);
+    shader()->setVec3("diffuseColor", _diffuseColor);
+    shader()->setVec3("ambientColor", _ambientColor);
+    if (_alphaColor != nullptr) shader()->setVec3("alphaColor", _alphaColor);
+    shader()->setBool("lightingEnabled", _lightingEnabled);
 
     auto *pointLights = _scene->pointLights();
-    setInt("pointLightCount", (int) pointLights->size());
+    shader()->setInt("pointLightCount", (int) pointLights->size());
     for (int i = 0; i < pointLights->size(); i++) {
         auto light = pointLights->at(i);
-        setVec3(("pointLights[" + std::to_string(i) + "].position").c_str(),
-                light->transform()->position());
-        setVec3(("pointLights[" + std::to_string(i) + "].color").c_str(), light->color());
-        setFloat(("pointLights[" + std::to_string(i) + "].intensity").c_str(), light->intensity());
+        shader()->setVec3(("pointLights[" + std::to_string(i) + "].position").c_str(),
+                          light->transform()->position());
+        shader()->setVec3(("pointLights[" + std::to_string(i) + "].color").c_str(), light->color());
+        shader()->setFloat(("pointLights[" + std::to_string(i) + "].intensity").c_str(), light->intensity());
     }
 
     auto *directionalLights = _scene->directionalLights();
-    setInt("directionalLightCount", (int) directionalLights->size());
+    shader()->setInt("directionalLightCount", (int) directionalLights->size());
     for (int i = 0; i < directionalLights->size(); i++) {
         auto light = directionalLights->at(i);
-        setVec3(("directionalLights[" + std::to_string(i) + "].direction").c_str(),
-                light->getDirection());
-        setVec3(("directionalLights[" + std::to_string(i) + "].color").c_str(),
-                light->color());
-        setFloat(("directionalLights[" + std::to_string(i) + "].intensity").c_str(),
-                 light->intensity());
+        shader()->setVec3(("directionalLights[" + std::to_string(i) + "].direction").c_str(),
+                          light->getDirection());
+        shader()->setVec3(("directionalLights[" + std::to_string(i) + "].color").c_str(),
+                          light->color());
+        shader()->setFloat(("directionalLights[" + std::to_string(i) + "].intensity").c_str(),
+                           light->intensity());
     }
 }
 
@@ -83,7 +89,7 @@ void PhongMaterial::setDiffuseColor(float r, float g, float b) {
 
 void PhongMaterial::setAlphaColor(float r, float g, float b) {
     if (_alphaColor == nullptr) {
-        setDefine("ALPHA_COLOR");
+        shader()->setDefine("ALPHA_COLOR");
         _alphaColor = new glm::vec3(r, g, b);
     } else {
         _alphaColor->x = r;

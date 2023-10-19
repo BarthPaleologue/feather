@@ -24,6 +24,7 @@ add_executable(featherGL ${SRCS}
         core/utils/ComputeShader.h
         core/shadows/ShadowRenderer.h
         core/materials/DepthMaterial.h
+        core/meshes/ScreenQuad.h
 )
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})

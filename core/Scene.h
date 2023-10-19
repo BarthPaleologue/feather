@@ -56,7 +56,7 @@ public:
 
     void compileShaders() {
         for (auto mesh: _meshes) {
-            mesh->material()->compile();
+            mesh->material()->shader()->compile();
         }
     }
 

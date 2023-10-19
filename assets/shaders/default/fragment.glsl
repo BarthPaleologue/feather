@@ -11,7 +11,7 @@ void main() {
     vec3 color = vec3(0.0);
 
     // 10x10 checkerboard
-    if (mod(floor(vPosition.x * 10.0) + floor(vPosition.z * 10.0), 2.0) == 0.0) {
+    if (mod(floor(vPosition.x * 10.0) + floor(vPosition.y * 10.0) + floor(vPosition.z * 10.0), 2.0) == 0.0) {
         color = vec3(1.0);
     }
 

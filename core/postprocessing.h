@@ -11,22 +11,21 @@
 #include "utils.h"
 #include "Shader.h"
 #include "Engine.h"
+#include "ScreenQuad.h"
 
 class PostProcessing {
 private:
-    int _width, _height;
+    int _width{}, _height{};
 
-    unsigned int FBO;
-    unsigned int RBO;
-    unsigned int outputTexture;
+    std::shared_ptr<ScreenQuad> screenQuad;
+
+    unsigned int FBO{};
+    unsigned int RBO{};
+    unsigned int inputTexture{};
 
     std::shared_ptr<Shader> _shader;
 
     GLuint uniformScreenResolution;
-
-    static const float rectangleVerts[];
-
-    unsigned int rectVAO;
 public:
     explicit PostProcessing(const char *shaderFolder, Engine *engine);
 
@@ -50,8 +49,8 @@ public:
         return _shader;
     }
 
-    GLuint outputTextureHandle() {
-        return outputTexture;
+    GLuint inputTextureHandle() {
+        return inputTexture;
     }
 
     Observable<> onBeforeRenderObservable;

@@ -9,6 +9,7 @@
 #include <glm/fwd.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <memory>
 #include "glad/glad.h"
 #include "Observable.h"
 #include "Texture.h"

@@ -35,6 +35,7 @@ uniform vec3 alphaColor;
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D ambientTexture;
+uniform sampler2D shadowMap;
 
 void main() {
     vec3 color = vec3(0.0);
@@ -84,6 +85,10 @@ void main() {
 
     #ifdef ALPHA_COLOR
     if (ambientColor == alphaColor) discard;
+    #endif
+
+    #ifdef SHADOW_MAP
+    color = vec3(texture(shadowMap, vUV).r);
     #endif
 
     color += ambientColor;

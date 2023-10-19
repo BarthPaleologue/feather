@@ -13,21 +13,12 @@ public:
     explicit ShadowRenderer(std::shared_ptr<DirectionalLight> directionalLight,
                             const unsigned int shadowMapWidth = 1024, const unsigned int shadowMapHeight = 1024)
             :
-            _width(shadowMapWidth), _height(shadowMapHeight), _directionalLight(directionalLight) {
+            _width(shadowMapWidth), _height(shadowMapHeight), _directionalLight(directionalLight),
+            _depthTexture(shadowMapWidth, shadowMapHeight, DEPTH) {
 
         glGenFramebuffers(1, &_depthMapFBO);
-
-        glGenTextures(1, &_depthMap);
-        glBindTexture(GL_TEXTURE_2D, _depthMap);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-                     (int) _width, (int) _height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
         glBindFramebuffer(GL_FRAMEBUFFER, _depthMapFBO);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _depthMap, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _depthTexture.handle(), 0);
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -47,16 +38,16 @@ public:
     }
 
     void unbind() {
-        writeDepthTextureToPPM(_depthMap, "shadowMap.ppm");
+        writeDepthTextureToPPM(_depthTexture.handle(), "shadowMap.ppm");
         glViewport(0, 0, _initialWidth, _initialHeight);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     void computeProjectionViewMatrix() {
-        float near_plane = 1.0f, far_plane = 7.5f;
-        glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+        float near_plane = 1.0f, far_plane = 75.0f;
+        glm::mat4 lightProjection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, near_plane, far_plane);
 
-        glm::mat4 lightView = glm::lookAt(-glm::vec3(-2.0f, 4.0f, -1.0f),
+        glm::mat4 lightView = glm::lookAt(glm::vec3(-8.0f, 8.0f, -2.0f),
                                           glm::vec3(0.0f, 0.0f, 0.0f),
                                           glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -67,13 +58,18 @@ public:
         return _projectionViewMatrix;
     }
 
+    Texture *depthTexture() {
+        return &_depthTexture;
+    }
+
 private:
     std::shared_ptr<DirectionalLight> _directionalLight;
 
     glm::mat4 _projectionViewMatrix;
 
     unsigned int _depthMapFBO{};
-    unsigned int _depthMap{};
+
+    Texture _depthTexture;
 
     unsigned int _width{};
     unsigned int _height{};

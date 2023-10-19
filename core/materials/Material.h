@@ -13,11 +13,15 @@
 #include "Observable.h"
 #include "Shader.h"
 
-class Material : public Shader {
+class Material {
 public:
     explicit Material(const char *shaderFolder);
 
-    void bind() override;
+    virtual void bind();
+
+    virtual void unbind() {
+        _shader->unbind();
+    }
 
     void setWireframe(bool enabled) {
         _isWireframe = enabled;
@@ -35,7 +39,12 @@ public:
         _isBackFaceCullingEnabled = enabled;
     }
 
+    std::shared_ptr<Shader> shader() {
+        return _shader;
+    }
+
 private:
+    std::shared_ptr<Shader> _shader;
     bool _isWireframe = false;
     bool _isBackFaceCullingEnabled = true;
 };

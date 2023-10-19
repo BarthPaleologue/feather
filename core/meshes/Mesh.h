@@ -42,7 +42,7 @@ public:
         return _vertexData;
     }
 
-    void render(glm::mat4 projectionViewMatrix, std::shared_ptr<Material> materialOverride = nullptr);
+    void render(glm::mat4 projectionViewMatrix, std::shared_ptr<Shader> shaderOverride = nullptr);
 
 private:
     const char *_name;

@@ -32,11 +32,13 @@ public:
 
     void setAmbientColor(float r, float g, float b);
 
+    void setShadowMap(Texture *texture);
+
     void setLightingEnabled(bool enabled) { _lightingEnabled = enabled; }
 
     void bind() override;
 
-    void unbind() override;
+    void unbind();
 
 private:
     Texture *_diffuseTexture = nullptr;
@@ -44,6 +46,8 @@ private:
     glm::vec3 *_alphaColor = nullptr;
     glm::vec3 *_diffuseColor = new glm::vec3(0.0);
     glm::vec3 *_ambientColor = new glm::vec3(0.0);
+
+    Texture *_shadowMap = nullptr;
 
     std::shared_ptr<Scene> _scene;
 
