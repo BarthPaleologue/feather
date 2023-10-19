@@ -69,7 +69,7 @@ void PostProcessing::resize(int width, int height) {
 
     // resize framebuffer texture
     glBindTexture(GL_TEXTURE_2D, inputTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, _width, _height, 0, GL_RGBA, GL_FLOAT, nullptr);
 
     // resize render buffer
     glBindRenderbuffer(GL_RENDERBUFFER, RBO);
