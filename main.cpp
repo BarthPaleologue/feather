@@ -6,6 +6,7 @@
 #include "MeshLoader.h"
 #include "physics/HpbdSolver.h"
 #include "physics/Cloth.h"
+#include "PbrMaterial.h"
 
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
@@ -63,8 +64,7 @@ int main() {
     auto sphere = MeshBuilder::makeSphere("sphere", scene, 32);
     sphere->transform()->setPosition(4, 1, 10);
 
-    auto sphereMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
-    sphereMaterial->setDiffuseColor(0.2, 0.2, 1.0);
+    auto sphereMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     sphere->setMaterial(sphereMaterial);
 
     shadowRenderer->addShadowCaster(sphere);
