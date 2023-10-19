@@ -33,9 +33,9 @@ uniform vec3 diffuseColor;
 uniform vec3 ambientColor;
 uniform vec3 alphaColor;
 
-uniform sampler2D diffuseTexture;
-uniform sampler2D ambientTexture;
-uniform sampler2D shadowMap;
+layout(binding = 0) uniform sampler2D diffuseTexture;
+layout(binding = 1) uniform sampler2D ambientTexture;
+layout(binding = 2) uniform sampler2D shadowMap;
 
 void main() {
     vec3 color = vec3(0.0);

@@ -6,7 +6,7 @@ uniform float contrast;
 uniform float saturation;
 uniform float brightness;
 
-uniform sampler2D screenTexture;
+layout(binding = 0) uniform sampler2D screenTexture;
 
 in vec2 vUV;
 
