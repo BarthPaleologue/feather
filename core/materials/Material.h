@@ -20,7 +20,7 @@ public:
     virtual void bind();
 
     virtual void unbind() {
-        _shader->unbind();
+        _shader.unbind();
     }
 
     void setWireframe(bool enabled) {
@@ -39,12 +39,12 @@ public:
         _isBackFaceCullingEnabled = enabled;
     }
 
-    std::shared_ptr<Shader> shader() {
-        return _shader;
+    Shader *shader() {
+        return &_shader;
     }
 
 private:
-    std::shared_ptr<Shader> _shader;
+    Shader _shader;
     bool _isWireframe = false;
     bool _isBackFaceCullingEnabled = true;
 };
