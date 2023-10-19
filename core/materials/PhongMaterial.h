@@ -32,7 +32,7 @@ public:
 
     void setAmbientColor(float r, float g, float b);
 
-    void setShadowRenderer(std::shared_ptr<ShadowRenderer> shadowRenderer);
+    void receiveShadows(std::shared_ptr<ShadowRenderer> shadowRenderer);
 
     void setLightingEnabled(bool enabled) { _lightingEnabled = enabled; }
 

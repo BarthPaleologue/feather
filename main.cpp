@@ -58,6 +58,8 @@ int main() {
     solver.addBody(cloth);
     solver.applyForce(cloth->mesh(), glm::vec3(-2, -9.81, 0));
 
+    shadowRenderer->addShadowCaster(cloth->mesh());
+
     auto sphere = MeshBuilder::makeSphere("sphere", scene, 32);
     sphere->transform()->setPosition(4, 1, 10);
 
@@ -65,13 +67,15 @@ int main() {
     sphereMaterial->setDiffuseColor(0.2, 0.2, 1.0);
     sphere->setMaterial(sphereMaterial);
 
+    shadowRenderer->addShadowCaster(sphere);
+
     auto ground = MeshBuilder::makePlane("ground", scene, 64);
     ground->transform()->setPosition(0, -2, 0);
     ground->transform()->setScale(40);
 
     auto groundMaterial = std::make_shared<PhongMaterial>(std::shared_ptr<Scene>(&scene));
     groundMaterial->setDiffuseColor(0.5, 0.5, 0.5);
-    groundMaterial->setShadowRenderer(shadowRenderer);
+    groundMaterial->receiveShadows(shadowRenderer);
 
     groundMaterial->setBackFaceCullingEnabled(false);
     ground->setMaterial(groundMaterial);

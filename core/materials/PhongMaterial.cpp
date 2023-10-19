@@ -28,7 +28,7 @@ void PhongMaterial::setAmbientTexture(Texture *texture) {
     _ambientTexture = texture;
 }
 
-void PhongMaterial::setShadowRenderer(std::shared_ptr<ShadowRenderer> shadowRenderer) {
+void PhongMaterial::receiveShadows(std::shared_ptr<ShadowRenderer> shadowRenderer) {
     if (_shadowRenderer == nullptr) shader()->setDefine("SHADOW_MAP");
     _shadowRenderer = shadowRenderer;
 }

@@ -12,16 +12,9 @@ void Scene::addMesh(std::shared_ptr<Mesh> mesh) {
 void Scene::render() {
     onBeforeRenderObservable.notifyObservers();
 
-    auto depthMaterial = std::make_shared<DepthMaterial>();
-    auto defaultMaterial = std::make_shared<DefaultMaterial>();
-
     // Shadow pass
-    for (auto shadowRenderer: _shadowRenderers) {
-        shadowRenderer->bind();
-        for (auto drawable: _meshes) {
-            drawable->render(shadowRenderer->projectionViewMatrix(), depthMaterial->shader());
-        }
-        shadowRenderer->unbind();
+    for (const auto &shadowRenderer: _shadowRenderers) {
+        shadowRenderer->render();
     }
 
     if (!_postProcesses.empty()) {

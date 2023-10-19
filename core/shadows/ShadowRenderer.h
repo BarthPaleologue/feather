@@ -7,6 +7,7 @@
 
 #include "glad/glad.h"
 #include "DirectionalLight.h"
+#include "DepthMaterial.h"
 
 class ShadowRenderer {
 public:
@@ -14,7 +15,7 @@ public:
                             const unsigned int shadowMapWidth = 2048, const unsigned int shadowMapHeight = 2048)
             :
             _width(shadowMapWidth), _height(shadowMapHeight), _directionalLight(directionalLight),
-            _depthTexture(shadowMapWidth, shadowMapHeight, DEPTH) {
+            _depthTexture(shadowMapWidth, shadowMapHeight, DEPTH), _depthMaterial(std::make_shared<DepthMaterial>()) {
 
         glGenFramebuffers(1, &_depthMapFBO);
         glBindFramebuffer(GL_FRAMEBUFFER, _depthMapFBO);
@@ -44,6 +45,14 @@ public:
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
+    void render() {
+        bind();
+        for (const auto &shadowCaster: _shadowCasters) {
+            shadowCaster->render(_projectionViewMatrix, _depthMaterial->shader());
+        }
+        unbind();
+    }
+
     void computeProjectionViewMatrix() {
         float near_plane = 1.0f, far_plane = 75.0f;
         glm::mat4 lightProjection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, near_plane, far_plane);
@@ -67,10 +76,17 @@ public:
         return _directionalLight;
     }
 
+    void addShadowCaster(std::shared_ptr<Mesh> mesh) {
+        _shadowCasters.push_back(mesh);
+    }
+
 private:
     std::shared_ptr<DirectionalLight> _directionalLight;
-
     glm::mat4 _projectionViewMatrix;
+
+    std::vector<std::shared_ptr<Mesh>> _shadowCasters;
+
+    std::shared_ptr<DepthMaterial> _depthMaterial;
 
     unsigned int _depthMapFBO{};
 
