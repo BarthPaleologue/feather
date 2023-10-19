@@ -73,6 +73,7 @@ void PhongMaterial::unbind() {
     Material::unbind();
     if (_diffuseTexture != nullptr) _diffuseTexture->unbind();
     if (_ambientTexture != nullptr) _ambientTexture->unbind();
+    if (_shadowMap != nullptr) _shadowMap->unbind();
 }
 
 void PhongMaterial::setAmbientColor(float r, float g, float b) {

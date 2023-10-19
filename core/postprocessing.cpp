@@ -51,7 +51,12 @@ void PostProcessing::RenderTo(unsigned int targetFramebuffer) {
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDisable(GL_DEPTH_TEST); // prevents framebuffer rectangle from being discarded
-    auto projectionView = glm::identity<glm::mat4>();
+
+    // bind input texture to screenTexture uniform
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, inputTexture);
+    _shader->setInt("screenTexture", 0);
+
     screenQuad->render();
 
     glBindVertexArray(0);

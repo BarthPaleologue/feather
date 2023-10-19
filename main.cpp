@@ -30,7 +30,7 @@ int main() {
     auto shadowRenderer = std::make_shared<ShadowRenderer>(std::shared_ptr<DirectionalLight>(&light));
     scene.addShadowRenderer(shadowRenderer);
 
-    /*PostProcessing colorCorrection("./assets/shaders/colorCorrection", &engine);
+    PostProcessing colorCorrection("./assets/shaders/colorCorrection", &engine);
     colorCorrection.onBeforeRenderObservable.add([&]() {
         colorCorrection.shader()->setFloat("gamma", 1.0f / 2.2f);
         colorCorrection.shader()->setFloat("exposure", 1.0f);
@@ -39,14 +39,14 @@ int main() {
         colorCorrection.shader()->setFloat("brightness", 0.0f);
     });
 
-    scene.addPostProcess(std::shared_ptr<PostProcessing>(&colorCorrection));*/
+    scene.addPostProcess(std::shared_ptr<PostProcessing>(&colorCorrection));
 
-    /*PostProcessing depth("./assets/shaders/depthPostProcess", &engine);
+    PostProcessing depth("./assets/shaders/depthPostProcess", &engine);
     depth.onBeforeRenderObservable.add([&]() {
         depth.shader()->bindTexture("depthTexture", shadowRenderer->depthTexture(), 1);
     });
 
-    scene.addPostProcess(std::shared_ptr<PostProcessing>(&depth));*/
+    scene.addPostProcess(std::shared_ptr<PostProcessing>(&depth));
 
     PhysicsBody *cloth = new Cloth("cloth", scene, 16, 0.1f);
 
