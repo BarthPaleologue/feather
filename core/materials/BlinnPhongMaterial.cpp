@@ -5,7 +5,8 @@
 #include "BlinnPhongMaterial.h"
 #include "Settings.h"
 
-BlinnPhongMaterial::BlinnPhongMaterial(std::shared_ptr<Scene> scene) : Material("./assets/shaders/standard"), _scene(scene) {
+BlinnPhongMaterial::BlinnPhongMaterial(std::shared_ptr<Scene> scene) : Material("./assets/shaders/standard"),
+                                                                       _scene(scene) {
     std::string maxPointLights = std::to_string(Settings::MAX_POINT_LIGHTS);
     shader()->setDefine((std::string("MAX_POINT_LIGHTS ") + maxPointLights).c_str());
 
@@ -13,17 +14,17 @@ BlinnPhongMaterial::BlinnPhongMaterial(std::shared_ptr<Scene> scene) : Material(
     shader()->setDefine((std::string("MAX_DIRECTIONAL_LIGHTS ") + maxDirectionalLights).c_str());
 }
 
-void BlinnPhongMaterial::setDiffuseTexture(Texture *texture) {
+void BlinnPhongMaterial::setDiffuseTexture(std::shared_ptr<Texture> texture) {
     if (_diffuseTexture == nullptr) shader()->setDefine("DIFFUSE_TEXTURE");
     _diffuseTexture = texture;
 }
 
 void BlinnPhongMaterial::setDiffuseTextureFromFile(const char *filePath) {
-    Texture *diffuseTexture = new Texture(filePath);
+    auto diffuseTexture = std::make_shared<Texture>(filePath);
     setDiffuseTexture(diffuseTexture);
 }
 
-void BlinnPhongMaterial::setAmbientTexture(Texture *texture) {
+void BlinnPhongMaterial::setAmbientTexture(std::shared_ptr<Texture> texture) {
     if (_ambientTexture == nullptr) shader()->setDefine("AMBIENT_TEXTURE");
     _ambientTexture = texture;
 }
@@ -40,8 +41,8 @@ void BlinnPhongMaterial::bind() {
 
     shader()->setFloat("shininess", _shininess);
 
-    if (_diffuseTexture != nullptr) shader()->bindTexture("diffuseTexture", _diffuseTexture, 0);
-    if (_ambientTexture != nullptr) shader()->bindTexture("ambientTexture", _ambientTexture, 1);
+    if (_diffuseTexture != nullptr) shader()->bindTexture("diffuseTexture", _diffuseTexture.get(), 0);
+    if (_ambientTexture != nullptr) shader()->bindTexture("ambientTexture", _ambientTexture.get(), 1);
     if (_shadowRenderer != nullptr) {
         shader()->bindTexture("shadowMap", _shadowRenderer->depthTexture(), 2);
         glm::mat4 lightSpaceMatrix = _shadowRenderer->projectionViewMatrix();
@@ -107,6 +108,6 @@ void BlinnPhongMaterial::setAlphaColor(float r, float g, float b) {
 }
 
 void BlinnPhongMaterial::setAmbientTextureFromFile(const char *filePath) {
-    Texture *ambientTexture = new Texture(filePath);
+    auto ambientTexture = std::make_shared<Texture>(filePath);
     setAmbientTexture(ambientTexture);
 }

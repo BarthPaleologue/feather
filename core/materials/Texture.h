@@ -26,7 +26,8 @@ public:
         glDeleteTextures(1, &_handle);
     }
 
-    Texture(unsigned int width, unsigned int height, TextureType type = RGBA, bool generateMipMap = true) {
+    Texture(unsigned int width, unsigned int height, TextureType type = RGBA, bool generateMipMap = true) : _type(
+            type) {
         glGenTextures(1, &_handle);
         //glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, _handle);
@@ -34,27 +35,42 @@ public:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-        if (type == RGBA) {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        } else {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-            float borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
-            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-        }
+        switch (_type) {
+            case RGBA:
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-        if (type == RGBA) {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, (int) width, (int) height, 0, GL_RGBA, GL_FLOAT, nullptr);
-            glBindImageTexture(0, _handle, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-        } else {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-                         (int) width, (int) height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, (int) width, (int) height, 0, GL_RGBA, GL_FLOAT, nullptr);
+                glBindImageTexture(0, _handle, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+                break;
+            case DEPTH: {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+                float borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
+                glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+                             (int) width, (int) height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+            }
+                break;
         }
 
         if (generateMipMap) {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
             glGenerateMipmap(GL_TEXTURE_2D);
+        }
+    }
+
+    void resize(int width, int height) {
+        glBindTexture(GL_TEXTURE_2D, _handle);
+        switch (_type) {
+            case RGBA:
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, (int) width, (int) height, 0, GL_RGBA, GL_FLOAT, nullptr);
+                break;
+            case DEPTH:
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, (int) width, (int) height, 0, GL_DEPTH_COMPONENT,
+                             GL_FLOAT, nullptr);
+                break;
         }
     }
 
@@ -72,6 +88,8 @@ public:
 
 private:
     unsigned int _handle{};
+
+    TextureType _type;
 };
 
 

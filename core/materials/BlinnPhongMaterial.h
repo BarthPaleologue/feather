@@ -12,13 +12,13 @@
 
 class BlinnPhongMaterial : public Material {
 public:
-    BlinnPhongMaterial(std::shared_ptr<Scene> scene);
+    explicit BlinnPhongMaterial(std::shared_ptr<Scene> scene);
 
-    void setDiffuseTexture(Texture *texture);
+    void setDiffuseTexture(std::shared_ptr<Texture> texture);
 
     void setDiffuseTextureFromFile(const char *filePath);
 
-    void setAmbientTexture(Texture *texture);
+    void setAmbientTexture(std::shared_ptr<Texture> texture);
 
     void setAmbientTextureFromFile(const char *filePath);
 
@@ -43,8 +43,8 @@ public:
     void unbind() override;
 
 private:
-    Texture *_diffuseTexture = nullptr;
-    Texture *_ambientTexture = nullptr;
+    std::shared_ptr<Texture> _diffuseTexture = nullptr;
+    std::shared_ptr<Texture> _ambientTexture = nullptr;
     glm::vec3 *_alphaColor = nullptr;
     glm::vec3 *_diffuseColor = new glm::vec3(0.0);
     glm::vec3 *_ambientColor = new glm::vec3(0.0);

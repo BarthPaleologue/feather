@@ -47,9 +47,7 @@ void PostProcessing::RenderTo(unsigned int targetFramebuffer) {
     glDisable(GL_DEPTH_TEST); // prevents framebuffer rectangle from being discarded
 
     // bind input texture to screenTexture uniform
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, _inputTexture->handle());
-    _shader->setInt("screenTexture", 0);
+    _shader->bindTexture("screenTexture", _inputTexture.get(), 0);
 
     screenQuad->render();
 
@@ -62,8 +60,7 @@ void PostProcessing::resize(int width, int height) {
     _height = height;
 
     // resize framebuffer texture
-    glBindTexture(GL_TEXTURE_2D, _inputTexture->handle());
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, _width, _height, 0, GL_RGBA, GL_FLOAT, nullptr);
+    _inputTexture->resize(_width, _height);
 
     // resize render buffer
     glBindRenderbuffer(GL_RENDERBUFFER, RBO);
