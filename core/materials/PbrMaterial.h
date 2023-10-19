@@ -11,7 +11,7 @@
 
 class PbrMaterial : public Material {
 public:
-    explicit PbrMaterial(std::shared_ptr<Scene> scene) : Material("./assets/shaders/standard"), _scene(scene) {
+    explicit PbrMaterial(std::shared_ptr<Scene> scene) : Material("./assets/shaders/pbr"), _scene(scene) {
         std::string maxPointLights = std::to_string(Settings::MAX_POINT_LIGHTS);
         shader()->setDefine((std::string("MAX_POINT_LIGHTS ") + maxPointLights).c_str());
 
@@ -21,9 +21,23 @@ public:
 
     void bind() override {
         Material::bind();
-        shader()->setVec3("cameraPosition", _scene->activeCamera()->position());
 
+        if (_albedoTexture != nullptr) shader()->bindTexture("albedoTexture", _albedoTexture, 0);
+        if (_shadowRenderer != nullptr) {
+            shader()->bindTexture("shadowMap", _shadowRenderer->depthTexture(), 2);
+            glm::mat4 lightSpaceMatrix = _shadowRenderer->projectionViewMatrix();
+            shader()->setMat4("lightSpaceMatrix", &lightSpaceMatrix);
+            shader()->setVec3("lightDirection", _shadowRenderer->directionalLight()->getDirection());
+        }
+        shader()->setVec3("cameraPosition", _scene->activeCamera()->position());
         shader()->setBool("lightingEnabled", _lightingEnabled);
+
+        shader()->setVec3("albedoColor", _albedoColor);
+        shader()->setVec3("ambientColor", _ambientColor);
+
+        shader()->setFloat("metallic", metallic);
+        shader()->setFloat("roughness", roughness);
+        shader()->setFloat("ao", ao);
 
         auto *pointLights = _scene->pointLights();
         shader()->setInt("pointLightCount", (int) pointLights->size());
@@ -55,13 +69,42 @@ public:
 
     void setLightingEnabled(bool enabled) { _lightingEnabled = enabled; }
 
+    void setMetallic(float metallic) { this->metallic = metallic; }
+
+    void setRoughness(float roughness) { this->roughness = roughness; }
+
     void receiveShadows(std::shared_ptr<ShadowRenderer> shadowRenderer) {
         if (_shadowRenderer == nullptr) shader()->setDefine("SHADOW_MAP");
         _shadowRenderer = shadowRenderer;
     }
 
+    void setAlbedoColor(float r, float g, float b) {
+        _albedoColor->x = r;
+        _albedoColor->y = g;
+        _albedoColor->z = b;
+    }
+
+    void setAlbedoTexture(Texture *texture) {
+        if (_albedoTexture == nullptr) shader()->setDefine("ALBEDO_TEXTURE");
+        _albedoTexture = texture;
+    }
+
 private:
     std::shared_ptr<Scene> _scene;
+
+    Texture *_albedoTexture = nullptr;
+    Texture *_normalTexture = nullptr;
+    Texture *_metallicTexture = nullptr;
+    Texture *_roughnessTexture = nullptr;
+    Texture *_aoTexture = nullptr;
+
+    glm::vec3 *_albedoColor = new glm::vec3(0.0);
+    glm::vec3 *_ambientColor = new glm::vec3(0.0);
+    glm::vec3 *_alphaColor = nullptr;
+
+    float metallic = 1.0f;
+    float roughness = 0.5f;
+    float ao = 1.0f;
 
     bool _lightingEnabled = true;
 

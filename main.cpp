@@ -65,6 +65,7 @@ int main() {
     sphere->transform()->setPosition(4, 1, 10);
 
     auto sphereMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
+    sphereMaterial->setAlbedoColor(1.0, 0.5, 0.5);
     sphere->setMaterial(sphereMaterial);
 
     shadowRenderer->addShadowCaster(sphere);
@@ -73,8 +74,10 @@ int main() {
     ground->transform()->setPosition(0, -2, 0);
     ground->transform()->setScale(40);
 
-    auto groundMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
-    groundMaterial->setDiffuseColor(0.5, 0.5, 0.5);
+    auto groundMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
+    groundMaterial->setAlbedoColor(0.5, 0.5, 0.5);
+    groundMaterial->setMetallic(0.2f);
+    groundMaterial->setRoughness(0.8f);
     groundMaterial->receiveShadows(shadowRenderer);
 
     groundMaterial->setBackFaceCullingEnabled(false);

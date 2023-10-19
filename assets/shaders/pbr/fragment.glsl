@@ -19,6 +19,7 @@ vec2(0.34495938, 0.29387760)
 #endif
 
 uniform mat4 world;
+uniform mat4 normalMatrix;
 
 uniform int pointLightCount;
 struct PointLight {
@@ -40,12 +41,15 @@ uniform vec3 cameraPosition;
 
 uniform bool lightingEnabled;
 
-uniform vec3 diffuseColor;
+uniform vec3 albedoColor;
 uniform vec3 ambientColor;
 uniform vec3 alphaColor;
-uniform float shininess;
 
-layout(binding = 0) uniform sampler2D diffuseTexture;
+uniform float metallic;
+uniform float roughness;
+uniform float ao;
+
+layout(binding = 0) uniform sampler2D albedoTexture;
 layout(binding = 1) uniform sampler2D ambientTexture;
 layout(binding = 2) uniform sampler2D shadowMap;
 
@@ -87,48 +91,116 @@ float getShadowFactor(vec4 positionShadow) {
 }
 #endif
 
+#define PI 3.14159265359
+
+float DistributionGGX(vec3 N, vec3 H, float roughness) {
+    float a      = roughness*roughness;
+    float a2     = a*a;
+    float NdotH  = max(dot(N, H), 0.0);
+    float NdotH2 = NdotH*NdotH;
+
+    float num   = a2;
+    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
+    denom = PI * denom * denom;
+
+    return num / denom;
+}
+
+float GeometrySchlickGGX(float NdotV, float roughness) {
+    float r = (roughness + 1.0);
+    float k = (r*r) / 8.0;
+
+    float num   = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+
+    return num / denom;
+}
+float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
+    float NdotV = max(dot(N, V), 0.0);
+    float NdotL = max(dot(N, L), 0.0);
+    float ggx2  = GeometrySchlickGGX(NdotV, roughness);
+    float ggx1  = GeometrySchlickGGX(NdotL, roughness);
+
+    return ggx1 * ggx2;
+}
+
+vec3 fresnelSchlick(float cosTheta, vec3 F0) {
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+}
 
 
 void main() {
     vec3 color = vec3(0.0);
 
+    vec3 N = normalize(vNormalW);
+    vec3 V = normalize(cameraPosition - vPositionW);
+
     if (lightingEnabled) {
-        vec3 diffuseColor = diffuseColor;
-        #ifdef DIFFUSE_TEXTURE
-        diffuseColor = texture(diffuseTexture, vUV).rgb;
+        vec3 albedo = albedoColor;
+        #ifdef ALBEDO_TEXTURE
+        albedo = pow(texture(albedoTexture, vUV).rgb, vec3(2.2));
         #endif
 
         #ifdef ALPHA_COLOR
-        if (diffuseColor == alphaColor) discard;
+        if (albedo == alphaColor) discard;
         #endif
 
-        vec3 diffuseLightContributions = vec3(0.0);
-        vec3 specularLightContributions = vec3(0.0);
-        for (int i = 0; i < pointLightCount; i++) {
-            float ndl = max(dot(vNormalW, normalize(pointLights[i].position - vPositionW)), 0.0);
-            diffuseLightContributions += diffuseColor * pointLights[i].color * ndl * pointLights[i].intensity;
+        vec3 Lo = vec3(0.0);
 
-            vec3 lightRayW = normalize(pointLights[i].position - vPositionW);
-            vec3 viewDirW = normalize(cameraPosition - vPositionW);
-            vec3 halfWayW = normalize(viewDirW + lightRayW);
-            vec3 normalW = normalize(vec3(world * vec4(vNormal, 0.0)));
-            float specComp = pow(max(0.0, dot(normalW, halfWayW)), shininess);
-            specularLightContributions += pow(specComp, 32.0) * pointLights[i].color * pointLights[i].intensity;
+        vec3 F0 = vec3(0.04);
+        F0      = mix(F0, albedo, metallic);
+
+        for (int i = 0; i < pointLightCount; i++) {
+            vec3 L = normalize(pointLights[i].position - vPositionW);
+            vec3 H = normalize(V + L);
+
+            float distance = length(pointLights[i].position - vPositionW);
+            float attenuation = 1.0 / (distance * distance);
+            vec3 radiance = pointLights[i].color * attenuation;
+
+            vec3 F  = fresnelSchlick(max(dot(H, V), 0.0), F0);
+
+            float NDF = DistributionGGX(N, H, roughness);
+            float G   = GeometrySmith(N, V, L, roughness);
+
+            vec3 numerator    = NDF * G * F;
+            float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0)  + 0.0001;
+            vec3 specular     = numerator / denominator;
+
+            vec3 kS = F;
+            vec3 kD = vec3(1.0) - kS;
+
+            kD *= 1.0 - metallic;
+
+            float NdotL = max(dot(N, L), 0.0);
+            Lo += (kD * albedo / PI + specular) * radiance * NdotL;
         }
 
         for (int i = 0; i < directionalLightCount; i++) {
-            float ndl = max(dot(vNormalW, normalize(directionalLights[i].direction)), 0.0);
-            diffuseLightContributions += diffuseColor * directionalLights[i].color * ndl * directionalLights[i].intensity;
+            vec3 L = normalize(directionalLights[i].direction);
+            vec3 H = normalize(V + L);
 
-            vec3 lightRayW = normalize(directionalLights[i].direction);
-            vec3 viewDirW = normalize(cameraPosition - vPositionW);
-            vec3 halfWayW = normalize(viewDirW + lightRayW);
-            vec3 normalW = normalize(vec3(world * vec4(vNormal, 0.0)));
-            float specComp = pow(max(0.0, dot(normalW, halfWayW)), shininess);
-            specularLightContributions += pow(specComp, 32.0) * directionalLights[i].color * directionalLights[i].intensity;
+            vec3 radiance = directionalLights[i].color;
+
+            vec3 F  = fresnelSchlick(max(dot(H, V), 0.0), F0);
+
+            float NDF = DistributionGGX(N, H, roughness);
+            float G   = GeometrySmith(N, V, L, roughness);
+
+            vec3 numerator    = NDF * G * F;
+            float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0)  + 0.0001;
+            vec3 specular     = numerator / denominator;
+
+            vec3 kS = F;
+            vec3 kD = vec3(1.0) - kS;
+
+            kD *= 1.0 - metallic;
+
+            float NdotL = max(dot(N, L), 0.0);
+            Lo += (kD * albedo / PI + specular) * radiance * NdotL;
         }
 
-        color += diffuseColor * diffuseLightContributions + specularLightContributions;
+        color += Lo;
     }
 
     vec3 ambientColor = ambientColor;
@@ -142,11 +214,11 @@ void main() {
 
     color += ambientColor;
 
-
     #ifdef SHADOW_MAP
-    //color = vec3(texture(shadowMap, vUV).r);
     color *= getShadowFactor(vPositionShadow);
     #endif
+
+    color = color / (color + vec3(1.0));
 
     frag_color = vec4(color, 1.0);
 }
