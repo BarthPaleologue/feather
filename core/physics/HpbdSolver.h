@@ -98,6 +98,7 @@ public:
                     body->mesh()->vertexData().positions[particle->startIndex + 2] = particle->position.z;
                 }
 
+                body->mesh()->vertexData().computeNormals();
                 body->mesh()->updateVertexData();
             }
         }

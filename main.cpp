@@ -44,13 +44,13 @@ int main() {
     PhysicsBody *cloth = new Cloth("cloth", scene, 16, 0.1f);
 
     cloth->transform()->setRotationZ(-3.14 / 2.0);
-    cloth->transform()->setRotationZ(-3.14 / 2.0);
+    cloth->transform()->setRotationY(3.14);
     cloth->bakeTransformIntoVertexData();
     cloth->transform()->setScale(10);
     cloth->transform()->setPosition(0, 5, 0);
 
     auto clothMaterial = std::make_shared<PhongMaterial>(std::shared_ptr<Scene>(&scene));
-    clothMaterial->setAmbientColor(1.0, 0.2, 0.2);
+    clothMaterial->setDiffuseColor(1.0, 0.2, 0.2);
     clothMaterial->setBackFaceCullingEnabled(false);
     clothMaterial->setWireframe(true);
     cloth->mesh()->setMaterial(clothMaterial);
