@@ -49,7 +49,7 @@ int main() {
     cloth->transform()->setScale(10);
     cloth->transform()->setPosition(0, 5, 0);
 
-    auto clothMaterial = std::make_shared<PhongMaterial>(std::shared_ptr<Scene>(&scene));
+    auto clothMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
     clothMaterial->setDiffuseColor(1.0, 0.2, 0.2);
     clothMaterial->setBackFaceCullingEnabled(false);
     clothMaterial->setWireframe(true);
@@ -63,7 +63,7 @@ int main() {
     auto sphere = MeshBuilder::makeSphere("sphere", scene, 32);
     sphere->transform()->setPosition(4, 1, 10);
 
-    auto sphereMaterial = std::make_shared<PhongMaterial>(std::shared_ptr<Scene>(&scene));
+    auto sphereMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
     sphereMaterial->setDiffuseColor(0.2, 0.2, 1.0);
     sphere->setMaterial(sphereMaterial);
 
@@ -73,7 +73,7 @@ int main() {
     ground->transform()->setPosition(0, -2, 0);
     ground->transform()->setScale(40);
 
-    auto groundMaterial = std::make_shared<PhongMaterial>(std::shared_ptr<Scene>(&scene));
+    auto groundMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
     groundMaterial->setDiffuseColor(0.5, 0.5, 0.5);
     groundMaterial->receiveShadows(shadowRenderer);
 

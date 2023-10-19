@@ -2,10 +2,10 @@
 // Created by barth on 03/10/2022.
 //
 
-#include "PhongMaterial.h"
+#include "BlinnPhongMaterial.h"
 #include "Settings.h"
 
-PhongMaterial::PhongMaterial(std::shared_ptr<Scene> scene) : Material("./assets/shaders/standard"), _scene(scene) {
+BlinnPhongMaterial::BlinnPhongMaterial(std::shared_ptr<Scene> scene) : Material("./assets/shaders/standard"), _scene(scene) {
     std::string maxPointLights = std::to_string(Settings::MAX_POINT_LIGHTS);
     shader()->setDefine((std::string("MAX_POINT_LIGHTS ") + maxPointLights).c_str());
 
@@ -13,30 +13,32 @@ PhongMaterial::PhongMaterial(std::shared_ptr<Scene> scene) : Material("./assets/
     shader()->setDefine((std::string("MAX_DIRECTIONAL_LIGHTS ") + maxDirectionalLights).c_str());
 }
 
-void PhongMaterial::setDiffuseTexture(Texture *texture) {
+void BlinnPhongMaterial::setDiffuseTexture(Texture *texture) {
     if (_diffuseTexture == nullptr) shader()->setDefine("DIFFUSE_TEXTURE");
     _diffuseTexture = texture;
 }
 
-void PhongMaterial::setDiffuseTextureFromFile(const char *filePath) {
+void BlinnPhongMaterial::setDiffuseTextureFromFile(const char *filePath) {
     Texture *diffuseTexture = new Texture(filePath);
     setDiffuseTexture(diffuseTexture);
 }
 
-void PhongMaterial::setAmbientTexture(Texture *texture) {
+void BlinnPhongMaterial::setAmbientTexture(Texture *texture) {
     if (_ambientTexture == nullptr) shader()->setDefine("AMBIENT_TEXTURE");
     _ambientTexture = texture;
 }
 
-void PhongMaterial::receiveShadows(std::shared_ptr<ShadowRenderer> shadowRenderer) {
+void BlinnPhongMaterial::receiveShadows(std::shared_ptr<ShadowRenderer> shadowRenderer) {
     if (_shadowRenderer == nullptr) shader()->setDefine("SHADOW_MAP");
     _shadowRenderer = shadowRenderer;
 }
 
-void PhongMaterial::bind() {
+void BlinnPhongMaterial::bind() {
     Material::bind();
 
     shader()->setVec3("cameraPosition", _scene->activeCamera()->position());
+
+    shader()->setFloat("shininess", _shininess);
 
     if (_diffuseTexture != nullptr) shader()->bindTexture("diffuseTexture", _diffuseTexture, 0);
     if (_ambientTexture != nullptr) shader()->bindTexture("ambientTexture", _ambientTexture, 1);
@@ -74,26 +76,26 @@ void PhongMaterial::bind() {
     }
 }
 
-void PhongMaterial::unbind() {
+void BlinnPhongMaterial::unbind() {
     Material::unbind();
     if (_diffuseTexture != nullptr) _diffuseTexture->unbind();
     if (_ambientTexture != nullptr) _ambientTexture->unbind();
     if (_shadowRenderer != nullptr) _shadowRenderer->depthTexture()->unbind();
 }
 
-void PhongMaterial::setAmbientColor(float r, float g, float b) {
+void BlinnPhongMaterial::setAmbientColor(float r, float g, float b) {
     _ambientColor->x = r;
     _ambientColor->y = g;
     _ambientColor->z = b;
 }
 
-void PhongMaterial::setDiffuseColor(float r, float g, float b) {
+void BlinnPhongMaterial::setDiffuseColor(float r, float g, float b) {
     _diffuseColor->x = r;
     _diffuseColor->y = g;
     _diffuseColor->z = b;
 }
 
-void PhongMaterial::setAlphaColor(float r, float g, float b) {
+void BlinnPhongMaterial::setAlphaColor(float r, float g, float b) {
     if (_alphaColor == nullptr) {
         shader()->setDefine("ALPHA_COLOR");
         _alphaColor = new glm::vec3(r, g, b);
@@ -104,7 +106,7 @@ void PhongMaterial::setAlphaColor(float r, float g, float b) {
     }
 }
 
-void PhongMaterial::setAmbientTextureFromFile(const char *filePath) {
+void BlinnPhongMaterial::setAmbientTextureFromFile(const char *filePath) {
     Texture *ambientTexture = new Texture(filePath);
     setAmbientTexture(ambientTexture);
 }

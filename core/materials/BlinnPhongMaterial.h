@@ -2,17 +2,17 @@
 // Created by barth on 03/10/2022.
 //
 
-#ifndef FEATHERGL_PHONGMATERIAL_H
-#define FEATHERGL_PHONGMATERIAL_H
+#ifndef FEATHERGL_BLINNPHONGMATERIAL_H
+#define FEATHERGL_BLINNPHONGMATERIAL_H
 
 #include "Material.h"
 #include "Texture.h"
 #include "Camera.h"
 #include "Scene.h"
 
-class PhongMaterial : public Material {
+class BlinnPhongMaterial : public Material {
 public:
-    PhongMaterial(std::shared_ptr<Scene> scene);
+    BlinnPhongMaterial(std::shared_ptr<Scene> scene);
 
     void setDiffuseTexture(Texture *texture);
 
@@ -36,6 +36,8 @@ public:
 
     void setLightingEnabled(bool enabled) { _lightingEnabled = enabled; }
 
+    void setShininess(float shininess) { _shininess = shininess; }
+
     void bind() override;
 
     void unbind() override;
@@ -47,6 +49,8 @@ private:
     glm::vec3 *_diffuseColor = new glm::vec3(0.0);
     glm::vec3 *_ambientColor = new glm::vec3(0.0);
 
+    float _shininess = 8.0f;
+
     std::shared_ptr<ShadowRenderer> _shadowRenderer = nullptr;
 
     std::shared_ptr<Scene> _scene;
@@ -55,4 +59,4 @@ private:
 };
 
 
-#endif //FEATHERGL_PHONGMATERIAL_H
+#endif //FEATHERGL_BLINNPHONGMATERIAL_H

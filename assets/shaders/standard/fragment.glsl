@@ -43,6 +43,7 @@ uniform bool lightingEnabled;
 uniform vec3 diffuseColor;
 uniform vec3 ambientColor;
 uniform vec3 alphaColor;
+uniform float shininess;
 
 layout(binding = 0) uniform sampler2D diffuseTexture;
 layout(binding = 1) uniform sampler2D ambientTexture;
@@ -109,8 +110,9 @@ void main() {
 
             vec3 lightRayW = normalize(pointLights[i].position - vPositionW);
             vec3 viewDirW = normalize(cameraPosition - vPositionW);
-            vec3 angleW = normalize(viewDirW + lightRayW);
-            float specComp = max(0., dot(normalize(vec3(world * vec4(vNormal, 0.0))), angleW));
+            vec3 halfWayW = normalize(viewDirW + lightRayW);
+            vec3 normalW = normalize(vec3(world * vec4(vNormal, 0.0)));
+            float specComp = pow(max(0.0, dot(normalW, halfWayW)), shininess);
             specularLightContributions += pow(specComp, 32.0) * pointLights[i].color * pointLights[i].intensity;
         }
 
@@ -120,8 +122,9 @@ void main() {
 
             vec3 lightRayW = normalize(directionalLights[i].direction);
             vec3 viewDirW = normalize(cameraPosition - vPositionW);
-            vec3 angleW = normalize(viewDirW + lightRayW);
-            float specComp = max(0., dot(normalize(vec3(world * vec4(vNormal, 0.0))), angleW));
+            vec3 halfWayW = normalize(viewDirW + lightRayW);
+            vec3 normalW = normalize(vec3(world * vec4(vNormal, 0.0)));
+            float specComp = pow(max(0.0, dot(normalW, halfWayW)), shininess);
             specularLightContributions += pow(specComp, 32.0) * directionalLights[i].color * directionalLights[i].intensity;
         }
 
