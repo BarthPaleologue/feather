@@ -1,3 +1,5 @@
+precision highp float;
+
 out vec4 fragColor;
 
 uniform float exposure;

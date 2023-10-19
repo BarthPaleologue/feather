@@ -1,3 +1,5 @@
+precision highp float;
+
 out vec4 frag_color;
 
 in vec3 vColor;
@@ -219,6 +221,7 @@ void main() {
     #endif
 
     color = color / (color + vec3(1.0));
+    color = pow(color, vec3(1.0 / 2.2));
 
     frag_color = vec4(color, 1.0);
 }

@@ -33,7 +33,7 @@ GLuint loadTextureFromFileToGPU(const char *filename) {
     unsigned char *data = stbi_load(
             filename,
             &width, &height,
-            &numComponents, // 1 for a 8 bit grey-scale image, 3 for 24bits RGB image, 4 for 32bits RGBA image
+            &numComponents, // 1 for a 8 bit grey-scale image, 3 for 24bits RGBA image, 4 for 32bits RGBA image
             0);
 
     GLuint texID;

@@ -65,7 +65,7 @@ RECENT REVISION HISTORY:
       2.13  (2016-12-04) experimental 16-bit API, only for PNG so far; fixes
       2.12  (2016-04-02) fix typo in 2.11 PSD fix that caused crashes
       2.11  (2016-04-02) 16-bit PNGS; enable SSE2 in non-gcc x64
-                         RGB-format JPEG; remove white matting in PSD;
+                         RGBA-format JPEG; remove white matting in PSD;
                          allocate large structures on the stack;
                          correct channel count for PNG & BMP
       2.10  (2016-01-22) avoid warning introduced in 2.09
@@ -311,7 +311,7 @@ RECENT REVISION HISTORY:
 // iPhone PNG support:
 //
 // We optionally support converting iPhone-formatted PNGs (which store
-// premultiplied BGRA) back to RGB, even though they're internally encoded
+// premultiplied BGRA) back to RGBA, even though they're internally encoded
 // differently. To enable this conversion, call
 // stbi_convert_iphone_png_to_rgb(1).
 //
@@ -1280,7 +1280,7 @@ static stbi__uint16 *stbi__load_and_postprocess_16bit(stbi__context *s, int *x, 
    }
 
    // @TODO: move stbi__convert_format16 to here
-   // @TODO: special case RGB-to-Y (and RGBA-to-YA) for 8-bit-to-16-bit case to keep more precision
+   // @TODO: special case RGBA-to-Y (and RGBA-to-YA) for 8-bit-to-16-bit case to keep more precision
 
    if (stbi__vertically_flip_on_load) {
       int channels = req_comp ? req_comp : *comp;
@@ -1895,7 +1895,7 @@ static stbi_uc *stbi__hdr_to_ldr(float   *data, int x, int y, int comp)
 //
 //    simple implementation
 //      - doesn't support delayed output of y-dimension
-//      - simple interface (only one output format: 8-bit interleaved RGB)
+//      - simple interface (only one output format: 8-bit interleaved RGBA)
 //      - doesn't try to recover corrupt jpegs
 //      - doesn't allow partial loading, loading multiple at once
 //      - still fast on x86 (copying globals into locals doesn't help x86)
@@ -3600,7 +3600,7 @@ static stbi_uc *stbi__resample_row_generic(stbi_uc *out, stbi_uc *in_near, stbi_
    return out;
 }
 
-// this is a reduced-precision calculation of YCbCr-to-RGB introduced
+// this is a reduced-precision calculation of YCbCr-to-RGBA introduced
 // to make sure the code produces the same results in both SIMD and scalar
 #define stbi__float2fixed(x)  (((int) ((x) * 4096.0f + 0.5f)) << 8)
 static void stbi__YCbCr_to_RGB_row(stbi_uc *out, const stbi_uc *y, const stbi_uc *pcb, const stbi_uc *pcr, int count, int step)
@@ -5660,7 +5660,7 @@ static void *stbi__bmp_load(stbi__context *s, int *x, int *y, int *comp, int req
 // returns STBI_rgb or whatever, 0 on error
 static int stbi__tga_get_comp(int bits_per_pixel, int is_grey, int* is_rgb16)
 {
-   // only RGB or RGBA (incl. 16bit) or grey allowed
+   // only RGBA or RGBA (incl. 16bit) or grey allowed
    if (is_rgb16) *is_rgb16 = 0;
    switch(bits_per_pixel) {
       case 8:  return STBI_grey;
@@ -5682,7 +5682,7 @@ static int stbi__tga_info(stbi__context *s, int *x, int *y, int *comp)
     tga_colormap_type = stbi__get8(s); // colormap type
     if( tga_colormap_type > 1 ) {
         stbi__rewind(s);
-        return 0;      // only RGB or indexed allowed
+        return 0;      // only RGBA or indexed allowed
     }
     tga_image_type = stbi__get8(s); // image type
     if ( tga_colormap_type == 1 ) { // colormapped (paletted) image
@@ -5698,10 +5698,10 @@ static int stbi__tga_info(stbi__context *s, int *x, int *y, int *comp)
         }
         stbi__skip(s,4);       // skip image x and y origin
         tga_colormap_bpp = sz;
-    } else { // "normal" image w/o colormap - only RGB or grey allowed, +/- RLE
+    } else { // "normal" image w/o colormap - only RGBA or grey allowed, +/- RLE
         if ( (tga_image_type != 2) && (tga_image_type != 3) && (tga_image_type != 10) && (tga_image_type != 11) ) {
             stbi__rewind(s);
-            return 0; // only RGB or grey allowed, +/- RLE
+            return 0; // only RGBA or grey allowed, +/- RLE
         }
         stbi__skip(s,9); // skip colormap specification and image x/y origin
         tga_colormap_bpp = 0;
@@ -5745,7 +5745,7 @@ static int stbi__tga_test(stbi__context *s)
    int sz, tga_color_type;
    stbi__get8(s);      //   discard Offset
    tga_color_type = stbi__get8(s);   //   color type
-   if ( tga_color_type > 1 ) goto errorEnd;   //   only RGB or indexed allowed
+   if ( tga_color_type > 1 ) goto errorEnd;   //   only RGBA or indexed allowed
    sz = stbi__get8(s);   //   image type
    if ( tga_color_type == 1 ) { // colormapped (paletted) image
       if (sz != 1 && sz != 9) goto errorEnd; // colortype 1 demands image type 1 or 9
@@ -5754,7 +5754,7 @@ static int stbi__tga_test(stbi__context *s)
       if ( (sz != 8) && (sz != 15) && (sz != 16) && (sz != 24) && (sz != 32) ) goto errorEnd;
       stbi__skip(s,4);       // skip image x and y origin
    } else { // "normal" image w/o colormap
-      if ( (sz != 2) && (sz != 3) && (sz != 10) && (sz != 11) ) goto errorEnd; // only RGB or grey allowed, +/- RLE
+      if ( (sz != 2) && (sz != 3) && (sz != 10) && (sz != 11) ) goto errorEnd; // only RGBA or grey allowed, +/- RLE
       stbi__skip(s,9); // skip colormap specification and image x/y origin
    }
    if ( stbi__get16le(s) < 1 ) goto errorEnd;      //   test _width
@@ -5770,7 +5770,7 @@ errorEnd:
    return res;
 }
 
-// read 16bit value and convert to 24bit RGB
+// read 16bit value and convert to 24bit RGBA
 static void stbi__tga_read_rgb16(stbi__context *s, stbi_uc* out)
 {
    stbi__uint16 px = (stbi__uint16)stbi__get16le(s);
@@ -5779,7 +5779,7 @@ static void stbi__tga_read_rgb16(stbi__context *s, stbi_uc* out)
    int r = (px >> 10) & fiveBitMask;
    int g = (px >> 5) & fiveBitMask;
    int b = px & fiveBitMask;
-   // Note that this saves the data in RGB(A) order, so it doesn't need to be swapped later
+   // Note that this saves the data in RGBA(A) order, so it doesn't need to be swapped later
    out[0] = (stbi_uc)((r * 255)/31);
    out[1] = (stbi_uc)((g * 255)/31);
    out[2] = (stbi_uc)((b * 255)/31);
@@ -5787,7 +5787,7 @@ static void stbi__tga_read_rgb16(stbi__context *s, stbi_uc* out)
    // some people claim that the most significant bit might be used for alpha
    // (possibly if an alpha-bit is set in the "image descriptor byte")
    // but that only made 16bit test images completely translucent..
-   // so let's treat all 15 and 16bit TGAs as RGB with no alpha.
+   // so let's treat all 15 and 16bit TGAs as RGBA with no alpha.
 }
 
 static void *stbi__tga_load(stbi__context *s, int *x, int *y, int *comp, int req_comp, stbi__result_info *ri)
@@ -5969,7 +5969,7 @@ static void *stbi__tga_load(stbi__context *s, int *x, int *y, int *comp, int req
       }
    }
 
-   // swap RGB - if the source data was RGB16, it already is in the right order
+   // swap RGBA - if the source data was RGB16, it already is in the right order
    if (tga_comp >= 3 && !tga_rgb16)
    {
       unsigned char* tga_pixel = tga_data;
@@ -6083,18 +6083,18 @@ static void *stbi__psd_load(stbi__context *s, int *x, int *y, int *comp, int req
    if (bitdepth != 8 && bitdepth != 16)
       return stbi__errpuc("unsupported bit depth", "PSD bit depth is not 8 or 16 bit");
 
-   // Make sure the color mode is RGB.
+   // Make sure the color mode is RGBA.
    // Valid options are:
    //   0: Bitmap
    //   1: Grayscale
    //   2: Indexed color
-   //   3: RGB color
+   //   3: RGBA color
    //   4: CMYK color
    //   7: Multichannel
    //   8: Duotone
    //   9: Lab color
    if (stbi__get16be(s) != 3)
-      return stbi__errpuc("wrong color format", "PSD is not in RGB color format");
+      return stbi__errpuc("wrong color format", "PSD is not in RGBA color format");
 
    // Skip the Mode Data.  (It's the palette for indexed color; other info for other modes.)
    stbi__skip(s,stbi__get32be(s) );
@@ -7155,7 +7155,7 @@ static float *stbi__hdr_load(stbi__context *s, int *x, int *y, int *comp, int re
          len = stbi__get8(s);
          if (c1 != 2 || c2 != 2 || (len & 0x80)) {
             // not run-length encoded, so we have to actually use THIS data as a decoded
-            // pixel (note this can't be a valid pixel--one of RGB must be >= 128)
+            // pixel (note this can't be a valid pixel--one of RGBA must be >= 128)
             stbi_uc rgbe[4];
             rgbe[0] = (stbi_uc) c1;
             rgbe[1] = (stbi_uc) c2;
@@ -7697,7 +7697,7 @@ STBIDEF int stbi_is_16_bit_from_callbacks(stbi_io_callbacks const *c, void *user
                          remove white matting for transparent PSD
                          fix reported channel count for PNG & BMP
                          re-enable SSE2 in non-gcc 64-bit
-                         support RGB-formatted JPEG
+                         support RGBA-formatted JPEG
                          read 16-bit PNGs (only as 8-bit)
       2.10  (2016-01-22) avoid warning introduced in 2.09 by STBI_REALLOC_SIZED
       2.09  (2016-01-16) allow comments in PNM files
@@ -7706,7 +7706,7 @@ STBIDEF int stbi_is_16_bit_from_callbacks(stbi_io_callbacks const *c, void *user
                          info() for BMP to shares code instead of sloppy parse
                          can use STBI_REALLOC_SIZED if allocator doesn't support realloc
                          code cleanup
-      2.08  (2015-09-13) fix to 2.07 cleanup, reading RGB PSD as RGBA
+      2.08  (2015-09-13) fix to 2.07 cleanup, reading RGBA PSD as RGBA
       2.07  (2015-09-13) fix compiler warnings
                          partial animated GIF support
                          limited 16-bpc PSD support

@@ -77,7 +77,8 @@ Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Pr
         engine->onWindowResizeObservable.notifyObservers(width, height);
     });
 
-    setClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    // blueish background
+    setClearColor(0.4f, 0.6f, 0.6f, 1.0f);
 
     lastFrameTime = getElapsedTime();
 

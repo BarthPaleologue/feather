@@ -31,7 +31,7 @@ int main() {
     auto shadowRenderer = std::make_shared<ShadowRenderer>(std::shared_ptr<DirectionalLight>(&light));
     scene.addShadowRenderer(shadowRenderer);
 
-    PostProcessing colorCorrection("./assets/shaders/colorCorrection", &engine);
+    /*PostProcessing colorCorrection("./assets/shaders/colorCorrection", &engine);
     colorCorrection.onBeforeRenderObservable.add([&]() {
         colorCorrection.shader()->setFloat("gamma", 1.0f / 2.2f);
         colorCorrection.shader()->setFloat("exposure", 1.0f);
@@ -40,7 +40,10 @@ int main() {
         colorCorrection.shader()->setFloat("brightness", 0.0f);
     });
 
-    scene.addPostProcess(std::shared_ptr<PostProcessing>(&colorCorrection));
+    scene.addPostProcess(std::shared_ptr<PostProcessing>(&colorCorrection));*/
+
+    /*PostProcessing invert("./assets/shaders/invertPostProcess", &engine);
+    scene.addPostProcess(std::shared_ptr<PostProcessing>(&invert));*/
 
     PhysicsBody *cloth = new Cloth("cloth", scene, 16, 0.1f);
 
@@ -50,8 +53,10 @@ int main() {
     cloth->transform()->setScale(10);
     cloth->transform()->setPosition(0, 5, 0);
 
-    auto clothMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
-    clothMaterial->setDiffuseColor(1.0, 0.2, 0.2);
+    auto clothMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
+    clothMaterial->setAlbedoColor(1.0, 0.2, 0.2);
+    clothMaterial->setMetallic(0.2f);
+    clothMaterial->setRoughness(0.8f);
     clothMaterial->setBackFaceCullingEnabled(false);
     clothMaterial->setWireframe(true);
     cloth->mesh()->setMaterial(clothMaterial);
@@ -66,6 +71,9 @@ int main() {
 
     auto sphereMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     sphereMaterial->setAlbedoColor(1.0, 0.5, 0.5);
+    sphereMaterial->setAlbedoTexture(new Texture("./assets/textures/earth.jpg"));
+    sphereMaterial->setMetallic(0.8f);
+    sphereMaterial->setRoughness(0.4f);
     sphere->setMaterial(sphereMaterial);
 
     shadowRenderer->addShadowCaster(sphere);
@@ -76,8 +84,8 @@ int main() {
 
     auto groundMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     groundMaterial->setAlbedoColor(0.5, 0.5, 0.5);
-    groundMaterial->setMetallic(0.2f);
-    groundMaterial->setRoughness(0.8f);
+    groundMaterial->setMetallic(0.5f);
+    groundMaterial->setRoughness(0.4f);
     groundMaterial->receiveShadows(shadowRenderer);
 
     groundMaterial->setBackFaceCullingEnabled(false);
@@ -86,7 +94,7 @@ int main() {
     bool realTimePhysics = false;
 
     engine.onKeyPressObservable.add([&](int key) {
-        if (key == GLFW_KEY_W) ground->material()->setWireframe(!ground->material()->wireframe());
+        if (key == GLFW_KEY_W) cloth->mesh()->material()->setWireframe(!cloth->mesh()->material()->wireframe());
         if (key == GLFW_KEY_SPACE) realTimePhysics = !realTimePhysics;
         if (!realTimePhysics && key == GLFW_KEY_ENTER) solver.solve(1.0f / 60.0f);
     });
