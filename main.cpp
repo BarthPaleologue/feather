@@ -65,7 +65,7 @@ int main() {
     auto groundMaterial = std::make_shared<PhongMaterial>(std::shared_ptr<Scene>(&scene));
     //groundMaterial->setDiffuseColor(0.5, 0.5, 0.5);
 
-    groundMaterial->setShadowMap(shadowRenderer->depthTexture());
+    groundMaterial->setShadowRenderer(shadowRenderer);
 
     groundMaterial->setBackFaceCullingEnabled(false);
     ground->setMaterial(groundMaterial);

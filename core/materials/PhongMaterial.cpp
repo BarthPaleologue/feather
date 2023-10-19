@@ -28,9 +28,9 @@ void PhongMaterial::setAmbientTexture(Texture *texture) {
     _ambientTexture = texture;
 }
 
-void PhongMaterial::setShadowMap(Texture *texture) {
-    if (_shadowMap == nullptr) shader()->setDefine("SHADOW_MAP");
-    _shadowMap = texture;
+void PhongMaterial::setShadowRenderer(std::shared_ptr<ShadowRenderer> shadowRenderer) {
+    if (_shadowRenderer == nullptr) shader()->setDefine("SHADOW_MAP");
+    _shadowRenderer = shadowRenderer;
 }
 
 void PhongMaterial::bind() {
@@ -40,7 +40,11 @@ void PhongMaterial::bind() {
 
     if (_diffuseTexture != nullptr) shader()->bindTexture("diffuseTexture", _diffuseTexture, 0);
     if (_ambientTexture != nullptr) shader()->bindTexture("ambientTexture", _ambientTexture, 1);
-    if (_shadowMap != nullptr) shader()->bindTexture("shadowMap", _shadowMap, 2);
+    if (_shadowRenderer != nullptr) {
+        shader()->bindTexture("shadowMap", _shadowRenderer->depthTexture(), 2);
+        glm::mat4 lightSpaceMatrix = _shadowRenderer->projectionViewMatrix();
+        shader()->setMat4("lightSpaceMatrix", &lightSpaceMatrix);
+    }
     shader()->setVec3("diffuseColor", _diffuseColor);
     shader()->setVec3("ambientColor", _ambientColor);
     if (_alphaColor != nullptr) shader()->setVec3("alphaColor", _alphaColor);
@@ -73,7 +77,7 @@ void PhongMaterial::unbind() {
     Material::unbind();
     if (_diffuseTexture != nullptr) _diffuseTexture->unbind();
     if (_ambientTexture != nullptr) _ambientTexture->unbind();
-    if (_shadowMap != nullptr) _shadowMap->unbind();
+    if (_shadowRenderer != nullptr) _shadowRenderer->depthTexture()->unbind();
 }
 
 void PhongMaterial::setAmbientColor(float r, float g, float b) {

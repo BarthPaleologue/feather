@@ -7,6 +7,10 @@ in vec3 vNormal;
 in vec3 vNormalW;
 in vec2 vUV;
 
+#ifdef SHADOW_MAP
+in vec4 vPositionShadow;
+#endif
+
 uniform mat4 world;
 
 uniform int pointLightCount;
@@ -37,13 +41,28 @@ layout(binding = 0) uniform sampler2D diffuseTexture;
 layout(binding = 1) uniform sampler2D ambientTexture;
 layout(binding = 2) uniform sampler2D shadowMap;
 
+#ifdef SHADOW_MAP
+float getShadowFactor(vec4 positionShadow) {
+    vec3 shadowCoord = positionShadow.xyz / positionShadow.w;
+    shadowCoord = shadowCoord * 0.5 + 0.5;
+
+    float shadowFactor = 1.0;
+    if (texture(shadowMap, shadowCoord.xy).r < shadowCoord.z - 0.001) {
+        shadowFactor = 0.5;
+    }
+
+    return shadowFactor;
+}
+#endif
+
+
+
 void main() {
     vec3 color = vec3(0.0);
 
     if (lightingEnabled) {
         vec3 diffuseColor = diffuseColor;
         #ifdef DIFFUSE_TEXTURE
-
         diffuseColor = texture(diffuseTexture, vUV).rgb;
         #endif
 
@@ -87,11 +106,13 @@ void main() {
     if (ambientColor == alphaColor) discard;
     #endif
 
-    #ifdef SHADOW_MAP
-    color = vec3(texture(shadowMap, vUV).r);
-    #endif
-
     color += ambientColor;
+
+
+    #ifdef SHADOW_MAP
+    //color = vec3(texture(shadowMap, vUV).r);
+    color *= getShadowFactor(vPositionShadow);
+    #endif
 
     frag_color = vec4(color, 1.0);
 }

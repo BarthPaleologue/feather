@@ -14,6 +14,11 @@ uniform mat4 projectionView;
 uniform mat4 world;
 uniform mat4 normalMatrix;
 
+#ifdef SHADOW_MAP
+out vec4 vPositionShadow;
+uniform mat4 lightSpaceMatrix;
+#endif
+
 void main() {
     vColor = color;
     vPosition = position;
@@ -21,6 +26,10 @@ void main() {
     vNormal = normal;
     vNormalW = normalize(vec3(mat4(normalMatrix) * vec4(normal, 1.0)));
     vUV = uv;
+
+    #ifdef SHADOW_MAP
+    vPositionShadow = lightSpaceMatrix * world * vec4(position, 1.0);
+    #endif
 
     gl_Position = projectionView * world * vec4(position, 1.0);
 }
