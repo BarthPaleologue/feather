@@ -11,7 +11,7 @@
 class ShadowRenderer {
 public:
     explicit ShadowRenderer(std::shared_ptr<DirectionalLight> directionalLight,
-                            const unsigned int shadowMapWidth = 1024, const unsigned int shadowMapHeight = 1024)
+                            const unsigned int shadowMapWidth = 2048, const unsigned int shadowMapHeight = 2048)
             :
             _width(shadowMapWidth), _height(shadowMapHeight), _directionalLight(directionalLight),
             _depthTexture(shadowMapWidth, shadowMapHeight, DEPTH) {
@@ -34,10 +34,12 @@ public:
         glViewport(0, 0, (int) _width, (int) _height);
         glBindFramebuffer(GL_FRAMEBUFFER, _depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
+        glCullFace(GL_FRONT);
         computeProjectionViewMatrix();
     }
 
     void unbind() {
+        glCullFace(GL_BACK);
         glViewport(0, 0, _initialWidth, _initialHeight);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
@@ -59,6 +61,10 @@ public:
 
     Texture *depthTexture() {
         return &_depthTexture;
+    }
+
+    std::shared_ptr<DirectionalLight> directionalLight() {
+        return _directionalLight;
     }
 
 private:

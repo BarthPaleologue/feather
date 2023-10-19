@@ -44,6 +44,7 @@ void PhongMaterial::bind() {
         shader()->bindTexture("shadowMap", _shadowRenderer->depthTexture(), 2);
         glm::mat4 lightSpaceMatrix = _shadowRenderer->projectionViewMatrix();
         shader()->setMat4("lightSpaceMatrix", &lightSpaceMatrix);
+        shader()->setVec3("lightDirection", _shadowRenderer->directionalLight()->getDirection());
     }
     shader()->setVec3("diffuseColor", _diffuseColor);
     shader()->setVec3("ambientColor", _ambientColor);
