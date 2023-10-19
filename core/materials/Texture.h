@@ -26,7 +26,7 @@ public:
         glDeleteTextures(1, &_handle);
     }
 
-    Texture(unsigned int width, unsigned int height, TextureType type = RGBA) {
+    Texture(unsigned int width, unsigned int height, TextureType type = RGBA, bool generateMipMap = true) {
         glGenTextures(1, &_handle);
         //glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, _handle);
@@ -46,14 +46,15 @@ public:
 
         if (type == RGBA) {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, (int) width, (int) height, 0, GL_RGBA, GL_FLOAT, nullptr);
-
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-            glGenerateMipmap(GL_TEXTURE_2D);
-
             glBindImageTexture(0, _handle, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
         } else {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
                          (int) width, (int) height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+        }
+
+        if (generateMipMap) {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            glGenerateMipmap(GL_TEXTURE_2D);
         }
     }
 

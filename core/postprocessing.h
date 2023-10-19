@@ -21,7 +21,8 @@ private:
 
     unsigned int FBO{};
     unsigned int RBO{};
-    unsigned int inputTexture{};
+
+    std::shared_ptr<Texture> _inputTexture{};
 
     std::shared_ptr<Shader> _shader;
 
@@ -47,10 +48,6 @@ public:
 
     std::shared_ptr<Shader> shader() {
         return _shader;
-    }
-
-    GLuint inputTextureHandle() {
-        return inputTexture;
     }
 
     Observable<> onBeforeRenderObservable;

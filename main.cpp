@@ -42,8 +42,8 @@ int main() {
 
     scene.addPostProcess(std::shared_ptr<PostProcessing>(&colorCorrection));*/
 
-    /*PostProcessing invert("./assets/shaders/invertPostProcess", &engine);
-    scene.addPostProcess(std::shared_ptr<PostProcessing>(&invert));*/
+    PostProcessing invert("./assets/shaders/invertPostProcess", &engine);
+    scene.addPostProcess(std::shared_ptr<PostProcessing>(&invert));
 
     PhysicsBody *cloth = new Cloth("cloth", scene, 16, 0.1f);
 

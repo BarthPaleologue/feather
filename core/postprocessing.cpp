@@ -11,15 +11,9 @@ PostProcessing::PostProcessing(const char *shaderFolder, Engine *engine) {
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
     // Create Framebuffer Texture
-    glGenTextures(1, &inputTexture);
-    glBindTexture(GL_TEXTURE_2D, inputTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // Prevents edge bleeding
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Prevents edge bleeding
+    _inputTexture = std::make_shared<Texture>(_width, _height, RGBA, false);
 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, inputTexture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _inputTexture->handle(), 0);
 
     // Create Render Buffer Object
     glGenRenderbuffers(1, &RBO);
@@ -54,7 +48,7 @@ void PostProcessing::RenderTo(unsigned int targetFramebuffer) {
 
     // bind input texture to screenTexture uniform
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, inputTexture);
+    glBindTexture(GL_TEXTURE_2D, _inputTexture->handle());
     _shader->setInt("screenTexture", 0);
 
     screenQuad->render();
@@ -68,7 +62,7 @@ void PostProcessing::resize(int width, int height) {
     _height = height;
 
     // resize framebuffer texture
-    glBindTexture(GL_TEXTURE_2D, inputTexture);
+    glBindTexture(GL_TEXTURE_2D, _inputTexture->handle());
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, _width, _height, 0, GL_RGBA, GL_FLOAT, nullptr);
 
     // resize render buffer

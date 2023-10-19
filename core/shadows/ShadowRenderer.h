@@ -15,7 +15,8 @@ public:
                             const unsigned int shadowMapWidth = 2048, const unsigned int shadowMapHeight = 2048)
             :
             _width(shadowMapWidth), _height(shadowMapHeight), _directionalLight(directionalLight),
-            _depthTexture(shadowMapWidth, shadowMapHeight, DEPTH), _depthMaterial(std::make_shared<DepthMaterial>()) {
+            _depthTexture(shadowMapWidth, shadowMapHeight, DEPTH, false),
+            _depthMaterial(std::make_shared<DepthMaterial>()) {
 
         glGenFramebuffers(1, &_depthMapFBO);
         glBindFramebuffer(GL_FRAMEBUFFER, _depthMapFBO);
