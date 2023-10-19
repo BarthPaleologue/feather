@@ -38,16 +38,9 @@ void Scene::render() {
     if (!_postProcesses.empty()) {
         for (int i = 0; i < _postProcesses.size() - 1; i++) {
             _postProcesses[i]->RenderTo(_postProcesses[i + 1]->getFBO());
-
-            std::string filename = "output" + std::to_string(i) + ".ppm";
-            writeTextureToPPM(_postProcesses[i]->inputTextureHandle(), filename.c_str());
         }
         _postProcesses[_postProcesses.size() - 1]->RenderToScreen();
-
-        writeTextureToPPM(_postProcesses[_postProcesses.size() - 1]->inputTextureHandle(), "output_final.ppm");
     }
-
-    //writeTextureToPPM(_postProcesses[0]->inputTextureHandle(), "output.ppm");
 
     onAfterRenderObservable.notifyObservers();
 }

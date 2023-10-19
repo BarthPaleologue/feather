@@ -38,7 +38,6 @@ public:
     }
 
     void unbind() {
-        writeDepthTextureToPPM(_depthTexture.handle(), "shadowMap.ppm");
         glViewport(0, 0, _initialWidth, _initialHeight);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }

@@ -41,13 +41,6 @@ int main() {
 
     scene.addPostProcess(std::shared_ptr<PostProcessing>(&colorCorrection));
 
-    PostProcessing depth("./assets/shaders/depthPostProcess", &engine);
-    depth.onBeforeRenderObservable.add([&]() {
-        depth.shader()->bindTexture("depthTexture", shadowRenderer->depthTexture(), 1);
-    });
-
-    scene.addPostProcess(std::shared_ptr<PostProcessing>(&depth));
-
     PhysicsBody *cloth = new Cloth("cloth", scene, 16, 0.1f);
 
     cloth->transform()->setRotationZ(-3.14 / 2.0);
