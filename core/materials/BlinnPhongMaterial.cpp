@@ -5,7 +5,7 @@
 #include "BlinnPhongMaterial.h"
 #include "Settings.h"
 
-BlinnPhongMaterial::BlinnPhongMaterial(std::shared_ptr<Scene> scene) : Material("./assets/shaders/standard"),
+BlinnPhongMaterial::BlinnPhongMaterial(std::shared_ptr<Scene> scene) : Material("./assets/shaders/blinnPhong"),
                                                                        _scene(scene) {
     std::string maxPointLights = std::to_string(Settings::MAX_POINT_LIGHTS);
     shader()->setDefine((std::string("MAX_POINT_LIGHTS ") + maxPointLights).c_str());
