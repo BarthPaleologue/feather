@@ -45,7 +45,7 @@ public:
     void render(glm::mat4 projectionViewMatrix, Shader* shaderOverride = nullptr);
 
 private:
-    const char *_name;
+    std::string _name;
     std::string _id;
     VertexData _vertexData;
 
