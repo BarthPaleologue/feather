@@ -102,6 +102,9 @@ int main() {
     scene.onBeforeRenderObservable.add([&]() {
         float deltaTime = engine.getDeltaTime();
 
+        glm::vec3 newLightDirection = glm::vec3(cosf(engine.getElapsedTime()), 1.0f, sinf(engine.getElapsedTime()));
+        light.setDirection(newLightDirection);
+
         if (realTimePhysics) solver.solve(deltaTime);
 
         camera.update();
