@@ -8,7 +8,7 @@
 #include <iostream>
 #include "Engine.h"
 
-Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Project") {
+Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Project") : context() {
     if (!glfwInit()) {
         throw std::runtime_error("Failed to initialize GLFW");
     }
