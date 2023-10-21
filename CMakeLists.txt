@@ -30,9 +30,17 @@ add_executable(featherGL ${SRCS}
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
+add_subdirectory(webgpu)
+
+# The application's binary must find wgpu.dll or libwgpu.so at runtime,
+# so we automatically copy it (it's called WGPU_RUNTIME_LIB in general)
+# next to the binary.
+target_copy_webgpu_binaries(${PROJECT_NAME})
+
+
 find_package(glfw3 REQUIRED)
 message(STATUS "Found GLFW3")
-target_link_libraries(${PROJECT_NAME} glfw)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw webgpu)
 
 find_package(glm REQUIRED)
 message(STATUS "GLM included")
