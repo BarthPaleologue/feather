@@ -2,9 +2,9 @@
 // Created by barth on 21/10/23.
 //
 
-#include "Adapter.h"
+#include "WgpuUtils.h"
 
-WGPUAdapter requestAdapter(WGPUInstance instance, WGPURequestAdapterOptions const * options) {
+WGPUAdapter requestAdapter(WGPUInstance instance, WGPURequestAdapterOptions const *options) {
     // A simple structure holding the local information shared with the
     // onAdapterRequestEnded callback.
     struct UserData {
@@ -21,8 +21,9 @@ WGPUAdapter requestAdapter(WGPUInstance instance, WGPURequestAdapterOptions cons
     // is to convey what we want to capture through the pUserData pointer,
     // provided as the last argument of wgpuInstanceRequestAdapter and received
     // by the callback as its last argument.
-    auto onAdapterRequestEnded = [](WGPURequestAdapterStatus status, WGPUAdapter adapter, char const * message, void * pUserData) {
-        UserData& userData = *reinterpret_cast<UserData*>(pUserData);
+    auto onAdapterRequestEnded = [](WGPURequestAdapterStatus status, WGPUAdapter adapter, char const *message,
+                                    void *pUserData) {
+        UserData &userData = *reinterpret_cast<UserData *>(pUserData);
         if (status == WGPURequestAdapterStatus_Success) {
             userData.adapter = adapter;
         } else {
@@ -36,7 +37,7 @@ WGPUAdapter requestAdapter(WGPUInstance instance, WGPURequestAdapterOptions cons
             instance /* equivalent of navigator.gpu */,
             options,
             onAdapterRequestEnded,
-            (void*)&userData
+            (void *) &userData
     );
 
     // In theory we should wait until onAdapterReady has been called, which
@@ -47,3 +48,34 @@ WGPUAdapter requestAdapter(WGPUInstance instance, WGPURequestAdapterOptions cons
 
     return userData.adapter;
 }
+
+WGPUDevice requestDevice(WGPUAdapter adapter, WGPUDeviceDescriptor const *descriptor) {
+    struct UserData {
+        WGPUDevice device = nullptr;
+        bool requestEnded = false;
+    };
+    UserData userData;
+
+    auto onDeviceRequestEnded = [](WGPURequestDeviceStatus status, WGPUDevice device, char const *message,
+                                   void *pUserData) {
+        UserData &userData = *reinterpret_cast<UserData *>(pUserData);
+        if (status == WGPURequestDeviceStatus_Success) {
+            userData.device = device;
+        } else {
+            std::cout << "Could not get WebGPU device: " << message << std::endl;
+        }
+        userData.requestEnded = true;
+    };
+
+    wgpuAdapterRequestDevice(
+            adapter,
+            descriptor,
+            onDeviceRequestEnded,
+            (void *) &userData
+    );
+
+    assert(userData.requestEnded);
+
+    return userData.device;
+}
+

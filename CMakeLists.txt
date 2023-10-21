@@ -27,8 +27,8 @@ add_executable(featherGL ${SRCS}
         core/meshes/ScreenQuad.h
         core/materials/PbrMaterial.h
         core/webgpu/WgpuContext.h
-        core/webgpu/Adapter.h
-        core/webgpu/Adapter.cpp
+        core/webgpu/WgpuUtils.h
+        core/webgpu/WgpuUtils.cpp
 )
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
