@@ -6,8 +6,8 @@
 #define FEATHERGL_ENGINE_H
 
 #include "Observable.h"
-#include "WgpuContext.h"
 #include <GLFW/glfw3.h>
+#include "webgpu/WgpuContext.h"
 #include <map>
 
 class Engine {
@@ -89,7 +89,7 @@ private:
     GLFWwindow *window;
 
     // WebGPU
-    WgpuContext context;
+    WgpuContext context{};
 };
 
 

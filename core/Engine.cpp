@@ -8,14 +8,12 @@
 #include <iostream>
 #include "Engine.h"
 
-Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Project") : context() {
+Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Project") {
     if (!glfwInit()) {
         throw std::runtime_error("Failed to initialize GLFW");
     }
-    // OpenGL 4.3
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
     window = glfwCreateWindow(windowWidth, windowHeight, name, nullptr, nullptr);
     if (window == nullptr) {
@@ -26,6 +24,8 @@ Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Pr
     glfwSetErrorCallback([](int error, const char *description) {
         throw std::runtime_error(description);
     });
+
+    context.init(window);
 
     if (glfwRawMouseMotionSupported()) glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 

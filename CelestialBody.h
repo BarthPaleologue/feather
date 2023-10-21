@@ -5,9 +5,8 @@
 #ifndef FEATHERGL_CELESTIALBODY_H
 #define FEATHERGL_CELESTIALBODY_H
 
-#include "BlinnPhongMaterial.h"
-#include "Scene.h"
 #include "MeshBuilder.h"
+#include "BlinnPhongMaterial.h"
 
 class CelestialBody {
 public:
