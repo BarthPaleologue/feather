@@ -20,7 +20,7 @@ int main() {
 
     OrbitCamera camera(&engine);
     camera.setRadius(20.0);
-    camera.setTarget(glm::vec3(0, 3, 0));
+    camera.setTarget(glm::vec3(0, 4, 0));
     camera.rotateTheta(-3.14 / 4.0);
     camera.rotatePhi(3.14 / 3.0);
     scene.setActiveCamera(std::shared_ptr<Camera>(&camera));
@@ -45,7 +45,7 @@ int main() {
     /*PostProcessing invert("./assets/shaders/invertPostProcess", &engine);
     scene.addPostProcess(std::shared_ptr<PostProcessing>(&invert));*/
 
-    PhysicsBody *cloth = new Cloth("cloth", scene, 16, 0.1f);
+    PhysicsBody *cloth = new Cloth("cloth", scene, 16, 0.5f);
 
     cloth->transform()->setRotationZ(-3.14 / 2.0);
     cloth->transform()->setRotationY(3.14);
