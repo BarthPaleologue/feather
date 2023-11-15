@@ -23,8 +23,10 @@ public:
         Material::bind();
 
         if (_albedoTexture != nullptr) shader()->bindTexture("albedoTexture", _albedoTexture, 0);
+        if (_roughnessTexture != nullptr) shader()->bindTexture("roughnessTexture", _roughnessTexture, 1);
+        if (_normalTexture != nullptr) shader()->bindTexture("normalTexture", _normalTexture, 2);
         if (_shadowRenderer != nullptr) {
-            shader()->bindTexture("shadowMap", _shadowRenderer->depthTexture(), 2);
+            shader()->bindTexture("shadowMap", _shadowRenderer->depthTexture(), 3);
             glm::mat4 lightSpaceMatrix = _shadowRenderer->projectionViewMatrix();
             shader()->setMat4("lightSpaceMatrix", &lightSpaceMatrix);
             shader()->setVec3("lightDirection", _shadowRenderer->directionalLight()->getDirection());
@@ -73,6 +75,11 @@ public:
 
     void setRoughness(float roughness) { this->roughness = roughness; }
 
+    void setRoughnessTexture(Texture *texture) {
+        if (_roughnessTexture == nullptr) shader()->setDefine("ROUGHNESS_TEXTURE");
+        _roughnessTexture = texture;
+    }
+
     void receiveShadows(std::shared_ptr<ShadowRenderer> shadowRenderer) {
         if (_shadowRenderer == nullptr) shader()->setDefine("SHADOW_MAP");
         _shadowRenderer = shadowRenderer;
@@ -89,6 +96,18 @@ public:
         _albedoTexture = texture;
     }
 
+    void setNormalTexture(Texture *texture) {
+        if (_normalTexture == nullptr) shader()->setDefine("NORMAL_TEXTURE");
+        _normalTexture = texture;
+    }
+
+    void setAmbientColor(float r, float g, float b) {
+        _ambientColor->x = r;
+        _ambientColor->y = g;
+        _ambientColor->z = b;
+    }
+
+
 private:
     std::shared_ptr<Scene> _scene;
 
@@ -98,7 +117,7 @@ private:
     Texture *_roughnessTexture = nullptr;
     Texture *_aoTexture = nullptr;
 
-    glm::vec3 *_albedoColor = new glm::vec3(0.0);
+    glm::vec3 *_albedoColor = new glm::vec3(1.0);
     glm::vec3 *_ambientColor = new glm::vec3(0.0);
     glm::vec3 *_alphaColor = nullptr;
 

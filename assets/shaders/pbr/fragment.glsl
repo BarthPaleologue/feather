@@ -8,6 +8,7 @@ in vec3 vPositionW;
 in vec3 vNormal;
 in vec3 vNormalW;
 in vec2 vUV;
+in mat4 vNormalMatrix;
 
 #ifdef SHADOW_MAP
 in vec4 vPositionShadow;
@@ -52,8 +53,9 @@ uniform float roughness;
 uniform float ao;
 
 layout(binding = 0) uniform sampler2D albedoTexture;
-layout(binding = 1) uniform sampler2D ambientTexture;
-layout(binding = 2) uniform sampler2D shadowMap;
+layout(binding = 1) uniform sampler2D roughnessTexture;
+layout(binding = 2) uniform sampler2D normalTexture;
+layout(binding = 3) uniform sampler2D shadowMap;
 
 #ifdef SHADOW_MAP
 float random(vec4 seed4) {
@@ -61,11 +63,11 @@ float random(vec4 seed4) {
     return fract(sin(dot_product) * 43758.5453);
 }
 
-float getShadowFactor(vec4 positionShadow) {
+float getShadowFactor(vec4 positionShadow, vec3 normal) {
     vec3 shadowCoord = positionShadow.xyz / positionShadow.w;
     shadowCoord = shadowCoord * 0.5 + 0.5;
 
-    float epsilon = max(0.05 * (1.0 - dot(vNormalW, lightDirection)), 0.005);
+    float epsilon = max(0.05 * (1.0 - dot(normal, lightDirection)), 0.005);
 
     float currentDepth = shadowCoord.z;
 
@@ -134,13 +136,25 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0) {
 void main() {
     vec3 color = vec3(0.0);
 
-    vec3 N = normalize(vNormalW);
+    vec3 normal = vNormal;
+    #ifdef NORMAL_TEXTURE
+    normal = texture(normalTexture, vUV).rgb;
+    normal = normalize(normal * 2.0 - 1.0);
+    normal = normalize(mix(normal, vNormalW, 0.4));
+    #endif
+
+    vec3 N = normalize(vec3(normalMatrix * vec4(normal, 0.0)));
     vec3 V = normalize(cameraPosition - vPositionW);
 
     if (lightingEnabled) {
         vec3 albedo = albedoColor;
         #ifdef ALBEDO_TEXTURE
-        albedo = pow(texture(albedoTexture, vUV).rgb, vec3(2.2));
+        albedo *= pow(texture(albedoTexture, vUV).rgb, vec3(2.2));
+        #endif
+
+        float roughness = roughness;
+        #ifdef ROUGHNESS_TEXTURE
+        roughness = texture(roughnessTexture, vUV).r;
         #endif
 
         #ifdef ALPHA_COLOR
@@ -217,7 +231,7 @@ void main() {
     color += ambientColor;
 
     #ifdef SHADOW_MAP
-    color *= getShadowFactor(vPositionShadow);
+    color *= getShadowFactor(vPositionShadow, N);
     #endif
 
     color = color / (color + vec3(1.0));

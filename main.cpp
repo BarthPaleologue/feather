@@ -54,15 +54,18 @@ int main() {
     cloth->transform()->setPosition(0, 5, 0);
 
     auto clothMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
-    clothMaterial->setAlbedoColor(1.0, 0.2, 0.2);
-    clothMaterial->setMetallic(0.2f);
-    clothMaterial->setRoughness(0.8f);
+    clothMaterial->setAlbedoColor(2.0, 2.0, 2.0);
+    clothMaterial->setAlbedoTexture(new Texture("./assets/textures/carpet.jpg"));
+    clothMaterial->setRoughnessTexture(new Texture("./assets/textures/carpet_roughness.jpg"));
+    clothMaterial->setNormalTexture(new Texture("./assets/textures/carpet_normal.png"));
+    clothMaterial->setMetallic(0.0f);
+    clothMaterial->setAmbientColor(0.02f, 0.02f, 0.02f);
     clothMaterial->setBackFaceCullingEnabled(false);
     clothMaterial->setWireframe(true);
     cloth->mesh()->setMaterial(clothMaterial);
 
     solver.addBody(cloth);
-    solver.applyForce(cloth->mesh(), glm::vec3(-2, -9.81, 0));
+    solver.applyForce(cloth->mesh(), glm::vec3(0, -9.81, 0));
 
     shadowRenderer->addShadowCaster(cloth->mesh());
 
@@ -70,7 +73,6 @@ int main() {
     sphere->transform()->setPosition(4, 1, 10);
 
     auto sphereMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
-    sphereMaterial->setAlbedoColor(1.0, 0.5, 0.5);
     sphereMaterial->setAlbedoTexture(new Texture("./assets/textures/earth.jpg"));
     sphereMaterial->setMetallic(0.8f);
     sphereMaterial->setRoughness(0.4f);
@@ -105,7 +107,7 @@ int main() {
         //glm::vec3 newLightDirection = glm::vec3(cosf(engine.getElapsedTime()), 1.0f, sinf(engine.getElapsedSeconds()));
         //light.setDirection(newLightDirection);
 
-        if (realTimePhysics) solver.solve(deltaTime);
+        if (realTimePhysics) solver.solve(1.0 / 60.0f); // fixed time step of 60 fps
 
         camera.update();
     });
