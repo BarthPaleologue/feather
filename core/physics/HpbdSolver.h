@@ -96,6 +96,9 @@ public:
                     particle->velocity = (particle->predictedPosition - particle->position) / subTimeStep;
                     particle->position = particle->predictedPosition;
 
+                    // velocity damping
+                    particle->velocity *= 0.999;
+
                     // update actual mesh vertex data
                     body->mesh()->vertexData().positions[particle->startIndex] = particle->position.x;
                     body->mesh()->vertexData().positions[particle->startIndex + 1] = particle->position.y;
@@ -103,14 +106,7 @@ public:
                 }
 
                 body->mesh()->vertexData().computeNormals();
-                body->mesh()->updateVertexData();
-            }
-
-            // velocity damping
-            for (auto body: _physicsBodies) {
-                for (auto particle: body->particles()) {
-                    particle->velocity *= 0.999;
-                }
+                body->mesh()->sendVertexDataToGPU();
             }
         }
     }

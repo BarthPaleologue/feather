@@ -27,7 +27,7 @@ public:
         switch (_type) {
             case INEQUALITY:
                 // >= 0
-                return evaluate() >= 1e-6;
+                return evaluate() >= 0;
             case EQUALITY:
                 // == 0
                 return fabsf(evaluate()) <= 1e-6;
@@ -43,7 +43,7 @@ public:
         computeLambda();
         for (unsigned int i = 0; i < _particles.size(); i++) {
             glm::vec3 gradient = glm::vec3(_gradient.col(i).x(), _gradient.col(i).y(), _gradient.col(i).z());
-            _particles[i]->predictedPosition += _lambda * _particles[i]->invMass * gradient;
+            _particles[i]->predictedPosition += _lambda * _particles[i]->invMass * gradient * _stiffness;
         }
     }
 

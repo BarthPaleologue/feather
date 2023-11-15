@@ -36,7 +36,7 @@ public:
 
     void setVertexData(VertexData &vertexData);
 
-    void updateVertexData();
+    void sendVertexDataToGPU();
 
     VertexData &vertexData() {
         return _vertexData;

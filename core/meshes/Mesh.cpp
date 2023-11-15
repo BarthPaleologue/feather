@@ -49,7 +49,7 @@ void Mesh::setVertexData(VertexData &vertexData) {
     glEnableVertexAttribArray(colorLayoutIndex);
 }
 
-void Mesh::updateVertexData() {
+void Mesh::sendVertexDataToGPU() {
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
     glBufferData(GL_ARRAY_BUFFER, _vertexData.positions.size() * sizeof(float), _vertexData.positions.data(),
                  GL_DYNAMIC_READ);
@@ -123,7 +123,7 @@ void Mesh::bakeTransformIntoVertexData() {
         _vertexData.normals[i + 2] = transformedNormal.z;
     }
 
-    updateVertexData();
+    sendVertexDataToGPU();
 
     transform()->reset();
 }

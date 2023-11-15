@@ -10,7 +10,7 @@
 
 class DistanceConstraint : public Constraint {
 public:
-    DistanceConstraint(Particle *p1, Particle *p2, float l0) : Constraint({p1, p2}, 0.8, EQUALITY) {
+    DistanceConstraint(Particle *p1, Particle *p2, float l0) : Constraint({p1, p2}, 0.5, EQUALITY) {
         _l0 = l0;
     }
 
