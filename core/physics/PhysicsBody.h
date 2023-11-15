@@ -10,6 +10,7 @@
 #include "Constraint.h"
 #include "DistanceConstraint.h"
 #include "FixedConstraint.h"
+#include "CollisionConstraint.h"
 
 class PhysicsBody {
 public:
@@ -67,6 +68,14 @@ public:
         return _constraints;
     }
 
+    std::vector<FixedConstraint *> &fixedConstraints() {
+        return _fixedConstraints;
+    }
+
+    std::vector<CollisionConstraint *> &collisionConstraints() {
+        return _collisionConstraints;
+    }
+
     float mass() const {
         return _mass;
     }
@@ -83,6 +92,7 @@ protected:
     std::vector<Constraint *> _constraints;
 
     std::vector<FixedConstraint *> _fixedConstraints;
+    std::vector<CollisionConstraint *> _collisionConstraints;
 };
 
 #endif //FEATHERGL_PHYSICSBODY_H

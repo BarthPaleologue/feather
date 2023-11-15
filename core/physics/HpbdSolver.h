@@ -10,6 +10,7 @@
 #include "Particle.h"
 #include "Constraint.h"
 #include "PhysicsBody.h"
+#include "CollisionConstraint.h"
 
 class HpbdSolver {
 public:
@@ -76,11 +77,19 @@ public:
                 }
             }
 
+            // collision constraints
+            /*auto ground1 = new Particle(0.0f, -1.0f, -3.0f, 0.0f);
+            auto ground2 = new Particle(0.0f, 1.0f, -3.0f, 0.0f);
+            auto ground3 = new Particle(0.0f, 0.0f, -3.0f, -1.0f);
+
             for (auto body: _physicsBodies) {
+                body->collisionConstraints().clear();
                 for (auto particle: body->particles()) {
-                    // generate collision constraints
+                    auto constraint = new CollisionConstraint(particle, ground1, ground2, ground3, 0.1f);
+                    body->constraints().push_back(constraint);
+                    body->collisionConstraints().push_back(constraint);
                 }
-            }
+            }*/
 
             // HPBD
             for(auto body: _physicsBodies) {

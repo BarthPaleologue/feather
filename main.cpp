@@ -20,7 +20,7 @@ int main() {
 
     OrbitCamera camera(&engine);
     camera.setRadius(20.0);
-    camera.setTarget(glm::vec3(0, 4, 0));
+    camera.setTarget(glm::vec3(0, 7, 0));
     camera.rotateTheta(-3.14 / 4.0);
     camera.rotatePhi(3.14 / 3.0);
     scene.setActiveCamera(std::shared_ptr<Camera>(&camera));
@@ -51,7 +51,7 @@ int main() {
     cloth->transform()->setRotationY(3.14);
     cloth->bakeTransformIntoVertexData();
     cloth->transform()->setScale(10);
-    cloth->transform()->setPosition(0, 5, 0);
+    cloth->transform()->setPosition(0, 7, 0);
 
     auto clothMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     clothMaterial->setAlbedoColor(2.0, 2.0, 2.0);
@@ -81,7 +81,7 @@ int main() {
     shadowRenderer->addShadowCaster(sphere);*/
 
     auto ground = MeshBuilder::makePlane("ground", scene, 64);
-    ground->transform()->setPosition(0, -2, 0);
+    ground->transform()->setPosition(0, 0, 0);
     ground->transform()->setScale(40);
 
     auto groundMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));

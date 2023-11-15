@@ -29,6 +29,7 @@ private:
     float _h;
 
     void computeGradient() override {
+        //TODO: check if this is correct
         glm::vec3 p1 = _particles[1]->predictedPosition;
         glm::vec3 p2 = _particles[2]->predictedPosition;
         glm::vec3 p3 = _particles[3]->predictedPosition;
