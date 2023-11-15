@@ -47,6 +47,10 @@ public:
         }
     }
 
+    void buildParticleHierarchy() {
+        //TODO: build particle hierarchy
+    }
+
     std::vector<Particle *> &particles() {
         return _particles;
     }

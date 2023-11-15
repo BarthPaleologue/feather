@@ -82,6 +82,11 @@ public:
                 }
             }
 
+            // HPBD
+            for(auto body: _physicsBodies) {
+                body->buildParticleHierarchy();
+            }
+
             // solve constraints
             //for (unsigned int i = 0; i < _iterations; i++) {
             for (auto body: _physicsBodies) {
