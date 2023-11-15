@@ -45,7 +45,7 @@ int main() {
     /*PostProcessing invert("./assets/shaders/invertPostProcess", &engine);
     scene.addPostProcess(std::shared_ptr<PostProcessing>(&invert));*/
 
-    PhysicsBody *cloth = new Cloth("cloth", scene, 16, 0.5f);
+    PhysicsBody *cloth = new Cloth("cloth", scene, 16, 10.0f);
 
     cloth->transform()->setRotationZ(-3.14 / 2.0);
     cloth->transform()->setRotationY(3.14);
@@ -65,7 +65,7 @@ int main() {
     cloth->mesh()->setMaterial(clothMaterial);
 
     solver.addBody(cloth);
-    solver.applyForce(cloth->mesh(), glm::vec3(0, -9.81, 0));
+    solver.applyForcePerParticle(cloth->mesh(), glm::vec3(0, -9.81 * cloth->mass() / cloth->nbParticles(), 0));
 
     shadowRenderer->addShadowCaster(cloth->mesh());
 

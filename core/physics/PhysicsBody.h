@@ -13,10 +13,11 @@
 
 class PhysicsBody {
 public:
-    PhysicsBody(std::shared_ptr<Mesh> mesh, float mass) : _mesh(mesh) {
+    PhysicsBody(std::shared_ptr<Mesh> mesh, float mass) : _mesh(mesh), _mass(mass) {
         _particles.reserve(mesh->vertexData().positions.size() / 3);
+        unsigned int nbParticles = mesh->vertexData().positions.size() / 3;
         for (unsigned int i = 0; i < mesh->vertexData().positions.size(); i += 3) {
-            _particles.push_back(new Particle(mass, mesh->vertexData().positions, i));
+            _particles.push_back(new Particle(mass / nbParticles, mesh->vertexData().positions, i));
         }
     };
 
@@ -40,7 +41,7 @@ public:
         }
     }
 
-    void applyForce(glm::vec3 force) {
+    void applyForcePerParticle(glm::vec3 force) {
         for (auto particle: _particles) {
             particle->_forces.push_back(force);
         }
@@ -62,7 +63,17 @@ public:
         return _constraints;
     }
 
+    float mass() const {
+        return _mass;
+    }
+
+    unsigned int nbParticles() const {
+        return _particles.size();
+    }
+
 protected:
+    float _mass;
+
     std::shared_ptr<Mesh> _mesh;
     std::vector<Particle *> _particles;
     std::vector<Constraint *> _constraints;

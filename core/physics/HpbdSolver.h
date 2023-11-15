@@ -48,10 +48,10 @@ public:
         _physicsBodies.push_back(pBody);
     }
 
-    void applyForce(std::shared_ptr<Mesh> mesh, glm::vec3 force) {
+    void applyForcePerParticle(std::shared_ptr<Mesh> mesh, glm::vec3 force) {
         for (auto body: _physicsBodies) {
             if (body->mesh() == mesh) {
-                body->applyForce(force);
+                body->applyForcePerParticle(force);
                 break;
             }
         }
