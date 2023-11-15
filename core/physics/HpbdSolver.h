@@ -61,12 +61,15 @@ public:
         // this is coming from XPBD where the time step is divided into sub time steps at the top level
         float subTimeStep = deltaTime / (float) _iterations;
         for (unsigned int i = 0; i < _iterations; i++) {
+
+            // apply forces
             for (auto body: _physicsBodies) {
                 for (auto particle: body->particles()) {
                     particle->velocity += subTimeStep * particle->invMass * particle->forces();
                 }
             }
 
+            // predict positions
             for (auto body: _physicsBodies) {
                 for (auto particle: body->particles()) {
                     particle->predictedPosition = particle->position + subTimeStep * particle->velocity;
@@ -79,6 +82,7 @@ public:
                 }
             }
 
+            // solve constraints
             //for (unsigned int i = 0; i < _iterations; i++) {
             for (auto body: _physicsBodies) {
                 for (auto constraint: body->constraints()) {
@@ -100,6 +104,13 @@ public:
 
                 body->mesh()->vertexData().computeNormals();
                 body->mesh()->updateVertexData();
+            }
+
+            // velocity damping
+            for (auto body: _physicsBodies) {
+                for (auto particle: body->particles()) {
+                    particle->velocity *= 0.999;
+                }
             }
         }
     }
