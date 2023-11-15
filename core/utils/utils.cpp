@@ -41,9 +41,10 @@ GLuint loadTextureFromFileToGPU(const char *filename) {
     glBindTexture(GL_TEXTURE_2D, texID); // activate the texture
 // Setup the texture filtering option and repeat mode; check www.opengl.org for details.
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
 // Fill the GPU texture with the data stored in the CPU image
     if (numComponents == 1) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0,
@@ -58,6 +59,9 @@ GLuint loadTextureFromFileToGPU(const char *filename) {
         std::cerr << "Error: Unknown number of components '" << numComponents << "' for texture " << filename
                   << std::endl;
     }
+
+    // mipmapping
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     // Free useless CPU memory
     stbi_image_free(data);
