@@ -12,21 +12,9 @@ file(GLOB SRCS ./*.h ./*.cpp
         core/materials/*.cpp core/materials/*.h
         core/utils/*.cpp core/utils/*.h
         core/physics/*.cpp core/physics/*.h
+        core/shadows/*.cpp core/shadows/*.h
 )
-add_executable(featherGL ${SRCS}
-        core/physics/DistanceConstraint.h
-        core/physics/BendConstraint.h
-        core/physics/SelfCollisionConstraint.h
-        core/physics/ClothBalloonConstraint.h
-        core/physics/Cloth.h
-        core/physics/PhysicsBody.h
-        core/physics/FixedConstraint.h
-        core/utils/ComputeShader.h
-        core/shadows/ShadowRenderer.h
-        core/materials/DepthMaterial.h
-        core/meshes/ScreenQuad.h
-        core/materials/PbrMaterial.h
-)
+add_executable(featherGL ${SRCS})
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
