@@ -40,10 +40,10 @@ public:
         if (isSatisfied()) return;
 
         computeGradient();
-        computeLambda();
+        computeS();
         for (unsigned int i = 0; i < _particles.size(); i++) {
             glm::vec3 gradient = glm::vec3(_gradient.col(i).x(), _gradient.col(i).y(), _gradient.col(i).z());
-            _particles[i]->predictedPosition += _lambda * _particles[i]->invMass * gradient * _stiffness;
+            _particles[i]->predictedPosition -= _s * _particles[i]->invMass * gradient * _stiffness;
         }
     }
 
@@ -52,8 +52,8 @@ protected:
 
     virtual float evaluate() const = 0;
 
-    void computeLambda() {
-        float numerator = -evaluate();
+    void computeS() {
+        float numerator = evaluate();
         float denominator = 0;
         if (_particles.size() != _gradient.cols()) {
             throw std::runtime_error("Gradient and particles size mismatch");
@@ -62,7 +62,7 @@ protected:
             denominator += _particles[i]->invMass * _gradient.col(i).dot(_gradient.col(i));
         }
 
-        _lambda = numerator / denominator;
+        _s = numerator / denominator;
     }
 
     /// Number of particles involved in the constraint
@@ -74,7 +74,7 @@ protected:
     /// Stiffness of the constraint (between 0 and 1)
     float _stiffness{};
 
-    float _lambda{};
+    float _s{};
 
     ConstraintType _type;
 
