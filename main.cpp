@@ -12,7 +12,7 @@ const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
 
 int main() {
-    Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "Solar System");
+    Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "HPBD Cloth Simulation");
 
     HpbdSolver solver;
 
@@ -66,7 +66,7 @@ int main() {
 
     shadowRenderer->addShadowCaster(cloth->mesh());
 
-    auto sphere = MeshBuilder::makeSphere("sphere", scene, 32);
+    /*auto sphere = MeshBuilder::makeSphere("sphere", scene, 32);
     sphere->transform()->setPosition(4, 1, 10);
 
     auto sphereMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
@@ -76,7 +76,7 @@ int main() {
     sphereMaterial->setRoughness(0.4f);
     sphere->setMaterial(sphereMaterial);
 
-    shadowRenderer->addShadowCaster(sphere);
+    shadowRenderer->addShadowCaster(sphere);*/
 
     auto ground = MeshBuilder::makePlane("ground", scene, 64);
     ground->transform()->setPosition(0, -2, 0);
@@ -100,10 +100,10 @@ int main() {
     });
 
     scene.onBeforeRenderObservable.add([&]() {
-        float deltaTime = engine.getDeltaTime();
+        float deltaTime = engine.getDeltaSeconds();
 
-        glm::vec3 newLightDirection = glm::vec3(cosf(engine.getElapsedTime()), 1.0f, sinf(engine.getElapsedTime()));
-        light.setDirection(newLightDirection);
+        //glm::vec3 newLightDirection = glm::vec3(cosf(engine.getElapsedTime()), 1.0f, sinf(engine.getElapsedSeconds()));
+        //light.setDirection(newLightDirection);
 
         if (realTimePhysics) solver.solve(deltaTime);
 

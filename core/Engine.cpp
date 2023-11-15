@@ -80,7 +80,7 @@ Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Pr
     // blueish background
     setClearColor(0.4f, 0.6f, 0.6f, 1.0f);
 
-    lastFrameTime = getElapsedTime();
+    lastFrameTime = getElapsedSeconds();
 
     glDepthFunc(GL_LESS);   // Specify the depth test for the z-buffer
     glEnable(GL_DEPTH_TEST);      // Enable the z-buffer test in the rasterization

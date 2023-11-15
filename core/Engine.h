@@ -37,11 +37,11 @@ public:
         glfwGetWindowSize(window, width, height);
     }
 
-    float getElapsedTime() const {
+    float getElapsedSeconds() const {
         return (float) glfwGetTime();
     }
 
-    float getDeltaTime() const {
+    float getDeltaSeconds() const {
         return deltaTime;
     }
 
@@ -55,7 +55,7 @@ public:
         onWindowResizeObservable.notifyObservers(width, height);
 
         while (!glfwWindowShouldClose(window)) {
-            float newFrameTime = getElapsedTime();
+            float newFrameTime = getElapsedSeconds();
             deltaTime = newFrameTime - lastFrameTime;
             lastFrameTime = newFrameTime;
 
