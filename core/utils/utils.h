@@ -6,6 +6,7 @@
 #define FEATHERGL_UTILS_H
 
 #include <string>
+#include <glm/vec3.hpp>
 #include "glad/glad.h"
 
 /**
@@ -20,5 +21,7 @@ GLuint loadTextureFromFileToGPU(const char *filename);
 void writeTextureToPPM(GLuint textureHandle, const char *filename);
 
 void writeDepthTextureToPPM(GLuint textureHandle, const char *filename);
+
+std::string toString(glm::vec3 &vec);
 
 #endif //FEATHERGL_UTILS_H

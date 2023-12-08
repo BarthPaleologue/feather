@@ -10,12 +10,12 @@
 
 class DistanceConstraint : public Constraint {
 public:
-    DistanceConstraint(Particle *p1, Particle *p2, float l0) : Constraint({p1, p2}, 0.5, EQUALITY) {
-        _l0 = l0;
+    DistanceConstraint(Particle *p1, Particle *p2, float restLength, float stiffness) : Constraint({p1, p2}, stiffness, EQUALITY) {
+        _restLength = restLength;
     }
 
 private:
-    float _l0;
+    float _restLength;
 
     void computeGradient() override {
         glm::vec3 p1 = _particles[0]->predictedPosition;
@@ -29,7 +29,7 @@ private:
     }
 
     float evaluate() const override {
-        return glm::length(_particles[0]->predictedPosition - _particles[1]->predictedPosition) - _l0;
+        return glm::length(_particles[0]->predictedPosition - _particles[1]->predictedPosition) - _restLength;
     }
 };
 

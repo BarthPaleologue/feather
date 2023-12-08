@@ -31,7 +31,7 @@ public:
             for (unsigned int y = 0; y < nbSubdivisions - 1; y++) {
                 auto particle1 = _particles[x * nbSubdivisions + y];
                 auto particle2 = _particles[x * nbSubdivisions + y + 1];
-                _constraints.push_back(new DistanceConstraint(particle1, particle2, 1.0f / (float) nbSubdivisions));
+                _constraints.push_back(new DistanceConstraint(particle1, particle2, 1.0f / (float) nbSubdivisions, 0.5));
             }
         }
 
@@ -40,7 +40,7 @@ public:
             for (unsigned int y = 0; y < nbSubdivisions; y++) {
                 auto particle1 = _particles[x * nbSubdivisions + y];
                 auto particle2 = _particles[(x + 1) * nbSubdivisions + y];
-                _constraints.push_back(new DistanceConstraint(particle1, particle2, 1.0f / (float) nbSubdivisions));
+                _constraints.push_back(new DistanceConstraint(particle1, particle2, 1.0f / (float) nbSubdivisions, 0.5));
             }
         }
 

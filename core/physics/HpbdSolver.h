@@ -110,6 +110,9 @@ public:
                     particle->velocity = (particle->predictedPosition - particle->position) / subTimeStep;
                     particle->position = particle->predictedPosition;
 
+                    // clamp to ground for now
+                    particle->position[1] = std::max(particle->position.y, -body->mesh()->transform()->position()->y);
+
                     // velocity damping
                     particle->velocity *= 0.999;
 

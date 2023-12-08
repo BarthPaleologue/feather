@@ -7,9 +7,14 @@
 #include "physics/HpbdSolver.h"
 #include "physics/Cloth.h"
 #include "PbrMaterial.h"
+#include "physics/RigidBody.h"
 
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
+
+float random01() {
+    return (float) rand() / (float) RAND_MAX;
+}
 
 int main() {
     Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "HPBD Cloth Simulation");
@@ -45,7 +50,7 @@ int main() {
     /*PostProcessing invert("./assets/shaders/invertPostProcess", &engine);
     scene.addPostProcess(std::shared_ptr<PostProcessing>(&invert));*/
 
-    PhysicsBody *cloth = new Cloth("cloth", scene, 16, 10.0f);
+    auto cloth = new Cloth("cloth", scene, 16, 10.0f);
 
     cloth->transform()->setRotationZ(-3.14 / 2.0);
     cloth->transform()->setRotationY(3.14);
@@ -68,6 +73,21 @@ int main() {
     solver.applyForcePerParticle(cloth->mesh(), glm::vec3(0, -9.81 * cloth->mass() / cloth->nbParticles(), 0));
 
     shadowRenderer->addShadowCaster(cloth->mesh());
+
+    for(unsigned int i = 0; i < 10; i++) {
+        auto cube = new RigidBody(MeshBuilder::makeCube("cube", scene), 1.0);
+        cube->transform()->setPosition(10.0f * (random01() * 2.0f - 1.0f), 4, 10.0f * (random01() * 2.0f - 1.0f));
+        cube->bakeTransformIntoVertexData();
+
+        std::cout << random01() << std::endl;
+
+        cube->mesh()->setMaterial(clothMaterial);
+
+        solver.addBody(cube);
+        solver.applyForcePerParticle(cube->mesh(), glm::vec3(0, -9.81 * cube->mass() / cube->nbParticles(), 0));
+
+        shadowRenderer->addShadowCaster(cube->mesh());
+    }
 
     /*auto sphere = MeshBuilder::makeSphere("sphere", scene, 32);
     sphere->transform()->setPosition(4, 1, 10);

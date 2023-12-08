@@ -14,6 +14,9 @@ public:
     CollisionConstraint(Particle *q, Particle *p1, Particle *p2, Particle *p3, float h) : Constraint(
             {q, p1, p2, p3}, 0.7, INEQUALITY), _h(h) {};
 
+private:
+    float _h;
+
     float evaluate() const override {
         glm::vec3 q = _particles[0]->predictedPosition;
         glm::vec3 p1 = _particles[1]->predictedPosition;
@@ -24,9 +27,6 @@ public:
 
         return glm::dot(q - p1, n) - _h;
     }
-
-private:
-    float _h;
 
     void computeGradient() override {
         //TODO: check if this is correct
