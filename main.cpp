@@ -8,6 +8,7 @@
 #include "physics/Cloth.h"
 #include "PbrMaterial.h"
 #include "physics/RigidBody.h"
+#include "physics/SoftBody.h"
 
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
@@ -75,12 +76,9 @@ int main() {
     shadowRenderer->addShadowCaster(cloth->mesh());
 
     for(unsigned int i = 0; i < 10; i++) {
-        auto cube = new RigidBody(MeshBuilder::makeCube("cube", scene), 1.0);
+        auto cube = new SoftBody(MeshBuilder::makeCube("cube", scene), 1.0);
         cube->transform()->setPosition(10.0f * (random01() * 2.0f - 1.0f), 4, 10.0f * (random01() * 2.0f - 1.0f));
-        cube->bakeTransformIntoVertexData();
-
-        std::cout << random01() << std::endl;
-
+        
         cube->mesh()->setMaterial(clothMaterial);
 
         solver.addBody(cube);
