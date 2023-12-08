@@ -92,7 +92,8 @@ void Mesh::render(glm::mat4 projectionViewMatrix, Shader *shaderOverride) {
 
     glBindVertexArray(_vao);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo);
-    glDrawElements(GL_TRIANGLES, _vertexData.indices.size(), GL_UNSIGNED_INT, nullptr);
+    auto drawMode = _vertexData.positions.size() == 6 ? GL_LINES : GL_TRIANGLES;
+    glDrawElements(drawMode, _vertexData.indices.size(), GL_UNSIGNED_INT, nullptr);
 
     if (shaderOverride == nullptr) _material->unbind();
     else shader->unbind();

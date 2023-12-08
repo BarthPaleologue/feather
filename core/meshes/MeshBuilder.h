@@ -74,6 +74,192 @@ public:
         return mesh;
     }
 
+    static std::shared_ptr<Mesh> makeUVCube(const char *name, Scene &scene) {
+        // make a cube with 24 vertices instead of 8
+        VertexData vertexData = VertexData();
+        vertexData.positions = {
+                // front
+                -1.0f, -1.0f, -1.0f, // 0
+                1.0f, -1.0f, -1.0f, // 1
+                -1.0f, 1.0f, -1.0f, // 2
+                1.0f, 1.0f, -1.0f, // 3
+
+                // right
+                1.0f, -1.0f, -1.0f, // 4
+                1.0f, -1.0f, 1.0f, // 5
+                1.0f, 1.0f, -1.0f, // 6
+                1.0f, 1.0f, 1.0f, // 7
+
+                // back
+                1.0f, -1.0f, 1.0f, // 8
+                -1.0f, -1.0f, 1.0f, // 9
+                1.0f, 1.0f, 1.0f, // 10
+                -1.0f, 1.0f, 1.0f, // 11
+
+                // left
+                -1.0f, -1.0f, 1.0f, // 12
+                -1.0f, -1.0f, -1.0f, // 13
+                -1.0f, 1.0f, 1.0f, // 14
+                -1.0f, 1.0f, -1.0f, // 15
+
+                // top
+                -1.0f, 1.0f, -1.0f, // 16
+                1.0f, 1.0f, -1.0f, // 17
+                -1.0f, 1.0f, 1.0f, // 18
+                1.0f, 1.0f, 1.0f, // 19
+
+                // bottom
+                -1.0f, -1.0f, 1.0f, // 20
+                1.0f, -1.0f, 1.0f, // 21
+                -1.0f, -1.0f, -1.0f, // 22
+                1.0f, -1.0f, -1.0f, // 23
+        };
+
+        vertexData.colors = {
+                // front
+                1.0f, 1.0f, 1.0f, // 0
+                1.0f, 0.0f, 1.0f, // 1
+                1.0f, 1.0f, 0.0f, // 2
+                0.0f, 1.0f, 1.0f, // 3
+
+                // right
+                1.0f, 1.0f, 0.0f, // 4
+                1.0f, 0.0f, 0.0f, // 5
+                0.0f, 1.0f, 0.0f, // 6
+                0.0f, 0.0f, 0.0f, // 7
+
+                // back
+                0.0f, 1.0f, 0.0f, // 8
+                0.0f, 0.0f, 0.0f, // 9
+                0.0f, 1.0f, 1.0f, // 10
+                0.0f, 0.0f, 1.0f, // 11
+
+                // left
+                0.0f, 1.0f, 1.0f, // 12
+                0.0f, 0.0f, 1.0f, // 13
+                1.0f, 1.0f, 1.0f, // 14
+                1.0f, 0.0f, 1.0f, // 15
+
+                // top
+                1.0f, 1.0f, 1.0f, // 16
+                1.0f, 0.0f, 1.0f, // 17
+                0.0f, 1.0f, 1.0f, // 18
+                0.0f, 0.0f, 1.0f, // 19
+
+                // bottom
+                1.0f, 0.0f, 0.0f, // 20
+                0.0f, 0.0f, 0.0f, // 21
+                1.0f, 0.0f, 1.0f, // 22
+                0.0f, 0.0f, 1.0f, // 23
+        };
+
+        vertexData.indices = {
+                // front
+                0, 2, 3,
+                0, 3, 1,
+
+                // right
+                4, 6, 7,
+                4, 7, 5,
+
+                // back
+                8, 10, 11,
+                8, 11, 9,
+
+                // left
+                12, 14, 15,
+                12, 15, 13,
+
+                // top
+                16, 18, 19,
+                16, 19, 17,
+
+                // bottom
+                20, 22, 23,
+                20, 23, 21,
+        };
+
+        vertexData.normals = {
+                // front
+                -0.577350, -0.577350, -0.577350, // 0
+                0.816497, -0.408248, -0.408248, // 1
+                -0.408248, 0.816497, -0.408248, // 2
+                0.408248, 0.408248, -0.816497, // 3
+
+                // right
+                0.408248, 0.408248, -0.816497, // 4
+                0.408248, -0.816497, -0.408248, // 5
+                0.816497, 0.408248, 0.408248, // 6
+                0.816497, -0.408248, -0.408248, // 7
+
+                // back
+                0.816497, -0.408248, -0.408248, // 8
+                -0.577350, -0.577350, 0.577350, // 9
+                0.408248, 0.408248, 0.816497, // 10
+                -0.408248, 0.816497, 0.408248, // 11
+
+                // left
+                -0.408248, 0.816497, 0.408248, // 12
+                -0.408248, -0.816497, 0.408248, // 13
+                -0.816497, 0.408248, -0.408248, // 14
+                -0.816497, -0.408248, 0.408248, // 15
+
+                // top
+                -0.816497, 0.408248, -0.408248, // 16
+                0.408248, 0.408248, -0.816497, // 17
+                -0.408248, 0.816497, 0.408248, // 18
+                0.408248, 0.816497, 0.408248, // 19
+
+                // bottom
+                -0.408248, -0.816497, 0.408248, // 20
+                0.408248, -0.816497, 0.408248, // 21
+                -0.408248, -0.408248, -0.816497, // 22
+                0.408248, -0.408248, -0.816497, // 23
+        };
+
+        vertexData.uvs = {
+                // front
+                0.0f, 1.0f, // 0
+                1.0f, 1.0f, // 1
+                1.0f, 0.0f, // 2
+                0.0f, 0.0f, // 3
+
+                // right
+                0.0f, 0.0f, // 4
+                1.0f, 0.0f, // 5
+                1.0f, 1.0f, // 6
+                0.0f, 1.0f, // 7
+
+                // back
+                0.0f, 1.0f, // 8
+                1.0f, 1.0f, // 9
+                1.0f, 0.0f, // 10
+                0.0f, 0.0f, // 11
+
+                // left
+                0.0f, 0.0f, // 12
+                1.0f, 0.0f, // 13
+                1.0f, 1.0f, // 14
+                0.0f, 1.0f, // 15
+
+                // top
+                0.0f, 1.0f, // 16
+                1.0f, 1.0f, // 17
+                1.0f, 0.0f, // 18
+                0.0f, 0.0f, // 19
+
+                // bottom
+                0.0f, 0.0f, // 20
+                1.0f, 0.0f, // 21
+                1.0f, 1.0f, // 22
+                0.0f, 1.0f, // 23
+        };
+
+        auto mesh = Mesh::FromVertexData(name, vertexData);
+        scene.addMesh(mesh);
+        return mesh;
+    }
+
     static std::shared_ptr<Mesh> makeTriangle(const char *name, Scene &scene) {
         VertexData vertexData = VertexData();
         vertexData.positions = {
@@ -238,6 +424,29 @@ public:
                 vertexData.indices[index + 5] = (x + 1) * nbSubdivisions + z + 1;
             }
         }
+
+        auto mesh = Mesh::FromVertexData(name, vertexData);
+        scene.addMesh(mesh);
+        return mesh;
+    }
+
+    static std::shared_ptr<Mesh> makeLine(const char *name, Scene &scene, glm::vec3 p1, glm::vec3 p2) {
+        VertexData vertexData = VertexData();
+        vertexData.positions = {
+                p1.x, p1.y, p1.z,
+                p2.x, p2.y, p2.z
+        };
+        vertexData.indices = {
+                0, 1
+        };
+        vertexData.normals = {
+                0.0f, 0.0f, 0.0f,
+                0.0f, 0.0f, -1.0f
+        };
+        vertexData.uvs = {
+                0.0f, 0.0f,
+                1.0f, 1.0f
+        };
 
         auto mesh = Mesh::FromVertexData(name, vertexData);
         scene.addMesh(mesh);
