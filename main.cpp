@@ -39,7 +39,7 @@ int main() {
 
     OrbitCamera camera(&engine);
     camera.setRadius(20.0);
-    camera.setTarget(glm::vec3(0, 1, 0));
+    camera.setTarget(glm::vec3(0, 5, 0));
     camera.rotateTheta(-3.14 / 4.0);
     camera.rotatePhi(3.14 / 3.0);
     scene.setActiveCamera(std::shared_ptr<Camera>(&camera));
@@ -69,26 +69,13 @@ int main() {
     auto gravity = std::make_shared<UniformAccelerationField>(glm::vec3(0.0, -9.81, 0.0));
     solver.addField(gravity);
 
-    /*auto cloth = new Cloth("cloth", scene, 32, 10.0f);
+    auto cloth = new Cloth("cloth", scene, 16, 10.0f);
 
     cloth->transform()->setRotationZ(-3.14 / 2.0);
     cloth->transform()->setRotationY(3.14);
     cloth->bakeTransformIntoVertexData();
     cloth->transform()->setScale(10);
     cloth->transform()->setPosition(0, 7, 0);
-    cloth->bakeTransformIntoVertexData();
-
-    auto simplifiedVertexData = cloth->mesh()->vertexData().vertexSubset();
-    auto simplifiedMesh = Mesh::FromVertexData("simplified1", simplifiedVertexData);
-    simplifiedMesh->material()->setWireframe(true);
-    simplifiedMesh->transform()->translate(glm::vec3(0, 0, -15));
-    scene.addMesh(simplifiedMesh);
-
-    auto simplifiedVertexData2 = simplifiedMesh->vertexData().vertexSubset();
-    auto simplifiedMesh2 = Mesh::FromVertexData("simplified2", simplifiedVertexData2);
-    simplifiedMesh2->material()->setWireframe(true);
-    simplifiedMesh2->transform()->translate(glm::vec3(0, 0, -30));
-    scene.addMesh(simplifiedMesh2);
 
     auto clothMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     clothMaterial->setAlbedoColor(2.0, 2.0, 2.0);
@@ -115,7 +102,7 @@ int main() {
 
     solver.onBeforeSolveObservable.addOnce([&] { cube->particles()[0]->forces.emplace_back(0, 5000.0f, 0); });
 
-    shadowRenderer->addShadowCaster(cube->mesh());*/
+    shadowRenderer->addShadowCaster(cube->mesh());
 
 
     /*auto sphere = MeshBuilder::makeSphere("sphere", scene, 32);
@@ -129,7 +116,7 @@ int main() {
 
     shadowRenderer->addShadowCaster(sphere);*/
 
-    auto bunnyMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
+    /*auto bunnyMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     bunnyMaterial->setWireframe(true);
 
     float y = 3.0;
@@ -155,7 +142,7 @@ int main() {
     shadowRenderer->addShadowCaster(simplifiedBunny3);
 
     auto soft = new RigidBody(simplifiedBunny3, 1.0);
-    solver.addBody(soft);
+    solver.addBody(soft);*/
 
     auto ground = MeshBuilder::makePlane("ground", scene, 64);
     ground->transform()->setPosition(0, 0, 0);
@@ -173,7 +160,7 @@ int main() {
     bool realTimePhysics = false;
 
     engine.onKeyPressObservable.add([&](int key) {
-        //if (key == GLFW_KEY_W) cloth->mesh()->material()->setWireframe(!cloth->mesh()->material()->wireframe());
+        if (key == GLFW_KEY_W) cloth->mesh()->material()->setWireframe(!cloth->mesh()->material()->wireframe());
         if (key == GLFW_KEY_SPACE) realTimePhysics = !realTimePhysics;
         if (!realTimePhysics && key == GLFW_KEY_ENTER) solver.solve(1.0f / 60.0f);
     });
