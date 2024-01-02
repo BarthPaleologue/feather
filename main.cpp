@@ -24,7 +24,6 @@ void showNormals(std::shared_ptr<Mesh> mesh, Scene &scene) {
                                  mesh->vertexData().positions[i + 2]);
         glm::vec3 n1 = glm::vec3(mesh->vertexData().normals[i], mesh->vertexData().normals[i + 1],
                                  mesh->vertexData().normals[i + 2]);
-        std::cout << glm::length(n1) << std::endl;
         glm::vec3 p2 = p1 + n1 * 1.0f;
 
         auto line = MeshBuilder::makeLine("line", scene, p1, p2);
@@ -36,6 +35,8 @@ int main() {
     Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "HPBD Cloth Simulation");
 
     Scene scene((std::shared_ptr<Engine>(&engine)));
+
+    srand(time(0));
 
     OrbitCamera camera(&engine);
     camera.setRadius(20.0);
@@ -100,7 +101,8 @@ int main() {
 
     solver.addBody(cube);
 
-    solver.onBeforeSolveObservable.addOnce([&] { cube->particles()[0]->forces.emplace_back(0, 5000.0f, 0); });
+    solver.onBeforeSolveObservable.addOnce(
+            [&] { cube->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 5000.0f); });
 
     shadowRenderer->addShadowCaster(cube->mesh());
 
@@ -161,6 +163,7 @@ int main() {
 
     engine.onKeyPressObservable.add([&](int key) {
         if (key == GLFW_KEY_W) cloth->mesh()->material()->setWireframe(!cloth->mesh()->material()->wireframe());
+        if (key == GLFW_KEY_N) showNormals(cube->mesh(), scene);
         if (key == GLFW_KEY_SPACE) realTimePhysics = !realTimePhysics;
         if (!realTimePhysics && key == GLFW_KEY_ENTER) solver.solve(1.0f / 60.0f);
     });
