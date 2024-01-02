@@ -480,6 +480,59 @@ public:
 
         return Mesh::FromVertexData(name, vertexData);
     }
+
+    static std::shared_ptr<Mesh> FromObjFile(std::string filePath, Scene &scene) {
+        std::ifstream file(filePath);
+        std::string line;
+        std::vector<GLfloat> positions;
+        std::vector<GLfloat> normals;
+        std::vector<GLfloat> uvs;
+        std::vector<GLint> indices;
+        std::vector<GLfloat> colors;
+
+        while (std::getline(file, line)) {
+            std::istringstream iss(line);
+            std::string type;
+            iss >> type;
+            if (type == "v") {
+                glm::vec3 position;
+                iss >> position.x >> position.y >> position.z;
+                positions.push_back(position.x);
+                positions.push_back(position.y);
+                positions.push_back(position.z);
+            } else if (type == "vn") {
+                glm::vec3 normal;
+                iss >> normal.x >> normal.y >> normal.z;
+                normals.push_back(normal.x);
+                normals.push_back(normal.y);
+                normals.push_back(normal.z);
+            } else if (type == "vt") {
+                glm::vec2 uv;
+                iss >> uv.x >> uv.y;
+                uvs.push_back(uv.x);
+                uvs.push_back(uv.y);
+            } else if (type == "f") {
+                std::string vertex1, vertex2, vertex3;
+                iss >> vertex1 >> vertex2 >> vertex3;
+                indices.push_back(std::stoi(vertex1) - 1);
+                indices.push_back(std::stoi(vertex2) - 1);
+                indices.push_back(std::stoi(vertex3) - 1);
+            }
+        }
+
+        for (int i = 0; i < positions.size(); i++) colors.push_back(1.0f);
+
+        VertexData vertexData;
+        vertexData.positions = positions;
+        vertexData.normals = normals;
+        vertexData.uvs = uvs;
+        vertexData.indices = indices;
+        vertexData.colors = colors;
+
+        auto mesh = Mesh::FromVertexData(filePath.c_str(), vertexData);
+        scene.addMesh(mesh);
+        return mesh;
+    }
 };
 
 #endif //FEATHERGL_MESHBUILDER_H
