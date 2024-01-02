@@ -59,6 +59,8 @@ public:
     }
 
     void solve(float deltaTime) {
+        onBeforeSolveObservable.notifyObservers();
+
         // this is coming from XPBD where the time step is divided into sub time steps at the top level
         float subTimeStep = deltaTime / (float) _iterations;
         for (unsigned int i = 0; i < _iterations; i++) {
@@ -127,6 +129,8 @@ public:
             }
         }
     }
+
+    Observable<> onBeforeSolveObservable;
 
 private:
     int _iterations = 16;
