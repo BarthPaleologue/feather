@@ -9,6 +9,8 @@
 #include <vector>
 #include <glm/vec3.hpp>
 #include <iostream>
+#include <glm/gtc/random.hpp>
+#include <glm/ext/scalar_constants.hpp>
 #include "glad/glad.h"
 
 /**
@@ -42,6 +44,13 @@ public:
             }
         }
         std::cout << "]" << std::endl;
+    }
+
+    static glm::vec3 RandomDirection() {
+        float theta = glm::linearRand(0.f, 2.f * glm::pi<float>());
+        float phi = glm::linearRand(0.f, glm::pi<float>());
+        std::cout << theta << phi << std::endl;
+        return {glm::sin(phi) * glm::cos(theta), glm::cos(phi), glm::sin(phi) * glm::sin(theta)};
     }
 };
 
