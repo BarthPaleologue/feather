@@ -482,6 +482,14 @@ public:
         return Mesh::FromVertexData(name, vertexData);
     }
 
+    static std::shared_ptr<Mesh> Simplify(const char* name, std::shared_ptr<Mesh> original, Scene &scene) {
+        auto simplifiedData = original->vertexData().vertexSubset();
+        auto simplifiedMesh = Mesh::FromVertexData(name, simplifiedData);
+        scene.addMesh(simplifiedMesh);
+
+        return simplifiedMesh;
+    }
+
     static std::shared_ptr<Mesh> FromObjFile(std::string filePath, Scene &scene) {
         std::ifstream file(filePath);
         std::string line;

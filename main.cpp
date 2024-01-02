@@ -129,44 +129,30 @@ int main() {
 
     shadowRenderer->addShadowCaster(sphere);*/
 
-    /*auto bunny = MeshBuilder::FromObjFile("../assets/models/bunny.obj", scene);
-    bunny->transform()->setScale(5);
-    bunny->bakeTransformIntoVertexData();
-    bunny->transform()->setPosition(-10, 5, 0);*/
-
     auto bunnyMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     bunnyMaterial->setWireframe(true);
 
     float y = 3.0;
 
     auto bunny = MeshBuilder::FromObjFile("../assets/models/bunny.obj", scene);
-    //bunny->transform()->setScale(2);
-    //bunny->bakeTransformIntoVertexData();
     bunny->transform()->setPosition(0, y, -6);
     bunny->setMaterial(bunnyMaterial);
     shadowRenderer->addShadowCaster(bunny);
 
-    auto simplifiedBunnyData1 = bunny->vertexData().vertexSubset();
-    auto simplifiedBunny1 = Mesh::FromVertexData("simplifiedBunny1", simplifiedBunnyData1);
+    auto simplifiedBunny1 = MeshBuilder::Simplify("simplifiedBunny1", bunny, scene);
     simplifiedBunny1->setMaterial(bunnyMaterial);
     simplifiedBunny1->transform()->translate(glm::vec3(0, y, -2));
-    scene.addMesh(simplifiedBunny1);
     shadowRenderer->addShadowCaster(simplifiedBunny1);
 
-    auto simplifiedBunnyData2 = simplifiedBunny1->vertexData().vertexSubset();
-    auto simplifiedBunny2 = Mesh::FromVertexData("simplifiedBunny2", simplifiedBunnyData2);
+    auto simplifiedBunny2 = MeshBuilder::Simplify("simplifiedBunny2", simplifiedBunny1, scene);
     simplifiedBunny2->setMaterial(bunnyMaterial);
     simplifiedBunny2->transform()->translate(glm::vec3(0, y, 2));
-    scene.addMesh(simplifiedBunny2);
     shadowRenderer->addShadowCaster(simplifiedBunny2);
 
-    auto simplifiedBunnyData3 = simplifiedBunny2->vertexData().vertexSubset();
-    auto simplifiedBunny3 = Mesh::FromVertexData("simplifiedBunny3", simplifiedBunnyData3);
+    auto simplifiedBunny3 = MeshBuilder::Simplify("simplifiedBunny3", simplifiedBunny2, scene);
     simplifiedBunny3->setMaterial(bunnyMaterial);
     simplifiedBunny3->transform()->translate(glm::vec3(0, y, 6));
-    scene.addMesh(simplifiedBunny3);
     shadowRenderer->addShadowCaster(simplifiedBunny3);
-
 
     auto soft = new RigidBody(simplifiedBunny3, 1.0);
     solver.addBody(soft);
