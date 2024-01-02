@@ -97,6 +97,36 @@ float getShadowFactor(vec4 positionShadow, vec3 normal) {
 
 #define PI 3.14159265359
 
+// http://www.thetenthplanet.de/archives/1180
+mat3 cotangent_frame(vec3 N, vec3 p, vec2 uv)
+{
+    // récupère les vecteurs du triangle composant le pixel
+    vec3 dp1 = dFdx( p );
+    vec3 dp2 = dFdy( p );
+    vec2 duv1 = dFdx( uv );
+    vec2 duv2 = dFdy( uv );
+
+    // résout le système linéaire
+    vec3 dp2perp = cross( dp2, N );
+    vec3 dp1perp = cross( N, dp1 );
+    vec3 T = dp2perp * duv1.x + dp1perp * duv2.x;
+    vec3 B = dp2perp * duv1.y + dp1perp * duv2.y;
+
+    // construit une trame invariante à l'échelle
+    float invmax = inversesqrt( max( dot(T,T), dot(B,B) ) );
+    return mat3( T * invmax, B * invmax, N );
+}
+
+vec3 perturb_normal(vec3 N, vec3 V, vec2 texcoord)
+{
+    // N, la normale interpolée et
+    // V, le vecteur vue (vertex dirigé vers l'œil)
+    vec3 map = texture(normalTexture, texcoord ).xyz;
+    map = map * 255./127. - 128./127.;
+    mat3 TBN = cotangent_frame(N, -V, texcoord);
+    return normalize(TBN * map);
+}
+
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
     float a      = roughness*roughness;
     float a2     = a*a;
@@ -137,14 +167,15 @@ void main() {
     vec3 color = vec3(0.0);
 
     vec3 normal = vNormal;
+
+    vec3 V = normalize(cameraPosition - vPositionW);
+
     #ifdef NORMAL_TEXTURE
-    normal = texture(normalTexture, vUV).rgb;
-    normal = normalize(normal * 2.0 - 1.0);
-    normal = normalize(mix(normal, vNormalW, 0.4));
+    normal = perturb_normal(normal, V, vUV);
     #endif
 
     vec3 N = normalize(vec3(normalMatrix * vec4(normal, 0.0)));
-    vec3 V = normalize(cameraPosition - vPositionW);
+
 
     if (lightingEnabled) {
         vec3 albedo = albedoColor;
