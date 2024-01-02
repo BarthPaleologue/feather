@@ -113,10 +113,13 @@ public:
                 body->mesh()->vertexData().computeNormals();
                 body->mesh()->sendVertexDataToGPU();
             }
+
+            onAfterSolveObservable.notifyObservers();
         }
     }
 
     Observable<> onBeforeSolveObservable;
+    Observable<> onAfterSolveObservable;
 
 private:
     int _iterations = 16;
