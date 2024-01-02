@@ -53,7 +53,7 @@ struct VertexData {
      * @return
      * @see See page 5 of original HPBD paper for the description of the algorithm
      */
-    std::vector<GLint> vertexSubset() {
+    VertexData vertexSubset() {
         int k = 2;
         unsigned long nbVertices = positions.size() / 3;
 
@@ -143,13 +143,34 @@ struct VertexData {
             }
 
             if(closest == -1) {
-                throw std::runtime_error("vertex had no neighbor");
+                //throw std::runtime_error("vertex had no neighbor");
+                indicesSubset.push_back(-1);
+            } else {
+                indicesSubset.push_back(closest);
             }
-            indicesSubset.push_back(closest);
         }
+
 
         Utils::DebugVector(indices, "IndicesOriginal");
         Utils::DebugVector(indicesSubset, "IndicesSubset");
+
+        // prune triangles
+        std::vector<GLint> prunedIndicesSubset;
+        for(unsigned int i = 0; i < indicesSubset.size(); i+=3) {
+            GLint index0 = indicesSubset[i];
+            GLint index1 = indicesSubset[i+1];
+            GLint index2 = indicesSubset[i+2];
+
+            if(index0 == -1 || index1 == -1 || index2 == -1) continue;
+
+            if(index0 == index1 || index1 == index2 || index0 == index2) continue;
+
+            prunedIndicesSubset.push_back(index0);
+            prunedIndicesSubset.push_back(index1);
+            prunedIndicesSubset.push_back(index2);
+        }
+
+        Utils::DebugVector(prunedIndicesSubset, "PrunedIndices");
 
         VertexData subset{};
         for (auto vertex: vertexSubset) {
@@ -161,7 +182,7 @@ struct VertexData {
             subset.normals.push_back(normals[vertex * 3 + 2]);
         }
 
-        for (auto index: indicesSubset) {
+        for (auto index: prunedIndicesSubset) {
             auto it = std::find(vertexSubset.begin(), vertexSubset.end(), index);
             if (it != vertexSubset.end()) {
                 subset.indices.push_back(std::distance(vertexSubset.begin(), it));
@@ -172,7 +193,7 @@ struct VertexData {
 
         Utils::DebugVector(subset.indices, "IndicesSubset 2");
 
-        return vertexSubset;
+        return subset;
     }
 };
 

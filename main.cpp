@@ -69,7 +69,7 @@ int main() {
     auto gravity = std::make_shared<UniformAccelerationField>(glm::vec3(0.0, -9.81, 0.0));
     solver.addField(gravity);
 
-    auto cloth = new Cloth("cloth", scene, 16, 10.0f);
+    auto cloth = new Cloth("cloth", scene, 32, 10.0f);
 
     cloth->transform()->setRotationZ(-3.14 / 2.0);
     cloth->transform()->setRotationY(3.14);
@@ -78,23 +78,17 @@ int main() {
     cloth->transform()->setPosition(0, 7, 0);
     cloth->bakeTransformIntoVertexData();
 
-    //std::cout << "Original vertices " << cloth->mesh()->vertexData().positions.size() / 3 << std::endl;
-    auto simplfied = cloth->mesh()->vertexData().vertexSubset();
+    auto simplifiedVertexData = cloth->mesh()->vertexData().vertexSubset();
+    auto simplifiedMesh = Mesh::FromVertexData("simplified1", simplifiedVertexData);
+    simplifiedMesh->material()->setWireframe(true);
+    simplifiedMesh->transform()->translate(glm::vec3(0, 0, -15));
+    scene.addMesh(simplifiedMesh);
 
-    //scene.addMesh(Mesh::FromVertexData("test", simplfied));
-    auto vertexData = cloth->mesh()->vertexData();
-    for (auto index: simplfied) {
-        glm::vec3 position = glm::vec3(
-                vertexData.positions[index * 3],
-                vertexData.positions[index * 3 + 1],
-                vertexData.positions[index * 3 + 2]
-        );
-        //std::cout << toString(position) << std::endl;
-
-        auto gizmo = MeshBuilder::makeSphere("gizmo", scene, 16);
-        gizmo->transform()->setPosition(position);
-        gizmo->transform()->setScale(0.2);
-    }
+    auto simplifiedVertexData2 = simplifiedMesh->vertexData().vertexSubset();
+    auto simplifiedMesh2 = Mesh::FromVertexData("simplified2", simplifiedVertexData2);
+    simplifiedMesh2->material()->setWireframe(true);
+    simplifiedMesh2->transform()->translate(glm::vec3(0, 0, -30));
+    scene.addMesh(simplifiedMesh2);
 
     auto clothMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     clothMaterial->setAlbedoColor(2.0, 2.0, 2.0);
@@ -135,10 +129,10 @@ int main() {
 
     shadowRenderer->addShadowCaster(sphere);*/
 
-    auto banana = MeshBuilder::FromObjFile("../assets/models/banana.obj", scene);
+    /*auto banana = MeshBuilder::FromObjFile("../assets/models/banana.obj", scene);
     banana->transform()->setScale(5);
     banana->bakeTransformIntoVertexData();
-    banana->transform()->setPosition(-10, 5, 0);
+    banana->transform()->setPosition(-10, 5, 0);*/
 
 
     //auto soft = new SoftBody(banana, 1.0);
