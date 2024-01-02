@@ -10,12 +10,27 @@
 class SoftBody: public PhysicsBody {
 public:
     SoftBody(std::shared_ptr<Mesh> mesh, float mass) : PhysicsBody(mesh, mass) {
-        // a softbody is a physics body where all particles are almost fixed to each other (and volume constraint)
-        for (unsigned int i = 0; i < _particles.size(); i++) {
-            for (unsigned int j = i + 1; j < _particles.size(); j++) {
-                glm::vec3 diff = _particles[i]->position - _particles[j]->position;
-                float distance = glm::length(diff);
-                _constraints.push_back(new DistanceConstraint(_particles[i], _particles[j], distance, 0.0001f));
+        float stiffness = 0.002f;
+
+        // iterate over all triangles and create distance constraints
+        for(unsigned int i = 0; i < mesh->vertexData().indices.size(); i+= 3) {
+            auto index1 = mesh->vertexData().indices[i];
+            auto index2 = mesh->vertexData().indices[i + 1];
+            auto index3 = mesh->vertexData().indices[i + 2];
+            auto p1 = _particles[index1];
+            auto p2 = _particles[index2];
+            auto p3 = _particles[index3];
+            _constraints.push_back(new DistanceConstraint(p1, p2, glm::length(p1->position - p2->position), stiffness));
+            _constraints.push_back(new DistanceConstraint(p2, p3, glm::length(p2->position - p3->position), stiffness));
+            _constraints.push_back(new DistanceConstraint(p3, p1, glm::length(p3->position - p1->position), stiffness));
+        }
+
+        // find particles that share their positions and create distance constraints
+        for(unsigned int i = 0; i < _particles.size(); i++) {
+            for(unsigned int j = i + 1; j < _particles.size(); j++) {
+                if(_particles[i]->position == _particles[j]->position) {
+                    _constraints.push_back(new DistanceConstraint(_particles[i], _particles[j], 0.0f, 1.0f));
+                }
             }
         }
     }
