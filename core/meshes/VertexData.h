@@ -40,11 +40,20 @@ struct VertexData {
                                 positions[index2 * 3 + 2]);
             auto v3 = glm::vec3(positions[index3 * 3], positions[index3 * 3 + 1],
                                 positions[index3 * 3 + 2]);
-            auto normal = glm::normalize(glm::cross(v2 - v1, v3 - v1));
+            auto normal = glm::cross(v2 - v1, v3 - v1);
 
             normals[index1 * 3] += normal.x;
             normals[index1 * 3 + 1] += normal.y;
             normals[index1 * 3 + 2] += normal.z;
+        }
+
+        // normalize all normals
+        for (int i = 0; i < normals.size(); i += 3) {
+            auto normal = glm::vec3(normals[i], normals[i + 1], normals[i + 2]);
+            normal = glm::normalize(normal);
+            normals[i] = normal.x;
+            normals[i + 1] = normal.y;
+            normals[i + 2] = normal.z;
         }
     }
 
