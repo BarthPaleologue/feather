@@ -39,7 +39,7 @@ int main() {
 
     OrbitCamera camera(&engine);
     camera.setRadius(20.0);
-    camera.setTarget(glm::vec3(0, 7, 0));
+    camera.setTarget(glm::vec3(0, 1, 0));
     camera.rotateTheta(-3.14 / 4.0);
     camera.rotatePhi(3.14 / 3.0);
     scene.setActiveCamera(std::shared_ptr<Camera>(&camera));
@@ -69,7 +69,7 @@ int main() {
     auto gravity = std::make_shared<UniformAccelerationField>(glm::vec3(0.0, -9.81, 0.0));
     solver.addField(gravity);
 
-    auto cloth = new Cloth("cloth", scene, 32, 10.0f);
+    /*auto cloth = new Cloth("cloth", scene, 32, 10.0f);
 
     cloth->transform()->setRotationZ(-3.14 / 2.0);
     cloth->transform()->setRotationY(3.14);
@@ -115,7 +115,7 @@ int main() {
 
     solver.onBeforeSolveObservable.addOnce([&] { cube->particles()[0]->forces.emplace_back(0, 5000.0f, 0); });
 
-    shadowRenderer->addShadowCaster(cube->mesh());
+    shadowRenderer->addShadowCaster(cube->mesh());*/
 
 
     /*auto sphere = MeshBuilder::makeSphere("sphere", scene, 32);
@@ -129,15 +129,47 @@ int main() {
 
     shadowRenderer->addShadowCaster(sphere);*/
 
-    /*auto banana = MeshBuilder::FromObjFile("../assets/models/banana.obj", scene);
-    banana->transform()->setScale(5);
-    banana->bakeTransformIntoVertexData();
-    banana->transform()->setPosition(-10, 5, 0);*/
+    /*auto bunny = MeshBuilder::FromObjFile("../assets/models/bunny.obj", scene);
+    bunny->transform()->setScale(5);
+    bunny->bakeTransformIntoVertexData();
+    bunny->transform()->setPosition(-10, 5, 0);*/
+
+    auto bunnyMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
+    bunnyMaterial->setWireframe(true);
+
+    float y = 3.0;
+
+    auto bunny = MeshBuilder::FromObjFile("../assets/models/bunny.obj", scene);
+    //bunny->transform()->setScale(2);
+    //bunny->bakeTransformIntoVertexData();
+    bunny->transform()->setPosition(0, y, -6);
+    bunny->setMaterial(bunnyMaterial);
+    shadowRenderer->addShadowCaster(bunny);
+
+    auto simplifiedBunnyData1 = bunny->vertexData().vertexSubset();
+    auto simplifiedBunny1 = Mesh::FromVertexData("simplifiedBunny1", simplifiedBunnyData1);
+    simplifiedBunny1->setMaterial(bunnyMaterial);
+    simplifiedBunny1->transform()->translate(glm::vec3(0, y, -2));
+    scene.addMesh(simplifiedBunny1);
+    shadowRenderer->addShadowCaster(simplifiedBunny1);
+
+    auto simplifiedBunnyData2 = simplifiedBunny1->vertexData().vertexSubset();
+    auto simplifiedBunny2 = Mesh::FromVertexData("simplifiedBunny2", simplifiedBunnyData2);
+    simplifiedBunny2->setMaterial(bunnyMaterial);
+    simplifiedBunny2->transform()->translate(glm::vec3(0, y, 2));
+    scene.addMesh(simplifiedBunny2);
+    shadowRenderer->addShadowCaster(simplifiedBunny2);
+
+    auto simplifiedBunnyData3 = simplifiedBunny2->vertexData().vertexSubset();
+    auto simplifiedBunny3 = Mesh::FromVertexData("simplifiedBunny3", simplifiedBunnyData3);
+    simplifiedBunny3->setMaterial(bunnyMaterial);
+    simplifiedBunny3->transform()->translate(glm::vec3(0, y, 6));
+    scene.addMesh(simplifiedBunny3);
+    shadowRenderer->addShadowCaster(simplifiedBunny3);
 
 
-    //auto soft = new SoftBody(banana, 1.0);
-    //solver.applyForcePerParticle(soft->mesh(), glm::vec3(0, -9.81 * soft->mass() / soft->nbParticles(), 0));
-    //solver.addBody(soft);
+    auto soft = new RigidBody(simplifiedBunny3, 1.0);
+    solver.addBody(soft);
 
     auto ground = MeshBuilder::makePlane("ground", scene, 64);
     ground->transform()->setPosition(0, 0, 0);
@@ -155,7 +187,7 @@ int main() {
     bool realTimePhysics = false;
 
     engine.onKeyPressObservable.add([&](int key) {
-        if (key == GLFW_KEY_W) cloth->mesh()->material()->setWireframe(!cloth->mesh()->material()->wireframe());
+        //if (key == GLFW_KEY_W) cloth->mesh()->material()->setWireframe(!cloth->mesh()->material()->wireframe());
         if (key == GLFW_KEY_SPACE) realTimePhysics = !realTimePhysics;
         if (!realTimePhysics && key == GLFW_KEY_ENTER) solver.solve(1.0f / 60.0f);
     });
