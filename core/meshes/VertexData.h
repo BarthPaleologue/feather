@@ -110,8 +110,7 @@ struct VertexData {
             if (coarseMarking[i]) vertexSubset.push_back(i);
         }
 
-        Utils::DebugVector(vertexSubset, "VertexSubset");
-
+        // Triangulate coarse vertices using closest coarse vertex (garbage triangles will be generated so it needs pruning afterward)
         std::vector<GLint> indicesSubset;
         for (int index: indices) {
             if (coarseMarking[index]) {
@@ -135,42 +134,31 @@ struct VertexData {
                             positions[neighbor + 2]
                     );
                     float distance = glm::distance(position, neighborPosition);
-                    if(distance >= minDistance) continue;
+                    if (distance >= minDistance) continue;
 
                     minDistance = distance;
                     closest = neighbor;
                 }
             }
 
-            if(closest == -1) {
-                //throw std::runtime_error("vertex had no neighbor");
-                indicesSubset.push_back(-1);
-            } else {
-                indicesSubset.push_back(closest);
-            }
+            indicesSubset.push_back(closest);
         }
-
-
-        Utils::DebugVector(indices, "IndicesOriginal");
-        Utils::DebugVector(indicesSubset, "IndicesSubset");
 
         // prune triangles
         std::vector<GLint> prunedIndicesSubset;
-        for(unsigned int i = 0; i < indicesSubset.size(); i+=3) {
+        for (unsigned int i = 0; i < indicesSubset.size(); i += 3) {
             GLint index0 = indicesSubset[i];
-            GLint index1 = indicesSubset[i+1];
-            GLint index2 = indicesSubset[i+2];
+            GLint index1 = indicesSubset[i + 1];
+            GLint index2 = indicesSubset[i + 2];
 
-            if(index0 == -1 || index1 == -1 || index2 == -1) continue;
+            if (index0 == -1 || index1 == -1 || index2 == -1) continue;
 
-            if(index0 == index1 || index1 == index2 || index0 == index2) continue;
+            if (index0 == index1 || index1 == index2 || index0 == index2) continue;
 
             prunedIndicesSubset.push_back(index0);
             prunedIndicesSubset.push_back(index1);
             prunedIndicesSubset.push_back(index2);
         }
-
-        Utils::DebugVector(prunedIndicesSubset, "PrunedIndices");
 
         VertexData subset{};
         for (auto vertex: vertexSubset) {
@@ -190,8 +178,6 @@ struct VertexData {
                 throw std::runtime_error("Could not find index of some element in simplify mesh");
             }
         }
-
-        Utils::DebugVector(subset.indices, "IndicesSubset 2");
 
         return subset;
     }
