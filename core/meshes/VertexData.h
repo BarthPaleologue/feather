@@ -7,7 +7,9 @@
 
 #include <vector>
 #include <iostream>
+#include <algorithm>
 #include "glad/glad.h"
+#include "utils.h"
 
 struct VertexData {
     std::vector<GLfloat> positions{};
@@ -105,8 +107,70 @@ struct VertexData {
 
         std::vector<GLint> vertexSubset;
         for (GLint i = 0; i < nbVertices; i++) {
-            if (!coarseMarking[i]) vertexSubset.push_back(i);
+            if (coarseMarking[i]) vertexSubset.push_back(i);
         }
+
+        Utils::DebugVector(vertexSubset, "VertexSubset");
+
+        std::vector<GLint> indicesSubset;
+        for (int index: indices) {
+            if (coarseMarking[index]) {
+                indicesSubset.push_back(index);
+                continue;
+            }
+
+            float minDistance = 1e3;
+            int closest = -1;
+            glm::vec3 position = glm::vec3(
+                    positions[index],
+                    positions[index + 1],
+                    positions[index + 2]
+            );
+
+            for (auto neighbor: neighbors[index]) {
+                if (coarseMarking[neighbor]) {
+                    glm::vec3 neighborPosition = glm::vec3(
+                            positions[neighbor],
+                            positions[neighbor + 1],
+                            positions[neighbor + 2]
+                    );
+                    float distance = glm::distance(position, neighborPosition);
+                    if(distance >= minDistance) continue;
+
+                    minDistance = distance;
+                    closest = neighbor;
+                }
+            }
+
+            if(closest == -1) {
+                throw std::runtime_error("vertex had no neighbor");
+            }
+            indicesSubset.push_back(closest);
+        }
+
+        Utils::DebugVector(indices, "IndicesOriginal");
+        Utils::DebugVector(indicesSubset, "IndicesSubset");
+
+        VertexData subset{};
+        for (auto vertex: vertexSubset) {
+            subset.positions.push_back(positions[vertex * 3]);
+            subset.positions.push_back(positions[vertex * 3 + 1]);
+            subset.positions.push_back(positions[vertex * 3 + 2]);
+            subset.normals.push_back(normals[vertex * 3]);
+            subset.normals.push_back(normals[vertex * 3 + 1]);
+            subset.normals.push_back(normals[vertex * 3 + 2]);
+        }
+
+        for (auto index: indicesSubset) {
+            auto it = std::find(vertexSubset.begin(), vertexSubset.end(), index);
+            if (it != vertexSubset.end()) {
+                subset.indices.push_back(std::distance(vertexSubset.begin(), it));
+            } else {
+                throw std::runtime_error("Could not find index of some element in simplify mesh");
+            }
+        }
+
+        Utils::DebugVector(subset.indices, "IndicesSubset 2");
 
         return vertexSubset;
     }

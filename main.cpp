@@ -18,6 +18,20 @@ float random01() {
     return (float) rand() / (float) RAND_MAX;
 }
 
+void showNormals(std::shared_ptr<Mesh> mesh, Scene &scene) {
+    for (unsigned int i = 0; i < mesh->vertexData().positions.size(); i += 3) {
+        glm::vec3 p1 = glm::vec3(mesh->vertexData().positions[i], mesh->vertexData().positions[i + 1],
+                                 mesh->vertexData().positions[i + 2]);
+        glm::vec3 n1 = glm::vec3(mesh->vertexData().normals[i], mesh->vertexData().normals[i + 1],
+                                 mesh->vertexData().normals[i + 2]);
+        std::cout << glm::length(n1) << std::endl;
+        glm::vec3 p2 = p1 + n1 * 1.0f;
+
+        auto line = MeshBuilder::makeLine("line", scene, p1, p2);
+        line->transform()->setParent(mesh->transform());
+    }
+}
+
 int main() {
     Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "HPBD Cloth Simulation");
 
@@ -62,6 +76,25 @@ int main() {
     cloth->bakeTransformIntoVertexData();
     cloth->transform()->setScale(10);
     cloth->transform()->setPosition(0, 7, 0);
+    cloth->bakeTransformIntoVertexData();
+
+    //std::cout << "Original vertices " << cloth->mesh()->vertexData().positions.size() / 3 << std::endl;
+    auto simplfied = cloth->mesh()->vertexData().vertexSubset();
+
+    //scene.addMesh(Mesh::FromVertexData("test", simplfied));
+    auto vertexData = cloth->mesh()->vertexData();
+    for (auto index: simplfied) {
+        glm::vec3 position = glm::vec3(
+                vertexData.positions[index * 3],
+                vertexData.positions[index * 3 + 1],
+                vertexData.positions[index * 3 + 2]
+        );
+        //std::cout << toString(position) << std::endl;
+
+        auto gizmo = MeshBuilder::makeSphere("gizmo", scene, 16);
+        gizmo->transform()->setPosition(position);
+        gizmo->transform()->setScale(0.2);
+    }
 
     auto clothMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     clothMaterial->setAlbedoColor(2.0, 2.0, 2.0);
@@ -106,6 +139,7 @@ int main() {
     banana->transform()->setScale(5);
     banana->bakeTransformIntoVertexData();
     banana->transform()->setPosition(-10, 5, 0);
+
 
     //auto soft = new SoftBody(banana, 1.0);
     //solver.applyForcePerParticle(soft->mesh(), glm::vec3(0, -9.81 * soft->mass() / soft->nbParticles(), 0));

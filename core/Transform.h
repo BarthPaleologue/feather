@@ -22,6 +22,10 @@ public:
 
     void setPosition(float x, float y, float z);
 
+    void setPosition(glm::vec3 position) {
+        setPosition(position.x, position.y, position.z);
+    }
+
     void translate(glm::vec3 displacement);
 
     void setParent(Transform *parent);
