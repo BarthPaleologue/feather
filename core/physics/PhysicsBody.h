@@ -44,7 +44,7 @@ public:
 
     void applyForcePerParticle(glm::vec3 force) {
         for (auto particle: _particles) {
-            particle->_forces.push_back(force);
+            particle->forces.push_back(force);
         }
     }
 

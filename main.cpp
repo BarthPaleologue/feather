@@ -9,6 +9,7 @@
 #include "PbrMaterial.h"
 #include "physics/RigidBody.h"
 #include "physics/SoftBody.h"
+#include "physics/UniformAccelerationField.h"
 
 const int WINDOW_WIDTH = 1000;
 const int WINDOW_HEIGHT = 600;
@@ -19,8 +20,6 @@ float random01() {
 
 int main() {
     Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "HPBD Cloth Simulation");
-
-    HpbdSolver solver;
 
     Scene scene((std::shared_ptr<Engine>(&engine)));
 
@@ -51,6 +50,11 @@ int main() {
     /*PostProcessing invert("./assets/shaders/invertPostProcess", &engine);
     scene.addPostProcess(std::shared_ptr<PostProcessing>(&invert));*/
 
+    HpbdSolver solver;
+
+    auto gravity = std::make_shared<UniformAccelerationField>(glm::vec3(0.0, -9.81, 0.0));
+    solver.addField(gravity);
+
     auto cloth = new Cloth("cloth", scene, 16, 10.0f);
 
     cloth->transform()->setRotationZ(-3.14 / 2.0);
@@ -70,22 +74,22 @@ int main() {
     clothMaterial->setWireframe(true);
     cloth->mesh()->setMaterial(clothMaterial);
 
+
     solver.addBody(cloth);
-    solver.applyForcePerParticle(cloth->mesh(), glm::vec3(0, -9.81 * cloth->mass() / cloth->nbParticles(), 0));
 
     shadowRenderer->addShadowCaster(cloth->mesh());
 
-    for(unsigned int i = 0; i < 10; i++) {
-        auto cube = new SoftBody(MeshBuilder::makeCube("cube", scene), 1.0);
-        cube->transform()->setPosition(10.0f * (random01() * 2.0f - 1.0f), 4, 10.0f * (random01() * 2.0f - 1.0f));
-        
-        cube->mesh()->setMaterial(clothMaterial);
+    auto cube = new RigidBody(MeshBuilder::makeUVCube("cube", scene), 1.0);
+    cube->transform()->setPosition(5.0, 4, -8.0);
 
-        solver.addBody(cube);
-        solver.applyForcePerParticle(cube->mesh(), glm::vec3(0, -9.81 * cube->mass() / cube->nbParticles(), 0));
+    cube->mesh()->setMaterial(clothMaterial);
 
-        shadowRenderer->addShadowCaster(cube->mesh());
-    }
+    solver.addBody(cube);
+
+    solver.onBeforeSolveObservable.addOnce([&] { cube->particles()[0]->forces.emplace_back(0, 5000.0f, 0); });
+
+    shadowRenderer->addShadowCaster(cube->mesh());
+
 
     /*auto sphere = MeshBuilder::makeSphere("sphere", scene, 32);
     sphere->transform()->setPosition(4, 1, 10);
@@ -97,6 +101,15 @@ int main() {
     sphere->setMaterial(sphereMaterial);
 
     shadowRenderer->addShadowCaster(sphere);*/
+
+    auto banana = MeshBuilder::FromObjFile("../assets/models/banana.obj", scene);
+    banana->transform()->setScale(5);
+    banana->bakeTransformIntoVertexData();
+    banana->transform()->setPosition(-10, 5, 0);
+
+    //auto soft = new SoftBody(banana, 1.0);
+    //solver.applyForcePerParticle(soft->mesh(), glm::vec3(0, -9.81 * soft->mass() / soft->nbParticles(), 0));
+    //solver.addBody(soft);
 
     auto ground = MeshBuilder::makePlane("ground", scene, 64);
     ground->transform()->setPosition(0, 0, 0);

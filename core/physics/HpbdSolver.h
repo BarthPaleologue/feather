@@ -11,6 +11,7 @@
 #include "Constraint.h"
 #include "PhysicsBody.h"
 #include "CollisionConstraint.h"
+#include "UniformAccelerationField.h"
 
 class HpbdSolver {
 public:
@@ -25,50 +26,33 @@ public:
         }
     }
 
-    PhysicsBody *addMesh(std::shared_ptr<Mesh> mesh, float mass) {
-        auto physicsBody = new PhysicsBody(mesh, mass);
-        _physicsBodies.push_back(physicsBody);
-
-        return physicsBody;
-    }
-
-    void removeMesh(std::shared_ptr<Mesh> mesh) {
-        // find index of mesh in meshes then erase in _meshes and _particles
-        unsigned long index = 0;
-        for (auto body: _physicsBodies) {
-            if (body->mesh() == mesh) {
-                _physicsBodies.erase(_physicsBodies.begin() + index);
-                break;
-            }
-            index++;
-        }
-    }
-
-
     void addBody(PhysicsBody *pBody) {
         _physicsBodies.push_back(pBody);
     }
 
-    void applyForcePerParticle(std::shared_ptr<Mesh> mesh, glm::vec3 force) {
-        for (auto body: _physicsBodies) {
-            if (body->mesh() == mesh) {
-                body->applyForcePerParticle(force);
-                break;
-            }
-        }
+    void addField(std::shared_ptr<UniformAccelerationField> field) {
+        _fields.push_back(field);
     }
 
     void solve(float deltaTime) {
         onBeforeSolveObservable.notifyObservers();
 
+        // apply force fields
+        for (auto body: _physicsBodies) {
+            for (auto particle: body->particles()) {
+                for(auto field: _fields) {
+                    particle->forces.push_back(field->computeAcceleration() /* particle->mass why is this wrong*/);
+                }
+            }
+        }
+
         // this is coming from XPBD where the time step is divided into sub time steps at the top level
         float subTimeStep = deltaTime / (float) _iterations;
         for (unsigned int i = 0; i < _iterations; i++) {
-
-            // apply forces
+            // apply resultingForce
             for (auto body: _physicsBodies) {
                 for (auto particle: body->particles()) {
-                    particle->velocity += subTimeStep * particle->invMass * particle->forces();
+                    particle->velocity += subTimeStep * particle->invMass * particle->resultingForce();
                 }
             }
 
@@ -118,6 +102,8 @@ public:
                     // velocity damping
                     particle->velocity *= 0.999;
 
+                    particle->forces.clear();
+
                     // update actual mesh vertex data
                     body->mesh()->vertexData().positions[particle->startIndex] = particle->position.x;
                     body->mesh()->vertexData().positions[particle->startIndex + 1] = particle->position.y;
@@ -135,6 +121,7 @@ public:
 private:
     int _iterations = 16;
     std::vector<PhysicsBody *> _physicsBodies;
+    std::vector<std::shared_ptr<UniformAccelerationField>> _fields;
 };
 
 #endif //FEATHERGL_HPBDSOLVER_H
