@@ -66,6 +66,11 @@ protected:
             denominator += _particles[i]->invMass * _gradient.col(i).dot(_gradient.col(i));
         }
 
+        if (denominator == 0) {
+            _s = 0;
+            return;
+        }
+
         _s = numerator / denominator;
     }
 
