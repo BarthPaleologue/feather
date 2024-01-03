@@ -19,19 +19,18 @@ public:
 
         // fixed particles
         auto topLeft = new FixedConstraint(_particles[0], _particles[0]->position);
-        _constraints.push_back(topLeft);
-        _fixedConstraints.push_back(topLeft);
+        addFixedConstraint(topLeft);
 
         auto topRight = new FixedConstraint(_particles[nbSubdivisions - 1], _particles[nbSubdivisions - 1]->position);
-        _constraints.push_back(topRight);
-        _fixedConstraints.push_back(topRight);
+        addFixedConstraint(topRight);
 
         // horizontal stretch
         for (unsigned int x = 0; x < nbSubdivisions; x++) {
             for (unsigned int y = 0; y < nbSubdivisions - 1; y++) {
                 auto particle1 = _particles[x * nbSubdivisions + y];
                 auto particle2 = _particles[x * nbSubdivisions + y + 1];
-                _constraints.push_back(new DistanceConstraint(particle1, particle2, 1.0f / (float) nbSubdivisions, 0.5));
+                auto distanceConstraint = new DistanceConstraint(particle1, particle2, 1.0f / (float) nbSubdivisions, 0.5);
+                addDistanceConstraint(distanceConstraint);
             }
         }
 
@@ -39,8 +38,9 @@ public:
         for (unsigned int x = 0; x < nbSubdivisions - 1; x++) {
             for (unsigned int y = 0; y < nbSubdivisions; y++) {
                 auto particle1 = _particles[x * nbSubdivisions + y];
-                auto particle2 = _particles[(x + 1) * nbSubdivisions + y];
-                _constraints.push_back(new DistanceConstraint(particle1, particle2, 1.0f / (float) nbSubdivisions, 0.5));
+                auto particle2= _particles[(x + 1) * nbSubdivisions + y];
+                auto distanceConstraint = new DistanceConstraint(particle1, particle2, 1.0f / (float) nbSubdivisions, 0.5);
+                addDistanceConstraint(distanceConstraint);
             }
         }
 

@@ -42,12 +42,6 @@ public:
         }
     }
 
-    void applyForcePerParticle(glm::vec3 force) {
-        for (auto particle: _particles) {
-            particle->forces.push_back(force);
-        }
-    }
-
     void buildParticleHierarchy() {
         //TODO: build particle hierarchy
     }
@@ -64,12 +58,31 @@ public:
         return _mesh->transform();
     }
 
+    void addFixedConstraint(FixedConstraint *constraint) {
+        _constraints.push_back(constraint);
+        _fixedConstraints.push_back(constraint);
+    }
+
+    void addDistanceConstraint(DistanceConstraint *constraint) {
+        _constraints.push_back(constraint);
+        _distanceConstraints.push_back(constraint);
+    }
+
+    void addCollisionConstraint(CollisionConstraint *constraint) {
+        _constraints.push_back(constraint);
+        _collisionConstraints.push_back(constraint);
+    }
+
     std::vector<Constraint *> &constraints() {
         return _constraints;
     }
 
     std::vector<FixedConstraint *> &fixedConstraints() {
         return _fixedConstraints;
+    }
+
+    std::vector<DistanceConstraint *> &distanceConstraints() {
+        return _distanceConstraints;
     }
 
     std::vector<CollisionConstraint *> &collisionConstraints() {
@@ -89,9 +102,11 @@ protected:
 
     std::shared_ptr<Mesh> _mesh;
     std::vector<Particle *> _particles;
-    std::vector<Constraint *> _constraints;
 
+private:
+    std::vector<Constraint *> _constraints;
     std::vector<FixedConstraint *> _fixedConstraints;
+    std::vector<DistanceConstraint *> _distanceConstraints;
     std::vector<CollisionConstraint *> _collisionConstraints;
 };
 

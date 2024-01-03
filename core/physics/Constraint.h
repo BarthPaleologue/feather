@@ -37,6 +37,10 @@ public:
         }
     }
 
+    std::vector<Particle *> particles() const {
+        return _particles;
+    }
+
 protected:
     /**
      * Computes the gradient of the constraint
