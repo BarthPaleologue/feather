@@ -34,6 +34,52 @@ public:
                 }
             }
         }
+
+
+        // bend constraints
+        // create map of edge to list of triangles (triangles are represented by their first index in the indices array)
+        std::map<std::pair<unsigned int, unsigned int>, std::vector<unsigned int>> edgeToTriangles;
+
+        for (unsigned int i = 0; i < mesh->vertexData().indices.size(); i += 3) {
+            auto index1 = mesh->vertexData().indices[i];
+            auto index2 = mesh->vertexData().indices[i + 1];
+            auto index3 = mesh->vertexData().indices[i + 2];
+
+            auto edge1 = std::pair<unsigned int, unsigned int>(std::min(index1, index2), std::max(index1, index2));
+            auto edge2 = std::pair<unsigned int, unsigned int>(std::min(index2, index3), std::max(index2, index3));
+            auto edge3 = std::pair<unsigned int, unsigned int>(std::min(index3, index1), std::max(index3, index1));
+
+            edgeToTriangles[edge1].push_back(i);
+            edgeToTriangles[edge2].push_back(i);
+            edgeToTriangles[edge3].push_back(i);
+        }
+
+        for (const auto& edgeToTrianglesPair: edgeToTriangles) {
+            auto edge = edgeToTrianglesPair.first;
+            auto triangles = edgeToTrianglesPair.second;
+
+            if (triangles.size() != 2) continue;
+
+            auto triangle1 = triangles[0];
+            auto triangle2 = triangles[1];
+
+            std::vector<unsigned int> notSharedVertices;
+            for (unsigned int i = 0; i < 3; i++) {
+                auto index = mesh->vertexData().indices[triangle1 + i];
+                if (index != edge.first && index != edge.second) {
+                    notSharedVertices.push_back(index);
+                }
+
+                index = mesh->vertexData().indices[triangle2 + i];
+                if (index != edge.first && index != edge.second) {
+                    notSharedVertices.push_back(index);
+                }
+            }
+
+            if(notSharedVertices.size() != 2) continue;
+
+            addBendConstraint(new BendConstraint(_particles[edge.first], _particles[edge.second], _particles[notSharedVertices[0]], _particles[notSharedVertices[1]], 1.0f));
+        }
     }
 };
 
