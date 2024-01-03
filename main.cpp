@@ -75,7 +75,7 @@ int main() {
     clothMesh->bakeTransformIntoVertexData();
     clothMesh->transform()->setPosition(0, 7, 0);
 
-    auto cloth = new SoftBody(clothMesh, 0.01f);
+    auto cloth = new SoftBody(clothMesh, 1.0f);
     // Seed the random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -141,9 +141,6 @@ int main() {
     clothMaterial->setWireframe(true);
     cloth->mesh()->setMaterial(clothMaterial);
 
-
-    solver.addBody(cloth);
-
     shadowRenderer->addShadowCaster(cloth->mesh());
 
     auto cube = new RigidBody(MeshBuilder::makeUVCube("cube", scene), 1.0);
@@ -171,24 +168,26 @@ int main() {
     shadowRenderer->addShadowCaster(sphere);*/
 
     /*auto bunnyMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
-    bunnyMaterial->setWireframe(true);
+    //bunnyMaterial->setWireframe(true);
 
     float y = 3.0;
 
     auto bunny = MeshBuilder::FromObjFile("../assets/models/bunny.obj", scene);
-    bunny->transform()->setPosition(0, y, -6);
+    bunny->transform()->setPosition(5, y, -6);
     bunny->setMaterial(bunnyMaterial);
     shadowRenderer->addShadowCaster(bunny);
 
     auto simplfiedData = bunny->vertexData().vertexSubset().vertexSubset().vertexSubset();
     auto simplifiedBunny1 = Mesh::FromVertexData("simpleBunny", simplfiedData);
+    simplifiedBunny1->transform()->setScale(3.0f);
+    simplifiedBunny1->bakeTransformIntoVertexData();
     simplifiedBunny1->setMaterial(bunnyMaterial);
-    simplifiedBunny1->transform()->translate(glm::vec3(0, y, -2));
+    simplifiedBunny1->transform()->translate(glm::vec3(5, y, -2));
     shadowRenderer->addShadowCaster(simplifiedBunny1);
 
-    scene.addMesh(simplifiedBunny1);*/
+    scene.addMesh(simplifiedBunny1);
 
-    /*auto softBunny = new SoftBody(simplifiedBunny1, 1.0);
+    auto softBunny = new SoftBody(simplifiedBunny1, 1.0);
     solver.addBody(softBunny);*/
 
     /*auto simplifiedBunny2 = MeshBuilder::Simplify("simplifiedBunny2", simplifiedBunny1, scene);
