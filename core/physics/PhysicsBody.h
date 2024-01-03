@@ -12,6 +12,7 @@
 #include "FixedConstraint.h"
 #include "CollisionConstraint.h"
 #include "BendConstraint.h"
+#include "VolumeConstraint.h"
 
 class PhysicsBody {
 public:
@@ -74,6 +75,11 @@ public:
         _bendConstraints.push_back(constraint);
     }
 
+    void addVolumeConstraint(VolumeConstraint *constraint) {
+        _constraints.push_back(constraint);
+        _volumeConstraints.push_back(constraint);
+    }
+
     void addCollisionConstraint(CollisionConstraint *constraint) {
         _constraints.push_back(constraint);
         _collisionConstraints.push_back(constraint);
@@ -93,6 +99,10 @@ public:
 
     std::vector<BendConstraint *> &bendConstraints() {
         return _bendConstraints;
+    }
+
+    std::vector<VolumeConstraint *> &volumeConstraints() {
+        return _volumeConstraints;
     }
 
     std::vector<CollisionConstraint *> &collisionConstraints() {
@@ -118,6 +128,7 @@ private:
     std::vector<FixedConstraint *> _fixedConstraints;
     std::vector<DistanceConstraint *> _distanceConstraints;
     std::vector<BendConstraint *> _bendConstraints;
+    std::vector<VolumeConstraint *> _volumeConstraints;
     std::vector<CollisionConstraint *> _collisionConstraints;
 };
 
