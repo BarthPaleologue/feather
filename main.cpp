@@ -78,6 +78,25 @@ int main() {
     cloth->transform()->setScale(10);
     cloth->transform()->setPosition(0, 7, 0);
 
+    auto clothWorld = cloth->transform()->computeWorldMatrix();
+
+    auto lineMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
+    lineMaterial->setAmbientColor(1.0, 0.0, 0.0);
+
+    for(auto constraint: cloth->distanceConstraints()) {
+        if(constraint->particles().size() == 2) {
+            auto p1 = constraint->particles()[0];
+            auto p2 = constraint->particles()[1];
+
+            auto position1 = clothWorld * glm::vec4(p1->position, 1.0f);
+            auto position2 = clothWorld * glm::vec4(p2->position, 1.0f);
+
+            auto line = MeshBuilder::makeLine("line", scene, position1, position2);
+            line->setMaterial(lineMaterial);
+            line->transform()->translate(glm::vec3(1.0, 0.0, 0.0));
+        }
+    }
+
     auto clothMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     clothMaterial->setAlbedoColor(2.0, 2.0, 2.0);
     clothMaterial->setAlbedoTexture(new Texture("./assets/textures/carpet.jpg"));
