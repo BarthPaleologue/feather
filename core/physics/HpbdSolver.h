@@ -97,7 +97,7 @@ public:
                     particle->position = particle->predictedPosition;
 
                     // clamp to ground for now
-                    particle->position[1] = std::max(particle->position.y, -body->mesh()->transform()->position()->y);
+                    particle->position[1] = std::max(particle->position.y, -body->mesh()->transform()->position()->y + 0.001f);
 
                     // velocity damping
                     particle->velocity *= 0.999;
