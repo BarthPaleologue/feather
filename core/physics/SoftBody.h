@@ -30,7 +30,7 @@ public:
         // find particles that share their positions and create distance constraints
         for (unsigned int i = 0; i < _particles.size(); i++) {
             for (unsigned int j = i + 1; j < _particles.size(); j++) {
-                if (_particles[i]->position == _particles[j]->position) {
+                if (glm::distance(_particles[i]->position, _particles[j]->position) < 0.001f) {
                     addDistanceConstraint(new DistanceConstraint(_particles[i], _particles[j], 0.0f, 1.0f));
                 }
             }
