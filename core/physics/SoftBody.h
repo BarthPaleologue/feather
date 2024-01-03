@@ -12,8 +12,7 @@
 
 class SoftBody : public PhysicsBody {
 public:
-    SoftBody(std::shared_ptr<Mesh> mesh, float mass) : PhysicsBody(mesh, mass) {
-        float stiffness = 0.5f;
+    SoftBody(std::shared_ptr<Mesh> mesh, float mass, float stretchStiffness = 0.5f, float bendStiffness = 0.2f) : PhysicsBody(mesh, mass) {
 
         // iterate over all triangles and create distance constraints
         for (unsigned int i = 0; i < mesh->vertexData().indices.size(); i += 3) {
@@ -23,9 +22,9 @@ public:
             auto p1 = _particles[index1];
             auto p2 = _particles[index2];
             auto p3 = _particles[index3];
-            addDistanceConstraint(new DistanceConstraint(p1, p2, glm::length(p1->position - p2->position), stiffness));
-            addDistanceConstraint(new DistanceConstraint(p2, p3, glm::length(p2->position - p3->position), stiffness));
-            addDistanceConstraint(new DistanceConstraint(p3, p1, glm::length(p3->position - p1->position), stiffness));
+            addDistanceConstraint(new DistanceConstraint(p1, p2, glm::length(p1->position - p2->position), stretchStiffness));
+            addDistanceConstraint(new DistanceConstraint(p2, p3, glm::length(p2->position - p3->position), stretchStiffness));
+            addDistanceConstraint(new DistanceConstraint(p3, p1, glm::length(p3->position - p1->position), stretchStiffness));
         }
 
         // find particles that share their positions and create distance constraints
@@ -91,7 +90,7 @@ public:
 
             if(notSharedVertices.size() != 2) continue;
 
-            addBendConstraint(new BendConstraint(_particles[edge.first], _particles[edge.second], _particles[notSharedVertices[0]], _particles[notSharedVertices[1]], 0.7f));
+            addBendConstraint(new BendConstraint(_particles[edge.first], _particles[edge.second], _particles[notSharedVertices[0]], _particles[notSharedVertices[1]], bendStiffness));
         }
     }
 };
