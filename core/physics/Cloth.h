@@ -45,15 +45,15 @@ public:
         }
 
         // bend
-        /*for(unsigned int x = 0; x < nbSubdivisions - 2; x++) {
-            for(unsigned int y = 0; y < nbSubdivisions - 2; y++) {
+        for(unsigned int x = 0; x < nbSubdivisions - 1; x++) {
+            for(unsigned int y = 0; y < nbSubdivisions - 1; y++) {
                 auto particle1 = _particles[x * nbSubdivisions + y];
-                auto particle2 = _particles[x * nbSubdivisions + y + 2];
-                auto particle3 = _particles[(x + 2) * nbSubdivisions + y];
-                auto particle4 = _particles[(x + 2) * nbSubdivisions + y + 2];
-                _constraints.push_back(new BendConstraint(particle1, particle2, particle3, particle4, 0.0f));
+                auto particle2 = _particles[x * nbSubdivisions + y + 1];
+                auto particle3 = _particles[(x + 1) * nbSubdivisions + y];
+                auto particle4 = _particles[(x + 1) * nbSubdivisions + y + 1];
+                addBendConstraint(new BendConstraint(particle1, particle2, particle3, particle4, 0.0f));
             }
-        }*/
+        }
     };
 };
 
