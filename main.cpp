@@ -75,7 +75,7 @@ int main() {
     clothMesh->bakeTransformIntoVertexData();
     clothMesh->transform()->setPosition(0, 7, 0);
 
-    auto cloth = new SoftBody(clothMesh, 1.0f);
+    auto cloth = new SoftBody(clothMesh, 1.0f, 0.5f, 0.01f);
     // Seed the random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
