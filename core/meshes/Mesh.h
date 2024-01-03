@@ -17,7 +17,6 @@ public:
     explicit Mesh(const char *name) : Transformable(), _name(name), _vao(0), _vbo(0) {
         _id = UUID::generate_uuid_v4();
         _material = std::make_shared<DefaultMaterial>();
-        std::cout << "Mesh " << _name << " _handle: " << _id << " created" << std::endl;
     }
 
     bool operator==(const Mesh &other) const {
