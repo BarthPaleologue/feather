@@ -51,7 +51,7 @@ public:
                 auto particle2 = _particles[x * nbSubdivisions + y + 1];
                 auto particle3 = _particles[(x + 1) * nbSubdivisions + y];
                 auto particle4 = _particles[(x + 1) * nbSubdivisions + y + 1];
-                addBendConstraint(new BendConstraint(particle1, particle2, particle3, particle4, 0.0f));
+                addBendConstraint(new BendConstraint(particle2, particle3, particle1, particle4, M_PIf, 1.0f));
             }
         }
     };
