@@ -156,7 +156,7 @@ int main() {
     shadowRenderer->addShadowCaster(cube->mesh());
 
 
-    /*auto sphere = MeshBuilder::makeSphere("sphere", scene, 32);
+    /*auto sphere = MeshBuilder::makeUvSphere("sphere", scene, 32);
     sphere->transform()->setPosition(4, 1, 10);
 
     auto sphereMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
@@ -203,11 +203,13 @@ int main() {
     auto soft = new RigidBody(simplifiedBunny3, 1.0);
     solver.addBody(soft);*/
 
-    auto sphere = MeshBuilder::makeSphere("sphere", scene, 8);
+    auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 4);
+    sphere->transform()->setScale(3.0f);
+    sphere->bakeTransformIntoVertexData();
     sphere->transform()->translate(glm::vec3(5, 5, 0));
     sphere->setMaterial(clothMaterial);
     shadowRenderer->addShadowCaster(sphere);
-    solver.addBody(new SoftBody(sphere, 1.0f));
+    solver.addBody(new SoftBody(sphere, 1.0f, 0.00002f, 0.0002f));
 
     auto ground = MeshBuilder::makePlane("ground", scene, 64);
     ground->transform()->setPosition(0, 0, 0);

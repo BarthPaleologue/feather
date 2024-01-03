@@ -6,7 +6,7 @@
 
 CelestialBody::CelestialBody(const char *name, float radius, float rotationPeriod, float orbitPeriod, float orbitRadius,
                              std::shared_ptr<BlinnPhongMaterial> material, Scene &scene) :
-        _mesh(MeshBuilder::makeSphere(name, scene, 32)) {
+        _mesh(MeshBuilder::makeUvSphere(name, scene, 32)) {
     _mesh->transform()->setScale(radius);
     _mesh->setMaterial(material);
     _rotationPeriod = rotationPeriod;

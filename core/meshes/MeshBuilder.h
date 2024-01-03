@@ -290,7 +290,7 @@ public:
         return mesh;
     }
 
-    static std::shared_ptr<Mesh> makeSphere(const char *name, Scene &scene, int resolution) {
+    static std::shared_ptr<Mesh> makeUvSphere(const char *name, Scene &scene, int resolution) {
         std::vector<GLfloat> positions;
         std::vector<GLfloat> normals;
         std::vector<GLfloat> uvs;
@@ -376,6 +376,49 @@ public:
         vertexData.uvs = uvs;
         vertexData.indices = indices;
         vertexData.colors = colors;
+
+        auto mesh = Mesh::FromVertexData(name, vertexData);
+        scene.addMesh(mesh);
+        return mesh;
+    }
+
+    static std::shared_ptr<Mesh> makeIcoSphere(const char *name, Scene &scene, unsigned int nbSubdivisions) {
+        const float X = .525731112119133606f;
+        const float Z = .850650808352039932f;
+        const float N = 0.f;
+
+        VertexData vertexData = VertexData();
+
+        vertexData.positions = {
+                -X, N, Z, X, N, Z, -X, N, -Z, X, N, -Z,
+                N, Z, X, N, Z, -X, N, -Z, X, N, -Z, -X,
+                Z, X, N, -Z, X, N, Z, -X, N, -Z, -X, N
+        };
+
+        vertexData.indices = {
+                        0,  4,  1,
+                        0,  9,  4,
+                        9,  5,  4,
+                        4,  5,  8,
+                        4,  8,  1,
+                        8,  10, 1,
+                        8,  3,  10,
+                        5,  3,  8,
+                        5,  2,  3,
+                        2,  7,  3,
+                        7,  10, 3,
+                        7,  6,  10,
+                        7,  11, 6,
+                        11, 0,  6,
+                        0,  1,  6,
+                        6,  1,  10,
+                        9,  0,  11,
+                        9,  11, 2,
+                        9,  2,  5,
+                        7,  2,  11
+                };
+
+        vertexData.computeNormals();
 
         auto mesh = Mesh::FromVertexData(name, vertexData);
         scene.addMesh(mesh);
@@ -482,7 +525,7 @@ public:
         return Mesh::FromVertexData(name, vertexData);
     }
 
-    static std::shared_ptr<Mesh> Simplify(const char* name, std::shared_ptr<Mesh> original, Scene &scene) {
+    static std::shared_ptr<Mesh> Simplify(const char *name, std::shared_ptr<Mesh> original, Scene &scene) {
         auto simplifiedData = original->vertexData().vertexSubset();
         auto simplifiedMesh = Mesh::FromVertexData(name, simplifiedData);
         scene.addMesh(simplifiedMesh);
