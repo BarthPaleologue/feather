@@ -29,7 +29,13 @@ private:
         glm::vec3 n1 = glm::normalize(glm::cross(p2 - p1, p3 - p1));
         glm::vec3 n2 = glm::normalize(glm::cross(p2 - p1, p4 - p1));
 
-        return acosf(glm::dot(n1, n2)) - _phi;
+        float dot = glm::dot(n1, n2);
+
+        // clamp dot product to -1..1 because of floating point precision
+        if (dot > 1.0f) dot = 1.0f;
+        if (dot < -1.0f) dot = -1.0f;
+
+        return acosf(dot) - _phi;
     }
 };
 
