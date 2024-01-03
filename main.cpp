@@ -203,6 +203,12 @@ int main() {
     auto soft = new RigidBody(simplifiedBunny3, 1.0);
     solver.addBody(soft);*/
 
+    auto sphere = MeshBuilder::makeSphere("sphere", scene, 8);
+    sphere->transform()->translate(glm::vec3(5, 5, 0));
+    sphere->setMaterial(clothMaterial);
+    shadowRenderer->addShadowCaster(sphere);
+    solver.addBody(new SoftBody(sphere, 1.0f));
+
     auto ground = MeshBuilder::makePlane("ground", scene, 64);
     ground->transform()->setPosition(0, 0, 0);
     ground->transform()->setScale(40);
@@ -211,6 +217,7 @@ int main() {
     groundMaterial->setAlbedoColor(0.5, 0.5, 0.5);
     groundMaterial->setMetallic(0.5f);
     groundMaterial->setRoughness(0.4f);
+    groundMaterial->setBackFaceCullingEnabled(false);
     groundMaterial->receiveShadows(shadowRenderer);
 
     ground->setMaterial(groundMaterial);
