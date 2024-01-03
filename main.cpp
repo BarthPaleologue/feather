@@ -70,7 +70,7 @@ int main() {
     auto gravity = std::make_shared<UniformAccelerationField>(glm::vec3(0.0, -9.81, 0.0));
     solver.addField(gravity);
 
-    auto cloth = new Cloth("cloth", scene, 16, 10.0f);
+    auto cloth = new Cloth("cloth", scene, 4, 10.0f);
 
     cloth->transform()->setRotationZ(-3.14 / 2.0);
     cloth->transform()->setRotationY(3.14);
@@ -80,9 +80,9 @@ int main() {
 
     auto clothWorld = cloth->transform()->computeWorldMatrix();
 
-    auto lineMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
-    lineMaterial->setAmbientColor(1.0, 0.0, 0.0);
 
+    auto distanceConstraintMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
+    distanceConstraintMaterial->setAmbientColor(1.0, 0.0, 0.0);
     for(auto constraint: cloth->distanceConstraints()) {
         if(constraint->particles().size() == 2) {
             auto p1 = constraint->particles()[0];
@@ -92,8 +92,44 @@ int main() {
             auto position2 = clothWorld * glm::vec4(p2->position, 1.0f);
 
             auto line = MeshBuilder::makeLine("line", scene, position1, position2);
-            line->setMaterial(lineMaterial);
+            line->setMaterial(distanceConstraintMaterial);
             line->transform()->translate(glm::vec3(1.0, 0.0, 0.0));
+        }
+    }
+
+    auto bendConstraintMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
+    bendConstraintMaterial->setAmbientColor(0.0, 1.0, 0.0);
+    for(auto constraint: cloth->bendConstraints()) {
+        if(constraint->particles().size() == 4) {
+            auto p1 = constraint->particles()[0];
+            auto p2 = constraint->particles()[1];
+            auto p3 = constraint->particles()[2];
+            auto p4 = constraint->particles()[3];
+
+            auto position1 = clothWorld * glm::vec4(p1->position, 1.0f);
+            auto position2 = clothWorld * glm::vec4(p2->position, 1.0f);
+            auto position3 = clothWorld * glm::vec4(p3->position, 1.0f);
+            auto position4 = clothWorld * glm::vec4(p4->position, 1.0f);
+
+            auto line = MeshBuilder::makeLine("line", scene, position1, position2);
+            line->setMaterial(bendConstraintMaterial);
+            line->transform()->translate(glm::vec3(2.0, 0.0, 0.0));
+
+            line = MeshBuilder::makeLine("line", scene, position2, position3);
+            line->setMaterial(bendConstraintMaterial);
+            line->transform()->translate(glm::vec3(2.0, 0.0, 0.0));
+
+            line = MeshBuilder::makeLine("line", scene, position3, position4);
+            line->setMaterial(bendConstraintMaterial);
+            line->transform()->translate(glm::vec3(2.0, 0.0, 0.0));
+
+            line = MeshBuilder::makeLine("line", scene, position4, position1);
+            line->setMaterial(bendConstraintMaterial);
+            line->transform()->translate(glm::vec3(2.0, 0.0, 0.0));
+
+            line = MeshBuilder::makeLine("line", scene, position1, position3);
+            line->setMaterial(bendConstraintMaterial);
+            line->transform()->translate(glm::vec3(2.0, 0.0, 0.0));
         }
     }
 
