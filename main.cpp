@@ -213,7 +213,6 @@ int main() {
     groundMaterial->setRoughness(0.4f);
     groundMaterial->receiveShadows(shadowRenderer);
 
-    groundMaterial->setBackFaceCullingEnabled(false);
     ground->setMaterial(groundMaterial);
 
     bool realTimePhysics = false;
