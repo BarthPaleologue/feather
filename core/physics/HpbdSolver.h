@@ -34,6 +34,12 @@ public:
         _fields.push_back(field);
     }
 
+    void reset() {
+        for (auto body: _physicsBodies) {
+            body->reset();
+        }
+    }
+
     void solve(float deltaTime) {
         onBeforeSolveObservable.notifyObservers();
 

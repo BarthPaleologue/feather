@@ -117,6 +117,12 @@ public:
         return _particles.size();
     }
 
+    void reset() {
+        for (auto particle: _particles) {
+            particle->reset();
+        }
+    }
+
 protected:
     float _mass;
 

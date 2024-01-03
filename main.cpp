@@ -221,6 +221,7 @@ int main() {
     engine.onKeyPressObservable.add([&](int key) {
         if (key == GLFW_KEY_W) cloth->mesh()->material()->setWireframe(!cloth->mesh()->material()->wireframe());
         if (key == GLFW_KEY_N) showNormals(cube->mesh(), scene);
+        if (key == GLFW_KEY_R) solver.reset();
         if (key == GLFW_KEY_SPACE) realTimePhysics = !realTimePhysics;
         if (!realTimePhysics && key == GLFW_KEY_ENTER) solver.solve(1.0f / 60.0f);
     });

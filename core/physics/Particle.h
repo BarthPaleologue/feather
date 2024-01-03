@@ -18,6 +18,7 @@ struct Particle {
     Particle(float mass, std::vector<float> &positions, unsigned long startIndex) {
         this->mass = mass;
         this->invMass = mass == 0 ? 0 : 1 / mass;
+        initialPosition = glm::vec3(positions[startIndex], positions[startIndex + 1], positions[startIndex + 2]);
         position = glm::vec3(positions[startIndex], positions[startIndex + 1], positions[startIndex + 2]);
         this->startIndex = startIndex;
     }
@@ -30,8 +31,14 @@ struct Particle {
         return result;
     }
 
+    void reset() {
+        position = initialPosition;
+        velocity = glm::vec3(0, 0, 0);
+    }
+
     float mass;
     float invMass;
+    glm::vec3 initialPosition{};
     glm::vec3 position{};
     glm::vec3 predictedPosition{};
     glm::vec3 velocity{};
