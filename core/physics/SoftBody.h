@@ -49,11 +49,6 @@ public:
             auto edge2 = std::pair<unsigned int, unsigned int>(std::min(index2, index3), std::max(index2, index3));
             auto edge3 = std::pair<unsigned int, unsigned int>(std::min(index3, index1), std::max(index3, index1));
 
-            std::cout << "EDGE " << edge1.first << ", " << edge1.second << std::endl;
-            std::cout << "EDGE " << edge2.first << ", " << edge2.second << std::endl;
-            std::cout << "EDGE " << edge3.first << ", " << edge3.second << std::endl;
-            std::cout << "==============" << std::endl;
-
             edgeToTriangles[edge1].push_back(i);
             edgeToTriangles[edge2].push_back(i);
             edgeToTriangles[edge3].push_back(i);
@@ -63,14 +58,7 @@ public:
             auto edge = edgeToTrianglesPair.first;
             auto triangles = edgeToTrianglesPair.second;
 
-            std::cout << triangles.size() << " TRIANGLES" << std::endl;
-
             if (triangles.size() != 2) continue;
-
-            std::cout << "EDGE " << edge.first << ", " << edge.second << " is shared by two triangles: " << std::endl;
-            std::cout << mesh->vertexData().indices[triangles[0]] << ", " << mesh->vertexData().indices[triangles[0] + 1] << ", " << mesh->vertexData().indices[triangles[0] + 2] << std::endl;
-            std::cout << mesh->vertexData().indices[triangles[1]] << ", " << mesh->vertexData().indices[triangles[1] + 1] << ", " << mesh->vertexData().indices[triangles[1] + 2] << std::endl;
-
 
             auto triangle1 = triangles[0];
             auto triangle2 = triangles[1];
