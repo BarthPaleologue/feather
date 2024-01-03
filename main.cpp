@@ -1,11 +1,8 @@
 #include "Scene.h"
 #include "cameras/OrbitCamera.h"
-#include "lights/PointLight.h"
-#include "CelestialBody.h"
 #include "Engine.h"
 #include "MeshLoader.h"
 #include "physics/HpbdSolver.h"
-#include "physics/Cloth.h"
 #include "PbrMaterial.h"
 #include "physics/RigidBody.h"
 #include "physics/SoftBody.h"
@@ -70,16 +67,36 @@ int main() {
     auto gravity = std::make_shared<UniformAccelerationField>(glm::vec3(0.0, -9.81, 0.0));
     solver.addField(gravity);
 
-    auto cloth = new Cloth("cloth", scene, 20, 10.0f);
+    auto clothMesh = MeshBuilder::makePlane("cloth", scene, 8);
+    clothMesh->transform()->setRotationZ(-3.14 / 2.0);
+    clothMesh->transform()->setRotationY(3.14);
+    clothMesh->bakeTransformIntoVertexData();
+    clothMesh->transform()->setScale(10);
+    clothMesh->bakeTransformIntoVertexData();
+    clothMesh->transform()->setPosition(0, 7, 0);
 
-    cloth->transform()->setRotationZ(-3.14 / 2.0);
-    cloth->transform()->setRotationY(3.14);
-    cloth->bakeTransformIntoVertexData();
-    cloth->transform()->setScale(10);
-    cloth->transform()->setPosition(0, 7, 0);
+    auto cloth = new SoftBody(clothMesh, 0.01f);
+    // Seed the random number generator
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    // Define the distribution for indices
+    std::uniform_int_distribution<> distribution(0, cloth->particles().size() - 1);
+
+    // Generate a random index
+    int randomIndex1 = distribution(gen);
+    int randomIndex2 = distribution(gen);
+
+    // fixed particles
+    auto topLeft = new FixedConstraint(cloth->particles()[randomIndex1], cloth->particles()[randomIndex1]->position);
+    cloth->addFixedConstraint(topLeft);
+
+    auto topRight = new FixedConstraint(cloth->particles()[randomIndex2], cloth->particles()[randomIndex2]->position);
+    cloth->addFixedConstraint(topRight);
+
+    solver.addBody(cloth);
 
     /*auto clothWorld = cloth->transform()->computeWorldMatrix();
-
 
     auto distanceConstraintMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
     distanceConstraintMaterial->setAmbientColor(1.0, 0.0, 0.0);
@@ -163,12 +180,18 @@ int main() {
     bunny->setMaterial(bunnyMaterial);
     shadowRenderer->addShadowCaster(bunny);
 
-    auto simplifiedBunny1 = MeshBuilder::Simplify("simplifiedBunny1", bunny, scene);
+    auto simplfiedData = bunny->vertexData().vertexSubset().vertexSubset().vertexSubset();
+    auto simplifiedBunny1 = Mesh::FromVertexData("simpleBunny", simplfiedData);
     simplifiedBunny1->setMaterial(bunnyMaterial);
     simplifiedBunny1->transform()->translate(glm::vec3(0, y, -2));
     shadowRenderer->addShadowCaster(simplifiedBunny1);
 
-    auto simplifiedBunny2 = MeshBuilder::Simplify("simplifiedBunny2", simplifiedBunny1, scene);
+    scene.addMesh(simplifiedBunny1);*/
+
+    /*auto softBunny = new SoftBody(simplifiedBunny1, 1.0);
+    solver.addBody(softBunny);*/
+
+    /*auto simplifiedBunny2 = MeshBuilder::Simplify("simplifiedBunny2", simplifiedBunny1, scene);
     simplifiedBunny2->setMaterial(bunnyMaterial);
     simplifiedBunny2->transform()->translate(glm::vec3(0, y, 2));
     shadowRenderer->addShadowCaster(simplifiedBunny2);
