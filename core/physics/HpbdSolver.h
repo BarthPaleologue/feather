@@ -49,7 +49,7 @@ public:
             for (auto particle: body->particles()) {
                 for (auto field: _fields) {
                     particle->forces.push_back(
-                            field->computeAcceleration() /* particle->mass why is this wrong*/);
+                            field->computeAcceleration() * particle->mass);
                 }
             }
         }
@@ -110,21 +110,25 @@ public:
 
                     // velocity damping
                     particle->velocity *= 0.999;
-
-                    particle->forces.clear();
-
-                    // update actual mesh vertex data
-                    body->mesh()->vertexData().positions[particle->startIndex] = particle->position.x;
-                    body->mesh()->vertexData().positions[particle->startIndex + 1] = particle->position.y;
-                    body->mesh()->vertexData().positions[particle->startIndex + 2] = particle->position.z;
                 }
+            }
+        }
 
-                body->mesh()->vertexData().computeNormals();
-                body->mesh()->sendVertexDataToGPU();
+        for (auto body: _physicsBodies) {
+            for (auto particle: body->particles()) {
+                particle->forces.clear();
+
+                // update actual mesh vertex data
+                body->mesh()->vertexData().positions[particle->startIndex] = particle->position.x;
+                body->mesh()->vertexData().positions[particle->startIndex + 1] = particle->position.y;
+                body->mesh()->vertexData().positions[particle->startIndex + 2] = particle->position.z;
             }
 
-            onAfterSolveObservable.notifyObservers();
+            body->mesh()->vertexData().computeNormals();
+            body->mesh()->sendVertexDataToGPU();
         }
+
+        onAfterSolveObservable.notifyObservers();
     }
 
     Observable<> onBeforeSolveObservable;
