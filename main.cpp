@@ -75,7 +75,7 @@ int main() {
     clothMesh->bakeTransformIntoVertexData();
     clothMesh->transform()->setPosition(0, 7, 0);
 
-    auto cloth = new SoftBody(clothMesh, 1.0f, 0.002f, 0.02f);
+    auto cloth = new SoftBody(clothMesh, 1.0f, 0.02f, 0.02f);
     // Seed the random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -147,14 +147,17 @@ int main() {
     cubeMaterial->setMetallic(1.0f);
     cubeMaterial->setRoughness(0.4f);
 
-    auto cube = new RigidBody(MeshBuilder::makeUVCube("cube", scene), 1.0);
+    auto cube = MeshBuilder::makeUVCube("cube", scene);
     cube->transform()->setPosition(5.0, 4, -8.0);
-    cube->mesh()->setMaterial(cubeMaterial);
-    solver.addBody(cube);
-    shadowRenderer->addShadowCaster(cube->mesh());
+    cube->bakeTransformIntoVertexData();
+    cube->setMaterial(cubeMaterial);
+
+    auto cubeBody = new RigidBody(cube, 1.0f);
+    solver.addBody(cubeBody);
+    shadowRenderer->addShadowCaster(cube);
 
     solver.onBeforeSolveObservable.addOnce(
-            [&] { cube->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 500.0f); });
+            [&] { cubeBody->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 500.0f); });
 
     auto cube2 = MeshBuilder::makeUVCube("cube2", scene);
     cube2->transform()->setPosition(-7.0, 4, 0.0);
@@ -193,9 +196,10 @@ int main() {
     auto softBunny = new SoftBody(simplifiedBunny1, 1.0, 0.5f, 0.5f);
     solver.addBody(softBunny);
 
-    auto ground = MeshBuilder::makePlane("ground", scene, 64);
+    auto ground = MeshBuilder::makePlane("ground", scene, 2);
     ground->transform()->setPosition(0, 0, 0);
     ground->transform()->setScale(40);
+    ground->bakeTransformIntoVertexData();
 
     auto groundMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     groundMaterial->setAlbedoColor(0.5, 0.5, 0.5);
@@ -206,7 +210,22 @@ int main() {
 
     ground->setMaterial(groundMaterial);
 
-    solver.addBody(new RigidBody(ground, 0.0f));
+    auto groundBody = new RigidBody(ground, 0.0f);
+    solver.addBody(groundBody);
+
+    auto groundParticles = groundBody->particles();
+    std::cout << groundParticles.size() << std::endl;
+    std::cout << toString(groundParticles[0]->position) << toString(groundParticles[1]->position)
+              << toString(groundParticles[2]->position) << toString(groundParticles[3]->position) << std::endl;
+
+    for(auto particle: cubeBody->particles()) {
+        // add 2 collision constraints with ground
+        auto constraint1 = new CollisionConstraint(particle, groundParticles[0], groundParticles[1], groundParticles[2], 0.01f);
+        cubeBody->addCollisionConstraint(constraint1);
+
+        auto constraint2 = new CollisionConstraint(particle, groundParticles[2], groundParticles[1], groundParticles[3], 0.01f);
+        cubeBody->addCollisionConstraint(constraint2);
+    }
 
     bool realTimePhysics = false;
 
@@ -216,6 +235,7 @@ int main() {
             sphereMaterial->setWireframe(!sphereMaterial->wireframe());
             cubeMaterial->setWireframe(!cubeMaterial->wireframe());
             bunnyMaterial->setWireframe(!bunnyMaterial->wireframe());
+            groundMaterial->setWireframe(!groundMaterial->wireframe());
         }
         if (key == GLFW_KEY_R) solver.reset();
         if (key == GLFW_KEY_SPACE) realTimePhysics = !realTimePhysics;

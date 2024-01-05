@@ -12,7 +12,7 @@
 class CollisionConstraint : public Constraint {
 public:
     CollisionConstraint(Particle *q, Particle *p1, Particle *p2, Particle *p3, float h) : Constraint(
-            {q, p1, p2, p3}, 0.7, INEQUALITY), _h(h) {};
+            {q, p1, p2, p3}, 1.0f, INEQUALITY), _h(h) {};
 
 private:
     float _h;
@@ -29,7 +29,6 @@ private:
     }
 
     void computeGradient() override {
-        //TODO: check if this is correct
         glm::vec3 p1 = _particles[1]->predictedPosition;
         glm::vec3 p2 = _particles[2]->predictedPosition;
         glm::vec3 p3 = _particles[3]->predictedPosition;

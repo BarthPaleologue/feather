@@ -27,6 +27,7 @@ public:
      * Updates the predicted position of the particles according to the constraint
      */
     void solve() {
+        // If the constraint is already satisfied, no need to solve it
         if (isSatisfied()) return;
 
         computeGradient();
