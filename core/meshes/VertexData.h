@@ -96,10 +96,12 @@ struct VertexData {
             neighbors[index2].push_back(index1);
         }
 
-        // we store the number of coarse neighbors for each vertex (equal to the number of neighbors at startup)
+        // we store the number of coarse neighbors for each vertex
         std::vector<unsigned int> nbCoarseNeighbors(nbTotalVertices, 0);
         for (unsigned int i = 0; i < nbTotalVertices; i++) {
-            nbCoarseNeighbors[i] = neighbors[i].size();
+            for (auto neighbor: neighbors[i]) {
+                if (markedAsCoarse[neighbor]) nbCoarseNeighbors[i] += 1;
+            }
         }
 
         // Traverse all particles in an arbitrary order
