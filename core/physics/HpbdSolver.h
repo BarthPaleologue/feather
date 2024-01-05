@@ -27,6 +27,7 @@ public:
     }
 
     void addBody(PhysicsBody *pBody) {
+        pBody->buildParticleHierarchy(1);
         _physicsBodies.push_back(pBody);
     }
 
@@ -46,8 +47,9 @@ public:
         // apply force fields
         for (auto body: _physicsBodies) {
             for (auto particle: body->particles()) {
-                for(auto field: _fields) {
-                    particle->forces.push_back(field->computeAcceleration() /* particle->mass why is this wrong*/);
+                for (auto field: _fields) {
+                    particle->forces.push_back(
+                            field->computeAcceleration() /* particle->mass why is this wrong*/);
                 }
             }
         }
@@ -84,9 +86,9 @@ public:
             }*/
 
             // HPBD
-            for(auto body: _physicsBodies) {
-                body->buildParticleHierarchy();
-            }
+            /*for (auto body: _physicsBodies) {
+                body->buildParticleHierarchy(1);
+            }*/
 
             // solve constraints
             //for (unsigned int i = 0; i < _iterations; i++) {
@@ -103,7 +105,8 @@ public:
                     particle->position = particle->predictedPosition;
 
                     // clamp to ground for now
-                    particle->position[1] = std::max(particle->position.y, -body->mesh()->transform()->position()->y + 0.001f);
+                    particle->position[1] = std::max(particle->position.y,
+                                                     -body->mesh()->transform()->position()->y + 0.001f);
 
                     // velocity damping
                     particle->velocity *= 0.999;
