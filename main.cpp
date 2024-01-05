@@ -138,15 +138,19 @@ int main() {
     clothMaterial->setMetallic(0.0f);
     clothMaterial->setAmbientColor(0.1f, 0.1f, 0.1f);
     clothMaterial->setBackFaceCullingEnabled(false);
-    clothMaterial->setWireframe(true);
     cloth->mesh()->setMaterial(clothMaterial);
 
     shadowRenderer->addShadowCaster(cloth->mesh());
 
+    auto cubeMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
+    cubeMaterial->setAlbedoColor(1.0, 0.0, 0.0);
+    cubeMaterial->setMetallic(1.0f);
+    cubeMaterial->setRoughness(0.4f);
+
     auto cube = new RigidBody(MeshBuilder::makeUVCube("cube", scene), 1.0);
     cube->transform()->setPosition(5.0, 4, -8.0);
 
-    cube->mesh()->setMaterial(clothMaterial);
+    cube->mesh()->setMaterial(cubeMaterial);
 
     solver.addBody(cube);
 
@@ -155,9 +159,10 @@ int main() {
 
     shadowRenderer->addShadowCaster(cube->mesh());
 
-
-    /*auto sphere = MeshBuilder::makeUvSphere("sphere", scene, 32);
-    sphere->transform()->setPosition(4, 1, 10);
+    auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 8);
+    sphere->transform()->setScale(2.0);
+    sphere->bakeTransformIntoVertexData();
+    sphere->transform()->setPosition(4, 5, 10);
 
     auto sphereMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     sphereMaterial->setAlbedoTexture(new Texture("./assets/textures/earth.jpg"));
@@ -165,23 +170,22 @@ int main() {
     sphereMaterial->setRoughness(0.4f);
     sphere->setMaterial(sphereMaterial);
 
-    shadowRenderer->addShadowCaster(sphere);*/
+    shadowRenderer->addShadowCaster(sphere);
+    solver.addBody(new SoftBody(sphere, 1.0f, 0.002f, 0.002f));
 
     auto bunnyMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
-    //bunnyMaterial->setWireframe(true);
-
-    float y = 3.0;
+    bunnyMaterial->setAlbedoColor(0.4, 0.4, 1.0);
+    bunnyMaterial->setMetallic(0.1);
+    bunnyMaterial->setRoughness(0.4);
 
     auto bunny = MeshBuilder::FromObjFile("../assets/models/bunny.obj", scene);
-    bunny->transform()->setPosition(10, y, -6);
-    bunny->setMaterial(bunnyMaterial);
-    shadowRenderer->addShadowCaster(bunny);
+    bunny->setEnabled(false);
 
     auto simplifiedBunny1 = MeshBuilder::Simplify("simpleBunny", bunny.get(), 2, scene);
-    simplifiedBunny1->transform()->setScale(2.0f);
+    //simplifiedBunny1->transform()->setScale(2.0f);
     simplifiedBunny1->bakeTransformIntoVertexData();
     simplifiedBunny1->setMaterial(bunnyMaterial);
-    simplifiedBunny1->transform()->translate(glm::vec3(10, y, -2));
+    simplifiedBunny1->transform()->translate(glm::vec3(10, 3.0, -2));
     shadowRenderer->addShadowCaster(simplifiedBunny1);
 
     auto softBunny = new SoftBody(simplifiedBunny1, 1.0, 0.5f, 0.5f);
@@ -211,8 +215,12 @@ int main() {
     bool realTimePhysics = false;
 
     engine.onKeyPressObservable.add([&](int key) {
-        if (key == GLFW_KEY_W) cloth->mesh()->material()->setWireframe(!cloth->mesh()->material()->wireframe());
-        //if (key == GLFW_KEY_N) showNormals(cube->mesh(), scene);
+        if (key == GLFW_KEY_W) {
+            clothMaterial->setWireframe(!clothMaterial->wireframe());
+            sphereMaterial->setWireframe(!sphereMaterial->wireframe());
+            cubeMaterial->setWireframe(!cubeMaterial->wireframe());
+            bunnyMaterial->setWireframe(!bunnyMaterial->wireframe());
+        }
         if (key == GLFW_KEY_R) solver.reset();
         if (key == GLFW_KEY_SPACE) realTimePhysics = !realTimePhysics;
         if (!realTimePhysics && key == GLFW_KEY_ENTER) solver.solve(1.0f / 60.0f);
