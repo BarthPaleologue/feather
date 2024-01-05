@@ -58,24 +58,33 @@ struct VertexData {
     }
 
     /**
-     *
-     * @param coarseIndices
+     * Creates a subset of the vertex data using an initial triangulation (it could already be a simplification of the original mesh triangulation).
+     * It returns the indices of the coarse vertices as well as a substitution table for removed vertices (closest coarse vertex)
+     * The returned new triangulation is obtained by using the substitution table on the original triangulation and then removing the garbage triangles.
+     * @param originalTriangleIndices
+     * @param coarseVertexIndices
      * @param closestCoarseVertexIndices
+     * @param prunedTriangleIndicesSubset
      * @see See page 5 of original HPBD paper for the description of the algorithm
      */
-    void subset(std::vector<GLint> &coarseIndices, std::vector<GLint> &closestCoarseVertexIndices) {
+    void subset(std::vector<GLint> &originalTriangleIndices, std::vector<GLint> &coarseVertexIndices,
+                std::vector<GLint> &closestCoarseVertexIndices, std::vector<GLint> &prunedTriangleIndicesSubset) {
         int k = 2;
-        unsigned long nbVertices = positions.size() / 3;
+        unsigned long nbTotalVertices = positions.size() / 3;
 
-        // all vertices are first marked as coarse
-        std::vector<bool> coarseMarking(nbVertices, true);
+        // All vertices of given triangulation are first marked as coarse
+        // In the case of using an already simplified triangulation, not all vertices will be marked as coarse
+        std::vector<bool> markedAsCoarse(nbTotalVertices, false);
+        for (GLint index: originalTriangleIndices) {
+            markedAsCoarse[index] = true;
+        }
 
         // for each vertex, we store the indices of its neighbors
-        std::vector<std::vector<GLint>> neighbors(nbVertices, std::vector<GLint>());
-        for (unsigned int i = 0; i < indices.size(); i += 3) {
-            GLint index0 = indices[i];
-            GLint index1 = indices[i + 1];
-            GLint index2 = indices[i + 2];
+        std::vector<std::vector<GLint>> neighbors(nbTotalVertices, std::vector<GLint>());
+        for (unsigned int i = 0; i < originalTriangleIndices.size(); i += 3) {
+            GLint index0 = originalTriangleIndices[i];
+            GLint index1 = originalTriangleIndices[i + 1];
+            GLint index2 = originalTriangleIndices[i + 2];
 
             neighbors[index0].push_back(index1);
             neighbors[index0].push_back(index2);
@@ -88,40 +97,45 @@ struct VertexData {
         }
 
         // we store the number of coarse neighbors for each vertex (equal to the number of neighbors at startup)
-        std::vector<unsigned int> nbCoarseNeighbors(nbVertices, 0);
-        for (unsigned int i = 0; i < nbVertices; i++) {
+        std::vector<unsigned int> nbCoarseNeighbors(nbTotalVertices, 0);
+        for (unsigned int i = 0; i < nbTotalVertices; i++) {
             nbCoarseNeighbors[i] = neighbors[i].size();
         }
 
         // Traverse all particles in an arbitrary order
-        for (unsigned int i = 0; i < nbVertices; i++) {
+        for (unsigned int i = 0; i < nbTotalVertices; i++) {
 //            A particle is marked fine if two conditions are met. First, the number of
 //            its coarse neighbors must be greater or equal k.
             if (nbCoarseNeighbors[i] < k) continue;
 
             // Second, all the neighboring fine vertices must have strictly more than k coarse neighbors.
-            bool flag = true;
+            bool fineNeighborsCondition = true;
             for (auto neighbor: neighbors[i]) {
-                if (coarseMarking[neighbor]) continue;
-                if (nbCoarseNeighbors[neighbor] <= k) flag = false;
+                // we skip coarse neighbors
+                if (markedAsCoarse[neighbor]) continue;
+                // if a fine neighbor has less or equal than k coarse neighbors, it invalidates the condition
+                if (nbCoarseNeighbors[neighbor] <= k) {
+                    fineNeighborsCondition = false;
+                    break;
+                }
             }
 
-            if (!flag) continue;
+            if (!fineNeighborsCondition) continue;
 
             // If the particle is marked as fine, the number of coarse neighbors of all its neighbors is decreased by one.
-            coarseMarking[i] = false;
+            markedAsCoarse[i] = false;
             for (auto neighbor: neighbors[i]) {
                 nbCoarseNeighbors[neighbor] -= 1;
             }
         }
 
-        for (GLint i = 0; i < nbVertices; i++) {
-            if (coarseMarking[i]) coarseIndices.push_back(i);
+        for (GLint i = 0; i < nbTotalVertices; i++) {
+            if (markedAsCoarse[i]) coarseVertexIndices.push_back(i);
         }
 
-        closestCoarseVertexIndices.resize(nbVertices, -1);
-        for (GLint i = 0; i < nbVertices; i++) {
-            if (coarseMarking[i]) {
+        closestCoarseVertexIndices.resize(nbTotalVertices, -1);
+        for (GLint i = 0; i < nbTotalVertices; i++) {
+            if (markedAsCoarse[i]) {
                 closestCoarseVertexIndices[i] = i;
                 continue;
             }
@@ -135,7 +149,7 @@ struct VertexData {
             );
 
             for (auto neighbor: neighbors[i]) {
-                if (coarseMarking[neighbor]) {
+                if (markedAsCoarse[neighbor]) {
                     glm::vec3 neighborPosition = glm::vec3(
                             positions[neighbor],
                             positions[neighbor + 1],
@@ -151,6 +165,29 @@ struct VertexData {
 
             closestCoarseVertexIndices[i] = closest;
         }
+
+        // Triangulate coarse vertices using the closest coarse vertex (garbage triangles will be generated, so it needs pruning afterward)
+        std::vector<GLint> rawTriangleIndicesSubset;
+        for (int index: indices) {
+            rawTriangleIndicesSubset.push_back(closestCoarseVertexIndices[index]);
+        }
+
+        // prune triangles
+        for (unsigned int i = 0; i < rawTriangleIndicesSubset.size(); i += 3) {
+            GLint index0 = rawTriangleIndicesSubset[i];
+            GLint index1 = rawTriangleIndicesSubset[i + 1];
+            GLint index2 = rawTriangleIndicesSubset[i + 2];
+
+            // if any of the vertices could not be substituted to a coarse vertex, skip the triangle
+            if (index0 == -1 || index1 == -1 || index2 == -1) continue;
+
+            // if the triangle is degenerate, skip it
+            if (index0 == index1 || index1 == index2 || index0 == index2) continue;
+
+            prunedTriangleIndicesSubset.push_back(index0);
+            prunedTriangleIndicesSubset.push_back(index1);
+            prunedTriangleIndicesSubset.push_back(index2);
+        }
     }
 
     /**
@@ -160,30 +197,9 @@ struct VertexData {
     VertexData simplify() {
         std::vector<GLint> coarseVertexIndices;
         std::vector<GLint> closestCoarseVertexIndices;
-
-        subset(coarseVertexIndices, closestCoarseVertexIndices);
-
-        // Triangulate coarse vertices using the closest coarse vertex (garbage triangles will be generated, so it needs pruning afterward)
-        std::vector<GLint> triangleIndicesSubset;
-        for (int index: indices) {
-            triangleIndicesSubset.push_back(closestCoarseVertexIndices[index]);
-        }
-
-        // prune triangles
         std::vector<GLint> prunedIndicesSubset;
-        for (unsigned int i = 0; i < triangleIndicesSubset.size(); i += 3) {
-            GLint index0 = triangleIndicesSubset[i];
-            GLint index1 = triangleIndicesSubset[i + 1];
-            GLint index2 = triangleIndicesSubset[i + 2];
 
-            if (index0 == -1 || index1 == -1 || index2 == -1) continue;
-
-            if (index0 == index1 || index1 == index2 || index0 == index2) continue;
-
-            prunedIndicesSubset.push_back(index0);
-            prunedIndicesSubset.push_back(index1);
-            prunedIndicesSubset.push_back(index2);
-        }
+        subset(indices, coarseVertexIndices, closestCoarseVertexIndices, prunedIndicesSubset);
 
         VertexData simplifiedData{};
         for (auto vertex: coarseVertexIndices) {
