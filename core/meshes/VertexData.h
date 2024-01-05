@@ -59,10 +59,11 @@ struct VertexData {
 
     /**
      *
-     * @return
+     * @param coarseIndices
+     * @param closestCoarseVertexIndices
      * @see See page 5 of original HPBD paper for the description of the algorithm
      */
-    VertexData simplify() {
+    void subset(std::vector<GLint> &coarseIndices, std::vector<GLint> &closestCoarseVertexIndices) {
         int k = 2;
         unsigned long nbVertices = positions.size() / 3;
 
@@ -114,28 +115,26 @@ struct VertexData {
             }
         }
 
-        std::vector<GLint> vertexSubset;
         for (GLint i = 0; i < nbVertices; i++) {
-            if (coarseMarking[i]) vertexSubset.push_back(i);
+            if (coarseMarking[i]) coarseIndices.push_back(i);
         }
 
-        // Triangulate coarse vertices using closest coarse vertex (garbage triangles will be generated so it needs pruning afterward)
-        std::vector<GLint> indicesSubset;
-        for (int index: indices) {
-            if (coarseMarking[index]) {
-                indicesSubset.push_back(index);
+        closestCoarseVertexIndices.resize(nbVertices, -1);
+        for (GLint i = 0; i < nbVertices; i++) {
+            if (coarseMarking[i]) {
+                closestCoarseVertexIndices[i] = i;
                 continue;
             }
 
             float minDistance = 1e3;
             int closest = -1;
             glm::vec3 position = glm::vec3(
-                    positions[index],
-                    positions[index + 1],
-                    positions[index + 2]
+                    positions[i],
+                    positions[i + 1],
+                    positions[i + 2]
             );
 
-            for (auto neighbor: neighbors[index]) {
+            for (auto neighbor: neighbors[i]) {
                 if (coarseMarking[neighbor]) {
                     glm::vec3 neighborPosition = glm::vec3(
                             positions[neighbor],
@@ -150,15 +149,32 @@ struct VertexData {
                 }
             }
 
-            indicesSubset.push_back(closest);
+            closestCoarseVertexIndices[i] = closest;
+        }
+    }
+
+    /**
+     *
+     * @return
+     */
+    VertexData simplify() {
+        std::vector<GLint> coarseVertexIndices;
+        std::vector<GLint> closestCoarseVertexIndices;
+
+        subset(coarseVertexIndices, closestCoarseVertexIndices);
+
+        // Triangulate coarse vertices using the closest coarse vertex (garbage triangles will be generated, so it needs pruning afterward)
+        std::vector<GLint> triangleIndicesSubset;
+        for (int index: indices) {
+            triangleIndicesSubset.push_back(closestCoarseVertexIndices[index]);
         }
 
         // prune triangles
         std::vector<GLint> prunedIndicesSubset;
-        for (unsigned int i = 0; i < indicesSubset.size(); i += 3) {
-            GLint index0 = indicesSubset[i];
-            GLint index1 = indicesSubset[i + 1];
-            GLint index2 = indicesSubset[i + 2];
+        for (unsigned int i = 0; i < triangleIndicesSubset.size(); i += 3) {
+            GLint index0 = triangleIndicesSubset[i];
+            GLint index1 = triangleIndicesSubset[i + 1];
+            GLint index2 = triangleIndicesSubset[i + 2];
 
             if (index0 == -1 || index1 == -1 || index2 == -1) continue;
 
@@ -169,26 +185,27 @@ struct VertexData {
             prunedIndicesSubset.push_back(index2);
         }
 
-        VertexData subset{};
-        for (auto vertex: vertexSubset) {
-            subset.positions.push_back(positions[vertex * 3]);
-            subset.positions.push_back(positions[vertex * 3 + 1]);
-            subset.positions.push_back(positions[vertex * 3 + 2]);
-            subset.normals.push_back(normals[vertex * 3]);
-            subset.normals.push_back(normals[vertex * 3 + 1]);
-            subset.normals.push_back(normals[vertex * 3 + 2]);
+        VertexData simplifiedData{};
+        for (auto vertex: coarseVertexIndices) {
+            simplifiedData.positions.push_back(positions[vertex * 3]);
+            simplifiedData.positions.push_back(positions[vertex * 3 + 1]);
+            simplifiedData.positions.push_back(positions[vertex * 3 + 2]);
+            simplifiedData.normals.push_back(normals[vertex * 3]);
+            simplifiedData.normals.push_back(normals[vertex * 3 + 1]);
+            simplifiedData.normals.push_back(normals[vertex * 3 + 2]);
         }
 
+        // convert indices to the new range (many vertices have been removed)
         for (auto index: prunedIndicesSubset) {
-            auto it = std::find(vertexSubset.begin(), vertexSubset.end(), index);
-            if (it != vertexSubset.end()) {
-                subset.indices.push_back(std::distance(vertexSubset.begin(), it));
+            auto it = std::find(coarseVertexIndices.begin(), coarseVertexIndices.end(), index);
+            if (it != coarseVertexIndices.end()) {
+                simplifiedData.indices.push_back(std::distance(coarseVertexIndices.begin(), it));
             } else {
                 throw std::runtime_error("Could not find index of some element in simplify mesh");
             }
         }
 
-        return subset;
+        return simplifiedData;
     }
 };
 
