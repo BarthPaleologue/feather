@@ -24,28 +24,21 @@ public:
         }
     };
 
-    void bakeTransformIntoVertexData() {
-        auto worldMatrix = transform()->computeWorldMatrix();
-        for (auto fixedConstraint: _fixedConstraints) {
-            std::cout << fixedConstraint->targetPosition().x << ", " << fixedConstraint->targetPosition().y << ", "
-                      << fixedConstraint->targetPosition().z << std::endl;
-            fixedConstraint->setTargetPosition(worldMatrix * glm::vec4(fixedConstraint->targetPosition(), 1.0f));
-            std::cout << fixedConstraint->targetPosition().x << ", " << fixedConstraint->targetPosition().y << ", "
-                      << fixedConstraint->targetPosition().z << std::endl;
+    void buildParticleHierarchy(int nbLevels) {
+        std::vector<std::vector<GLint>> triangulations;
+        triangulations.push_back(mesh()->vertexData().indices);
+
+        for(unsigned int i = 0; i < nbLevels; i++) {
+            std::vector<GLint> coarseVertexIndices;
+            std::vector<GLint> closestCoarseVertexIndices;
+            std::vector<GLint> newTriangulation;
+
+            std::vector<GLint> previousTriangulation = triangulations[triangulations.size() - 1];
+
+            mesh()->vertexData().subset(previousTriangulation, coarseVertexIndices, closestCoarseVertexIndices, newTriangulation);
+
+            triangulations.push_back(newTriangulation);
         }
-
-        mesh()->bakeTransformIntoVertexData();
-
-        for (unsigned int i = 0; i < _particles.size(); i++) {
-            auto particlePosition = glm::vec3(_mesh->vertexData().positions[i * 3],
-                                              _mesh->vertexData().positions[i * 3 + 1],
-                                              _mesh->vertexData().positions[i * 3 + 2]);
-            _particles[i]->position = particlePosition;
-        }
-    }
-
-    void buildParticleHierarchy() {
-        //TODO: build particle hierarchy
     }
 
     std::vector<Particle *> &particles() {
