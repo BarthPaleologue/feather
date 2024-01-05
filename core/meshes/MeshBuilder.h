@@ -525,8 +525,11 @@ public:
         return Mesh::FromVertexData(name, vertexData);
     }
 
-    static std::shared_ptr<Mesh> Simplify(const char *name, std::shared_ptr<Mesh> original, Scene &scene) {
-        auto simplifiedData = original->vertexData().vertexSubset();
+    static std::shared_ptr<Mesh> Simplify(const char *name, Mesh *original, unsigned int nbSimplifications, Scene &scene) {
+        auto simplifiedData = original->vertexData();
+        for(unsigned int i = 0; i < nbSimplifications; i++) {
+            simplifiedData = simplifiedData.simplify();
+        }
         auto simplifiedMesh = Mesh::FromVertexData(name, simplifiedData);
         scene.addMesh(simplifiedMesh);
 
