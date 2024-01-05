@@ -143,7 +143,7 @@ int main() {
 
     shadowRenderer->addShadowCaster(cloth->mesh());
 
-    /*auto cube = new RigidBody(MeshBuilder::makeUVCube("cube", scene), 1.0);
+    auto cube = new RigidBody(MeshBuilder::makeUVCube("cube", scene), 1.0);
     cube->transform()->setPosition(5.0, 4, -8.0);
 
     cube->mesh()->setMaterial(clothMaterial);
@@ -151,9 +151,9 @@ int main() {
     solver.addBody(cube);
 
     solver.onBeforeSolveObservable.addOnce(
-            [&] { cube->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 5000.0f); });
+            [&] { cube->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 500.0f); });
 
-    shadowRenderer->addShadowCaster(cube->mesh());*/
+    shadowRenderer->addShadowCaster(cube->mesh());
 
 
     /*auto sphere = MeshBuilder::makeUvSphere("sphere", scene, 32);
