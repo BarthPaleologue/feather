@@ -173,7 +173,7 @@ int main() {
     float y = 3.0;
 
     auto bunny = MeshBuilder::FromObjFile("../assets/models/bunny.obj", scene);
-    bunny->transform()->setPosition(8, y, -6);
+    bunny->transform()->setPosition(10, y, -6);
     bunny->setMaterial(bunnyMaterial);
     shadowRenderer->addShadowCaster(bunny);
 
@@ -181,7 +181,7 @@ int main() {
     simplifiedBunny1->transform()->setScale(2.0f);
     simplifiedBunny1->bakeTransformIntoVertexData();
     simplifiedBunny1->setMaterial(bunnyMaterial);
-    simplifiedBunny1->transform()->translate(glm::vec3(8, y, -2));
+    simplifiedBunny1->transform()->translate(glm::vec3(10, y, -2));
     shadowRenderer->addShadowCaster(simplifiedBunny1);
 
     auto softBunny = new SoftBody(simplifiedBunny1, 1.0, 0.5f, 0.5f);
@@ -221,8 +221,9 @@ int main() {
     scene.onBeforeRenderObservable.add([&]() {
         float deltaTime = engine.getDeltaSeconds();
 
-        //glm::vec3 newLightDirection = glm::vec3(cosf(engine.getElapsedTime()), 1.0f, sinf(engine.getElapsedSeconds()));
-        //light.setDirection(newLightDirection);
+        float theta = 0.1f * engine.getElapsedSeconds() + 3.14f;
+        glm::vec3 newLightDirection = glm::normalize(glm::vec3(cosf(theta), 1.0f, sinf(theta)));
+        light.setDirection(newLightDirection);
 
         if (realTimePhysics) solver.solve(1.0 / 60.0f); // fixed time step of 60 fps
 
