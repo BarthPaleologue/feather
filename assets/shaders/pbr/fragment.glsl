@@ -13,11 +13,15 @@ in mat4 vNormalMatrix;
 #ifdef SHADOW_MAP
 in vec4 vPositionShadow;
 uniform vec3 lightDirection;
-vec2 poissonDisk[4] = vec2[](
+vec2 poissonDisk[8] = vec2[](
 vec2(-0.94201624, -0.39906216),
 vec2(0.94558609, -0.76890725),
 vec2(-0.094184101, -0.92938870),
-vec2(0.34495938, 0.29387760)
+vec2(0.34495938, 0.29387760),
+vec2(-0.91588581, 0.45771432),
+vec2(-0.81544232, -0.87912464),
+vec2(-0.38277543, 0.27676845),
+vec2(0.97484398, 0.75648379)
 );
 #endif
 
@@ -67,7 +71,7 @@ float getShadowFactor(vec4 positionShadow, vec3 normal) {
     vec3 shadowCoord = positionShadow.xyz / positionShadow.w;
     shadowCoord = shadowCoord * 0.5 + 0.5;
 
-    float epsilon = max(0.05 * (1.0 - dot(normal, lightDirection)), 0.005);
+    float epsilon = max(0.05 * (1.0 - dot(normal, lightDirection)), 0.005) * 0.002;
 
     float currentDepth = shadowCoord.z;
 
@@ -75,16 +79,16 @@ float getShadowFactor(vec4 positionShadow, vec3 normal) {
     vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
     for (int x = -1; x <= 1; ++x) {
         for (int y = -1; y <= 1; ++y) {
-            for (int i = 0; i < 4; i++) {
-                vec2 offset = poissonDisk[i] / 700.0;
+            for (int i = 0; i < 8; i++) {
+                vec2 offset = poissonDisk[i] / 1000.0;
                 vec2 texelCoord = shadowCoord.xy + vec2(x, y) * texelSize + offset;
                 float texelDepth = texture(shadowMap, texelCoord).r;
 
-                shadowMultiplier += currentDepth - epsilon > texelDepth ? 0.5 : 1.0;
+                shadowMultiplier += currentDepth - epsilon > texelDepth ? 0.2 : 1.0;
             }
         }
     }
-    shadowMultiplier /= 9 * 4;
+    shadowMultiplier /= 9.0 * 8.0;
 
 
     if (shadowCoord.z > 1.0) {
