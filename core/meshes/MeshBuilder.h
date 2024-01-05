@@ -418,6 +418,24 @@ public:
                 2, 7, 11
         };
 
+        for(unsigned int i = 0; i < nbSubdivisions; i++) {
+            Utils::loopSubdivision(vertexData.positions, vertexData.indices);
+        }
+
+        // normalize all vertices and compute uv coordinates
+        for(unsigned int i = 0; i < vertexData.positions.size(); i += 3) {
+            glm::vec3 position = glm::vec3(vertexData.positions[i], vertexData.positions[i + 1], vertexData.positions[i + 2]);
+            position = glm::normalize(position);
+            vertexData.positions[i] = position.x;
+            vertexData.positions[i + 1] = position.y;
+            vertexData.positions[i + 2] = position.z;
+
+            float u = 0.5f + std::atan2(position.z, position.x) / (2 * M_PI);
+            float v = 0.5f - std::asin(position.y) / M_PI;
+            vertexData.uvs.push_back(1.0f - u);
+            vertexData.uvs.push_back(v);
+        }
+
         vertexData.computeNormals();
 
         auto mesh = Mesh::FromVertexData(name, vertexData);

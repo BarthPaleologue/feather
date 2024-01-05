@@ -51,6 +51,58 @@ public:
         float phi = glm::linearRand(0.f, glm::pi<float>());
         return {glm::sin(phi) * glm::cos(theta), glm::cos(phi), glm::sin(phi) * glm::sin(theta)};
     }
+
+    static void loopSubdivision(std::vector<float>& positions, std::vector<int>& indices) {
+        std::vector<int> newIndices;
+
+        for(int i = 0; i < indices.size(); i += 3) {
+            int index1 = indices[i];
+            int index2 = indices[i + 1];
+            int index3 = indices[i + 2];
+
+            glm::vec3 v1 = glm::vec3(positions[index1 * 3], positions[index1 * 3 + 1], positions[index1 * 3 + 2]);
+            glm::vec3 v2 = glm::vec3(positions[index2 * 3], positions[index2 * 3 + 1], positions[index2 * 3 + 2]);
+            glm::vec3 v3 = glm::vec3(positions[index3 * 3], positions[index3 * 3 + 1], positions[index3 * 3 + 2]);
+
+            glm::vec3 v12 = (v1 + v2) / 2.f;
+            glm::vec3 v23 = (v2 + v3) / 2.f;
+            glm::vec3 v31 = (v3 + v1) / 2.f;
+
+            int index12 = positions.size() / 3;
+            int index23 = positions.size() / 3 + 1;
+            int index31 = positions.size() / 3 + 2;
+
+            positions.push_back(v12.x);
+            positions.push_back(v12.y);
+            positions.push_back(v12.z);
+
+            positions.push_back(v23.x);
+            positions.push_back(v23.y);
+            positions.push_back(v23.z);
+
+            positions.push_back(v31.x);
+            positions.push_back(v31.y);
+            positions.push_back(v31.z);
+
+            newIndices.push_back(index1);
+            newIndices.push_back(index12);
+            newIndices.push_back(index31);
+
+            newIndices.push_back(index2);
+            newIndices.push_back(index23);
+            newIndices.push_back(index12);
+
+            newIndices.push_back(index3);
+            newIndices.push_back(index31);
+            newIndices.push_back(index23);
+
+            newIndices.push_back(index12);
+            newIndices.push_back(index23);
+            newIndices.push_back(index31);
+        }
+
+        indices = newIndices;
+    }
 };
 
 #endif //FEATHERGL_UTILS_H
