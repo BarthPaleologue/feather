@@ -45,6 +45,14 @@ struct VertexData {
             normals[index1 * 3] += normal.x;
             normals[index1 * 3 + 1] += normal.y;
             normals[index1 * 3 + 2] += normal.z;
+
+            normals[index2 * 3] += normal.x;
+            normals[index2 * 3 + 1] += normal.y;
+            normals[index2 * 3 + 2] += normal.z;
+
+            normals[index3 * 3] += normal.x;
+            normals[index3 * 3 + 1] += normal.y;
+            normals[index3 * 3 + 2] += normal.z;
         }
 
         // normalize all normals
