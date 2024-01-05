@@ -43,6 +43,14 @@ public:
 
     void render(glm::mat4 projectionViewMatrix, Shader* shaderOverride = nullptr);
 
+    void setEnabled(bool enabled) {
+        _enabled = enabled;
+    }
+
+    bool isEnabled() {
+        return _enabled;
+    }
+
 private:
     std::string _name;
     std::string _id;
@@ -54,6 +62,8 @@ private:
     GLuint _normalVbo;
     GLuint _uvVbo;
     GLuint _colVbo;
+
+    bool _enabled = true;
 protected:
     std::shared_ptr<Material> _material;
 };

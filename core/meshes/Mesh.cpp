@@ -78,6 +78,8 @@ void Mesh::setMaterial(std::shared_ptr<Material> material) {
 }
 
 void Mesh::render(glm::mat4 projectionViewMatrix, Shader *shaderOverride) {
+    if(!_enabled) return;
+
     auto shader = shaderOverride == nullptr ? _material->shader() : shaderOverride;
 
     if (shaderOverride == nullptr) _material->bind();
