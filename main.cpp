@@ -45,7 +45,7 @@ int main() {
     DirectionalLight light("sun", -1.0, 1.0, 0.0);
     scene.addDirectionalLight(std::shared_ptr<DirectionalLight>(&light));
 
-    auto shadowRenderer = std::make_shared<ShadowRenderer>(std::shared_ptr<DirectionalLight>(&light));
+    auto shadowRenderer = std::make_shared<ShadowRenderer>(std::shared_ptr<DirectionalLight>(&light), 4096, 4096);
     scene.addShadowRenderer(shadowRenderer);
 
     /*PostProcessing colorCorrection("./assets/shaders/colorCorrection", &engine);
@@ -67,7 +67,7 @@ int main() {
     auto gravity = std::make_shared<UniformAccelerationField>(glm::vec3(0.0, -9.81, 0.0));
     solver.addField(gravity);
 
-    auto clothMesh = MeshBuilder::makePlane("cloth", scene, 8);
+    auto clothMesh = MeshBuilder::makePlane("cloth", scene, 16);
     clothMesh->transform()->setRotationZ(-3.14 / 2.0);
     clothMesh->transform()->setRotationY(3.14);
     clothMesh->bakeTransformIntoVertexData();
@@ -75,7 +75,7 @@ int main() {
     clothMesh->bakeTransformIntoVertexData();
     clothMesh->transform()->setPosition(0, 7, 0);
 
-    auto cloth = new SoftBody(clothMesh, 1.0f, 0.02f, 0.02f);
+    auto cloth = new SoftBody(clothMesh, 1.0f, 0.002f, 0.02f);
     // Seed the random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -149,29 +149,32 @@ int main() {
 
     auto cube = new RigidBody(MeshBuilder::makeUVCube("cube", scene), 1.0);
     cube->transform()->setPosition(5.0, 4, -8.0);
-
     cube->mesh()->setMaterial(cubeMaterial);
-
     solver.addBody(cube);
+    shadowRenderer->addShadowCaster(cube->mesh());
 
     solver.onBeforeSolveObservable.addOnce(
             [&] { cube->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 500.0f); });
 
-    shadowRenderer->addShadowCaster(cube->mesh());
+    auto cube2 = MeshBuilder::makeUVCube("cube2", scene);
+    cube2->transform()->setPosition(-7.0, 4, 0.0);
+    cube2->setMaterial(cubeMaterial);
+    solver.addBody(new SoftBody(cube2, 1.0f, 0.0005f, 0.0005f));
+    shadowRenderer->addShadowCaster(cube2);
 
-    auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 8);
+    auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 2);
     sphere->transform()->setScale(2.0);
     sphere->bakeTransformIntoVertexData();
     sphere->transform()->setPosition(4, 5, 10);
 
     auto sphereMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     sphereMaterial->setAlbedoTexture(new Texture("./assets/textures/earth.jpg"));
-    sphereMaterial->setMetallic(0.8f);
-    sphereMaterial->setRoughness(0.4f);
+    sphereMaterial->setMetallic(0.2f);
+    sphereMaterial->setRoughness(0.6f);
     sphere->setMaterial(sphereMaterial);
 
     shadowRenderer->addShadowCaster(sphere);
-    solver.addBody(new SoftBody(sphere, 1.0f, 0.002f, 0.002f));
+    solver.addBody(new SoftBody(sphere, 1.0f, 0.02f, 0.02f));
 
     auto bunnyMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     bunnyMaterial->setAlbedoColor(0.4, 0.4, 1.0);
@@ -182,7 +185,6 @@ int main() {
     bunny->setEnabled(false);
 
     auto simplifiedBunny1 = MeshBuilder::Simplify("simpleBunny", bunny.get(), 2, scene);
-    //simplifiedBunny1->transform()->setScale(2.0f);
     simplifiedBunny1->bakeTransformIntoVertexData();
     simplifiedBunny1->setMaterial(bunnyMaterial);
     simplifiedBunny1->transform()->translate(glm::vec3(10, 3.0, -2));
@@ -190,14 +192,6 @@ int main() {
 
     auto softBunny = new SoftBody(simplifiedBunny1, 1.0, 0.5f, 0.5f);
     solver.addBody(softBunny);
-
-    /*auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 4);
-    sphere->transform()->setScale(3.0f);
-    sphere->bakeTransformIntoVertexData();
-    sphere->transform()->translate(glm::vec3(5, 5, 0));
-    sphere->setMaterial(clothMaterial);
-    shadowRenderer->addShadowCaster(sphere);
-    solver.addBody(new SoftBody(sphere, 1.0f, 0.00002f, 0.0002f));*/
 
     auto ground = MeshBuilder::makePlane("ground", scene, 64);
     ground->transform()->setPosition(0, 0, 0);
@@ -211,6 +205,8 @@ int main() {
     groundMaterial->receiveShadows(shadowRenderer);
 
     ground->setMaterial(groundMaterial);
+
+    solver.addBody(new RigidBody(ground, 0.0f));
 
     bool realTimePhysics = false;
 
