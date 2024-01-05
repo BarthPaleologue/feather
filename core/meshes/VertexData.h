@@ -62,7 +62,7 @@ struct VertexData {
      * @return
      * @see See page 5 of original HPBD paper for the description of the algorithm
      */
-    VertexData vertexSubset() {
+    VertexData simplify() {
         int k = 2;
         unsigned long nbVertices = positions.size() / 3;
 

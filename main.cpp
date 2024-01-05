@@ -177,31 +177,15 @@ int main() {
     bunny->setMaterial(bunnyMaterial);
     shadowRenderer->addShadowCaster(bunny);
 
-    auto simplfiedData = bunny->vertexData().vertexSubset().vertexSubset().vertexSubset();
-    auto simplifiedBunny1 = Mesh::FromVertexData("simpleBunny", simplfiedData);
+    auto simplifiedBunny1 = MeshBuilder::Simplify("simpleBunny", bunny.get(), 3, scene);
     simplifiedBunny1->transform()->setScale(3.0f);
     simplifiedBunny1->bakeTransformIntoVertexData();
     simplifiedBunny1->setMaterial(bunnyMaterial);
     simplifiedBunny1->transform()->translate(glm::vec3(5, y, -2));
     shadowRenderer->addShadowCaster(simplifiedBunny1);
 
-    scene.addMesh(simplifiedBunny1);
-
     auto softBunny = new SoftBody(simplifiedBunny1, 1.0);
     solver.addBody(softBunny);*/
-
-    /*auto simplifiedBunny2 = MeshBuilder::Simplify("simplifiedBunny2", simplifiedBunny1, scene);
-    simplifiedBunny2->setMaterial(bunnyMaterial);
-    simplifiedBunny2->transform()->translate(glm::vec3(0, y, 2));
-    shadowRenderer->addShadowCaster(simplifiedBunny2);
-
-    auto simplifiedBunny3 = MeshBuilder::Simplify("simplifiedBunny3", simplifiedBunny2, scene);
-    simplifiedBunny3->setMaterial(bunnyMaterial);
-    simplifiedBunny3->transform()->translate(glm::vec3(0, y, 6));
-    shadowRenderer->addShadowCaster(simplifiedBunny3);
-
-    auto soft = new RigidBody(simplifiedBunny3, 1.0);
-    solver.addBody(soft);*/
 
     auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 4);
     sphere->transform()->setScale(3.0f);
