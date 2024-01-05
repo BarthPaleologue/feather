@@ -31,3 +31,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE glad/include/)
 
 target_sources(${PROJECT_NAME} PRIVATE Eigen/Dense)
 target_include_directories(${PROJECT_NAME} PRIVATE Eigen/)
+
+# Set optimization level to -O3
+target_compile_options(${PROJECT_NAME} PRIVATE -O3)
