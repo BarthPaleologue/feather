@@ -41,6 +41,10 @@ public:
         return _particles;
     }
 
+    void setParticles(std::vector<Particle *> particles) {
+        _particles = std::move(particles);
+    }
+
 protected:
     /**
      * Computes the gradient of the constraint
