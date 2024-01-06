@@ -6,6 +6,7 @@
 #define FEATHERGL_TRANSFORM_H
 
 #include <vector>
+#include <glm/ext/matrix_transform.hpp>
 #include "glm/glm.hpp"
 
 class Transform {
@@ -50,7 +51,19 @@ public:
         return glm::transpose(glm::inverse(computeWorldMatrix()));
     }
 
+    glm::mat4 computeRotationMatrix() {
+        glm::mat4 rotation = glm::mat4(1.0f);
+        rotation = glm::rotate(rotation, _rotation->x, glm::vec3(1.0f, 0.0f, 0.0f));
+        rotation = glm::rotate(rotation, _rotation->y, glm::vec3(0.0f, 1.0f, 0.0f));
+        rotation = glm::rotate(rotation, _rotation->z, glm::vec3(0.0f, 0.0f, 1.0f));
+        return rotation;
+    }
+
     void setScale(float scale);
+
+    glm::vec3 scaling() {
+        return *_scaling;
+    }
 
     /**
      * Reset the transform to its default values (position: 0,0,0, rotation: 0,0,0, scale: 1)

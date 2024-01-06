@@ -121,13 +121,64 @@ void Mesh::bakeTransformIntoVertexData() {
         glm::vec4 normal = glm::vec4(_vertexData.normals[i], _vertexData.normals[i + 1],
                                      _vertexData.normals[i + 2], 1.0f);
         glm::vec4 transformedNormal = normalMatrix * normal;
-        _vertexData.normals[i] = transformedNormal.x;
-        _vertexData.normals[i + 1] = transformedNormal.y;
-        _vertexData.normals[i + 2] = transformedNormal.z;
+        glm::vec3 normalizedTransformedNormal = glm::normalize(glm::vec3(transformedNormal.x, transformedNormal.y, transformedNormal.z));
+        _vertexData.normals[i] = normalizedTransformedNormal.x;
+        _vertexData.normals[i + 1] = normalizedTransformedNormal.y;
+        _vertexData.normals[i + 2] = normalizedTransformedNormal.z;
     }
 
     sendVertexDataToGPU();
 
     transform()->reset();
+}
+
+void Mesh::bakeRotationIntoVertexData() {
+    auto rotationMatrix = transform()->computeRotationMatrix();
+    auto normalMatrix = transform()->computeNormalMatrix();
+    for (int i = 0; i < _vertexData.positions.size(); i += 3) {
+        glm::vec4 position = glm::vec4(_vertexData.positions[i], _vertexData.positions[i + 1],
+                                       _vertexData.positions[i + 2], 1.0f);
+        glm::vec4 transformedPosition = rotationMatrix * position;
+        _vertexData.positions[i] = transformedPosition.x;
+        _vertexData.positions[i + 1] = transformedPosition.y;
+        _vertexData.positions[i + 2] = transformedPosition.z;
+
+        glm::vec4 normal = glm::vec4(_vertexData.normals[i], _vertexData.normals[i + 1],
+                                     _vertexData.normals[i + 2], 1.0f);
+        glm::vec4 transformedNormal = normalMatrix * normal;
+        glm::vec3 normalizedTransformedNormal = glm::normalize(glm::vec3(transformedNormal.x, transformedNormal.y, transformedNormal.z));
+        _vertexData.normals[i] = normalizedTransformedNormal.x;
+        _vertexData.normals[i + 1] = normalizedTransformedNormal.y;
+        _vertexData.normals[i + 2] = normalizedTransformedNormal.z;
+    }
+
+    sendVertexDataToGPU();
+
+    transform()->setRotation(0, 0, 0);
+}
+
+void Mesh::bakeScalingIntoVertexData() {
+    auto scalingMatrix = glm::scale(glm::mat4(1.0f), transform()->scaling());
+    auto normalMatrix = transform()->computeNormalMatrix();
+    for (int i = 0; i < _vertexData.positions.size(); i += 3) {
+        glm::vec4 position = glm::vec4(_vertexData.positions[i], _vertexData.positions[i + 1],
+                                       _vertexData.positions[i + 2], 1.0f);
+        glm::vec4 transformedPosition = scalingMatrix * position;
+        _vertexData.positions[i] = transformedPosition.x;
+        _vertexData.positions[i + 1] = transformedPosition.y;
+        _vertexData.positions[i + 2] = transformedPosition.z;
+
+        glm::vec4 normal = glm::vec4(_vertexData.normals[i], _vertexData.normals[i + 1],
+                                     _vertexData.normals[i + 2], 1.0f);
+        glm::vec4 transformedNormal = normalMatrix * normal;
+        glm::vec3 normalizedTransformedNormal = glm::normalize(glm::vec3(transformedNormal.x, transformedNormal.y, transformedNormal.z));
+        _vertexData.normals[i] = normalizedTransformedNormal.x;
+        _vertexData.normals[i + 1] = normalizedTransformedNormal.y;
+        _vertexData.normals[i + 2] = normalizedTransformedNormal.z;
+    }
+
+    sendVertexDataToGPU();
+
+    transform()->setScale(1);
 }
 

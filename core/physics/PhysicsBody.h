@@ -17,13 +17,17 @@
 class PhysicsBody {
 public:
     PhysicsBody(std::shared_ptr<Mesh> mesh, float mass) : _mesh(mesh), _mass(mass) {
-        _particles.reserve(mesh->vertexData().positions.size() / 3);
+
+        _mesh->bakeRotationIntoVertexData();
+        _mesh->bakeScalingIntoVertexData();
+        auto meshPosition = *_mesh->transform()->position();
+
         unsigned int nbParticles = mesh->vertexData().positions.size() / 3;
-        auto worldMatrix = mesh->transform()->computeWorldMatrix();
+        _particles.reserve(nbParticles);
+
         for (unsigned int i = 0; i < mesh->vertexData().positions.size(); i += 3) {
-            auto particlePosition4 = worldMatrix * glm::vec4(mesh->vertexData().positions[i], mesh->vertexData().positions[i + 1], mesh->vertexData().positions[i + 2], 1.0f);
-            auto particlePosition = glm::vec3(particlePosition4.x, particlePosition4.y, particlePosition4.z);
-            _particles.push_back(new Particle(mass / (float)nbParticles, particlePosition, i));
+            auto particlePosition = glm::vec3(mesh->vertexData().positions[i], mesh->vertexData().positions[i + 1], mesh->vertexData().positions[i + 2]);
+            _particles.push_back(new Particle(mass / (float)nbParticles, particlePosition + meshPosition, i));
         }
     };
 

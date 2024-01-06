@@ -8,14 +8,14 @@
 #include "physics/SoftBody.h"
 #include "physics/UniformAccelerationField.h"
 
-const int WINDOW_WIDTH = 1000;
-const int WINDOW_HEIGHT = 600;
+const int WINDOW_WIDTH = 1300;
+const int WINDOW_HEIGHT = 800;
 
 float random01() {
     return (float) rand() / (float) RAND_MAX;
 }
 
-void showNormals(std::shared_ptr<Mesh> mesh, Scene &scene) {
+void showNormals(Mesh *mesh, Scene &scene) {
     for (unsigned int i = 0; i < mesh->vertexData().positions.size(); i += 3) {
         glm::vec3 p1 = glm::vec3(mesh->vertexData().positions[i], mesh->vertexData().positions[i + 1],
                                  mesh->vertexData().positions[i + 2]);
@@ -70,9 +70,7 @@ int main() {
     auto clothMesh = MeshBuilder::makePlane("cloth", scene, 16);
     clothMesh->transform()->setRotationZ(-3.14 / 2.0);
     clothMesh->transform()->setRotationY(3.14);
-    clothMesh->bakeTransformIntoVertexData();
     clothMesh->transform()->setScale(10);
-    clothMesh->bakeTransformIntoVertexData();
     clothMesh->transform()->setPosition(0, 7, 0);
 
     auto cloth = new SoftBody(clothMesh, 1.0f, 0.02f, 0.02f);
@@ -167,7 +165,6 @@ int main() {
 
     auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 2);
     sphere->transform()->setScale(2.0);
-    sphere->bakeTransformIntoVertexData();
     sphere->transform()->setPosition(4, 5, 10);
 
     auto sphereMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
@@ -177,8 +174,11 @@ int main() {
     sphere->setMaterial(sphereMaterial);
 
     shadowRenderer->addShadowCaster(sphere);
-    auto sphereBody = new SoftBody(sphere, 1.0f, 0.02f, 0.02f);
+    auto sphereBody = new SoftBody(sphere, 1.0f, 0.2f, 0.2f);
     solver.addBody(sphereBody);
+
+    solver.onBeforeSolveObservable.addOnce(
+            [&] { sphereBody->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 50.0f); });
 
     auto bunnyMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     bunnyMaterial->setAlbedoColor(0.4, 0.4, 1.0);
@@ -188,19 +188,17 @@ int main() {
     auto bunny = MeshBuilder::FromObjFile("../assets/models/bunny.obj", scene);
     bunny->setEnabled(false);
 
-    auto simplifiedBunny1 = MeshBuilder::Simplify("simpleBunny", bunny.get(), 2, scene);
-    simplifiedBunny1->bakeTransformIntoVertexData();
-    simplifiedBunny1->setMaterial(bunnyMaterial);
-    simplifiedBunny1->transform()->translate(glm::vec3(10, 3.0, -2));
-    shadowRenderer->addShadowCaster(simplifiedBunny1);
+    auto simplifiedBunny = MeshBuilder::Simplify("simpleBunny", bunny.get(), 2, scene);
+    simplifiedBunny->setMaterial(bunnyMaterial);
+    simplifiedBunny->transform()->translate(glm::vec3(10, 3.0, -2));
+    shadowRenderer->addShadowCaster(simplifiedBunny);
 
-    auto softBunny = new SoftBody(simplifiedBunny1, 1.0, 0.5f, 0.5f);
+    auto softBunny = new SoftBody(simplifiedBunny, 1.0, 0.5f, 0.5f);
     solver.addBody(softBunny);
 
     auto ground = MeshBuilder::makePlane("ground", scene, 2);
     ground->transform()->setPosition(0, 0, 0);
     ground->transform()->setScale(40);
-    ground->bakeTransformIntoVertexData();
 
     auto groundMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     groundMaterial->setAlbedoColor(0.5, 0.5, 0.5);
@@ -214,27 +212,28 @@ int main() {
     auto groundBody = new RigidBody(ground, 0.0f);
     solver.addBody(groundBody);
 
-    auto createCollisionsWithGround = [&](PhysicsBody *body) {
-        auto groundParticles = groundBody->particles();
-        for(auto particle: body->particles()) {
-            for(unsigned int i = 0; i < groundBody->mesh()->vertexData().indices.size(); i+=3) {
-                auto index1 = groundBody->mesh()->vertexData().indices[i];
-                auto index2 = groundBody->mesh()->vertexData().indices[i + 1];
-                auto index3 = groundBody->mesh()->vertexData().indices[i + 2];
+    auto createCollisionsConstraints = [](PhysicsBody *collider, PhysicsBody *collided) {
+        auto groundParticles = collided->particles();
+        for(auto particle: collider->particles()) {
+            for(unsigned int i = 0; i < collided->mesh()->vertexData().indices.size(); i+=3) {
+                auto index1 = collided->mesh()->vertexData().indices[i];
+                auto index2 = collided->mesh()->vertexData().indices[i + 1];
+                auto index3 = collided->mesh()->vertexData().indices[i + 2];
                 auto p1 = groundParticles[index1];
                 auto p2 = groundParticles[index2];
                 auto p3 = groundParticles[index3];
                 auto constraint = new CollisionConstraint(particle, p1, p2, p3, 0.01f);
-                body->addCollisionConstraint(constraint);
+                collider->addCollisionConstraint(constraint);
             }
         }
     };
 
-    createCollisionsWithGround(cubeBody);
-    createCollisionsWithGround(softBunny);
-    createCollisionsWithGround(cloth);
-    createCollisionsWithGround(cube2Body);
-    createCollisionsWithGround(sphereBody);
+    createCollisionsConstraints(cubeBody, groundBody);
+    createCollisionsConstraints(softBunny, groundBody);
+    createCollisionsConstraints(cloth, groundBody);
+    createCollisionsConstraints(cube2Body, groundBody);
+    createCollisionsConstraints(sphereBody, groundBody);
+    //createCollisionsConstraints(softBunny, cubeBody);
 
     bool realTimePhysics = false;
 

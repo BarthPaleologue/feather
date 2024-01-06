@@ -33,6 +33,10 @@ public:
 
     void bakeTransformIntoVertexData();
 
+    void bakeRotationIntoVertexData();
+
+    void bakeScalingIntoVertexData();
+
     void setVertexData(VertexData &vertexData);
 
     void sendVertexDataToGPU();
