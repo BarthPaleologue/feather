@@ -134,16 +134,15 @@ int main() {
     clothMaterial->setRoughnessTexture(new Texture("./assets/textures/carpet_roughness.jpg"));
     clothMaterial->setNormalTexture(new Texture("./assets/textures/carpet_normal.png"));
     clothMaterial->setMetallic(0.0f);
-    clothMaterial->setAmbientColor(0.1f, 0.1f, 0.1f);
     clothMaterial->setBackFaceCullingEnabled(false);
     cloth->mesh()->setMaterial(clothMaterial);
 
     shadowRenderer->addShadowCaster(cloth->mesh());
 
     auto cubeMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
-    cubeMaterial->setAlbedoColor(1.0, 0.0, 0.0);
-    cubeMaterial->setMetallic(1.0f);
-    cubeMaterial->setRoughness(0.4f);
+    cubeMaterial->setAlbedoColor(1.0, 1.0, 0.0);
+    cubeMaterial->setMetallic(0.8);
+    cubeMaterial->setRoughness(0.2);
 
     auto cube = MeshBuilder::makeUVCube("cube", scene);
     cube->transform()->setPosition(5.0, 4, -8.0);
@@ -196,6 +195,25 @@ int main() {
     auto softBunny = std::make_shared<SoftBody>(simplifiedBunny, 1.0, 0.5f, 0.5f);
     solver.addBody(softBunny);
 
+    auto rawDress = MeshBuilder::FromObjFile("../assets/models/dress/untitled.obj", scene);
+    rawDress->setEnabled(false);
+
+    auto dress = MeshBuilder::Simplify("dress", rawDress.get(), 1, scene);
+    dress->vertexData().computeNormals();
+    dress->transform()->setScale(0.4f);
+    dress->transform()->setPosition(10, 5, 4);
+    shadowRenderer->addShadowCaster(dress);
+
+    auto dressMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
+    dressMaterial->setAlbedoColor(1.0, 0.0, 0.0);
+    dressMaterial->setMetallic(0.1);
+    dressMaterial->setRoughness(0.4);
+    dressMaterial->setBackFaceCullingEnabled(false);
+    dress->setMaterial(dressMaterial);
+
+    auto dressBody = std::make_shared<SoftBody>(dress, 1.0, 0.05f, 0.005f);
+    solver.addBody(dressBody);
+
     auto ground = MeshBuilder::makePlane("ground", scene, 2);
     ground->transform()->setPosition(0, 0, 0);
     ground->transform()->setScale(40);
@@ -233,6 +251,7 @@ int main() {
     createCollisionsConstraints(cloth.get(), groundBody.get());
     createCollisionsConstraints(cube2Body.get(), groundBody.get());
     createCollisionsConstraints(sphereBody.get(), groundBody.get());
+    createCollisionsConstraints(dressBody.get(), groundBody.get());
     //createCollisionsConstraints(softBunny, cubeBody);
 
     bool realTimePhysics = false;
@@ -244,6 +263,7 @@ int main() {
             cubeMaterial->setWireframe(!cubeMaterial->wireframe());
             bunnyMaterial->setWireframe(!bunnyMaterial->wireframe());
             groundMaterial->setWireframe(!groundMaterial->wireframe());
+            dressMaterial->setWireframe(!dressMaterial->wireframe());
         }
         if (key == GLFW_KEY_R) solver.reset();
         if (key == GLFW_KEY_SPACE) realTimePhysics = !realTimePhysics;
