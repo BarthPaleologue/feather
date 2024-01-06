@@ -114,10 +114,12 @@ public:
             for (auto particle: body->particles()) {
                 particle->forces.clear();
 
+                auto particleLocalPosition = particle->position - *body->transform()->position();
+
                 // update actual mesh vertex data
-                body->mesh()->vertexData().positions[particle->startIndex] = particle->position.x;
-                body->mesh()->vertexData().positions[particle->startIndex + 1] = particle->position.y;
-                body->mesh()->vertexData().positions[particle->startIndex + 2] = particle->position.z;
+                body->mesh()->vertexData().positions[particle->positionIndex] = particleLocalPosition.x;
+                body->mesh()->vertexData().positions[particle->positionIndex + 1] = particleLocalPosition.y;
+                body->mesh()->vertexData().positions[particle->positionIndex + 2] = particleLocalPosition.z;
             }
 
             body->mesh()->vertexData().computeNormals();

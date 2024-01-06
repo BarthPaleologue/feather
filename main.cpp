@@ -149,7 +149,6 @@ int main() {
 
     auto cube = MeshBuilder::makeUVCube("cube", scene);
     cube->transform()->setPosition(5.0, 4, -8.0);
-    cube->bakeTransformIntoVertexData();
     cube->setMaterial(cubeMaterial);
 
     auto cubeBody = new RigidBody(cube, 1.0f);
@@ -162,7 +161,8 @@ int main() {
     auto cube2 = MeshBuilder::makeUVCube("cube2", scene);
     cube2->transform()->setPosition(-7.0, 4, 0.0);
     cube2->setMaterial(cubeMaterial);
-    solver.addBody(new SoftBody(cube2, 1.0f, 0.0005f, 0.0005f));
+    auto cube2Body = new SoftBody(cube2, 1.0f, 0.0005f, 0.0005f);
+    solver.addBody(cube2Body);
     shadowRenderer->addShadowCaster(cube2);
 
     auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 2);
@@ -177,7 +177,8 @@ int main() {
     sphere->setMaterial(sphereMaterial);
 
     shadowRenderer->addShadowCaster(sphere);
-    solver.addBody(new SoftBody(sphere, 1.0f, 0.02f, 0.02f));
+    auto sphereBody = new SoftBody(sphere, 1.0f, 0.02f, 0.02f);
+    solver.addBody(sphereBody);
 
     auto bunnyMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     bunnyMaterial->setAlbedoColor(0.4, 0.4, 1.0);
@@ -213,19 +214,27 @@ int main() {
     auto groundBody = new RigidBody(ground, 0.0f);
     solver.addBody(groundBody);
 
-    auto groundParticles = groundBody->particles();
-    std::cout << groundParticles.size() << std::endl;
-    std::cout << toString(groundParticles[0]->position) << toString(groundParticles[1]->position)
-              << toString(groundParticles[2]->position) << toString(groundParticles[3]->position) << std::endl;
+    auto createCollisionsWithGround = [&](PhysicsBody *body) {
+        auto groundParticles = groundBody->particles();
+        for(auto particle: body->particles()) {
+            for(unsigned int i = 0; i < groundBody->mesh()->vertexData().indices.size(); i+=3) {
+                auto index1 = groundBody->mesh()->vertexData().indices[i];
+                auto index2 = groundBody->mesh()->vertexData().indices[i + 1];
+                auto index3 = groundBody->mesh()->vertexData().indices[i + 2];
+                auto p1 = groundParticles[index1];
+                auto p2 = groundParticles[index2];
+                auto p3 = groundParticles[index3];
+                auto constraint = new CollisionConstraint(particle, p1, p2, p3, 0.01f);
+                body->addCollisionConstraint(constraint);
+            }
+        }
+    };
 
-    for(auto particle: cubeBody->particles()) {
-        // add 2 collision constraints with ground
-        auto constraint1 = new CollisionConstraint(particle, groundParticles[0], groundParticles[1], groundParticles[2], 0.01f);
-        cubeBody->addCollisionConstraint(constraint1);
-
-        auto constraint2 = new CollisionConstraint(particle, groundParticles[2], groundParticles[1], groundParticles[3], 0.01f);
-        cubeBody->addCollisionConstraint(constraint2);
-    }
+    createCollisionsWithGround(cubeBody);
+    createCollisionsWithGround(softBunny);
+    createCollisionsWithGround(cloth);
+    createCollisionsWithGround(cube2Body);
+    createCollisionsWithGround(sphereBody);
 
     bool realTimePhysics = false;
 

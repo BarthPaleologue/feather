@@ -19,8 +19,11 @@ public:
     PhysicsBody(std::shared_ptr<Mesh> mesh, float mass) : _mesh(mesh), _mass(mass) {
         _particles.reserve(mesh->vertexData().positions.size() / 3);
         unsigned int nbParticles = mesh->vertexData().positions.size() / 3;
+        auto worldMatrix = mesh->transform()->computeWorldMatrix();
         for (unsigned int i = 0; i < mesh->vertexData().positions.size(); i += 3) {
-            _particles.push_back(new Particle(mass / nbParticles, mesh->vertexData().positions, i));
+            auto particlePosition4 = worldMatrix * glm::vec4(mesh->vertexData().positions[i], mesh->vertexData().positions[i + 1], mesh->vertexData().positions[i + 2], 1.0f);
+            auto particlePosition = glm::vec3(particlePosition4.x, particlePosition4.y, particlePosition4.z);
+            _particles.push_back(new Particle(mass / (float)nbParticles, particlePosition, i));
         }
     };
 
