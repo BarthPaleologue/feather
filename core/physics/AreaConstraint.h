@@ -11,7 +11,7 @@
 
 class AreaConstraint : public Constraint {
 public:
-    AreaConstraint(Particle *p1, Particle *p2, Particle *p3, float a0) : Constraint(
+    AreaConstraint(std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2, std::shared_ptr<Particle> p3, float a0) : Constraint(
             {p1, p2, p3}, 0.7, EQUALITY), _a0(a0) {};
 
 private:

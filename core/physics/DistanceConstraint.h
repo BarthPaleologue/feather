@@ -10,7 +10,7 @@
 
 class DistanceConstraint : public Constraint {
 public:
-    DistanceConstraint(Particle *p1, Particle *p2, float restLength, float stiffness) : Constraint({p1, p2}, stiffness, EQUALITY) {
+    DistanceConstraint(std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2, float restLength, float stiffness) : Constraint({p1, p2}, stiffness, EQUALITY) {
         _restLength = restLength;
     }
 

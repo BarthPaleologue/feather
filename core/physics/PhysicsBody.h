@@ -27,7 +27,7 @@ public:
 
         for (unsigned int i = 0; i < mesh->vertexData().positions.size(); i += 3) {
             auto particlePosition = glm::vec3(mesh->vertexData().positions[i], mesh->vertexData().positions[i + 1], mesh->vertexData().positions[i + 2]);
-            _particles.push_back(new Particle(mass / (float)nbParticles, particlePosition + meshPosition, i));
+            _particles.push_back(std::make_shared<Particle>(mass / (float)nbParticles, particlePosition + meshPosition, i));
         }
     };
 
@@ -48,7 +48,7 @@ public:
         }
     }
 
-    std::vector<Particle *> &particles() {
+    std::vector<std::shared_ptr<Particle>> &particles() {
         return _particles;
     }
 
@@ -127,7 +127,7 @@ protected:
     float _mass;
 
     std::shared_ptr<Mesh> _mesh;
-    std::vector<Particle *> _particles;
+    std::vector<std::shared_ptr<Particle>> _particles;
 
 private:
     std::vector<Constraint *> _constraints;

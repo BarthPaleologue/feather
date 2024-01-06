@@ -10,7 +10,7 @@
 
 class ClothBalloonConstraint : public Constraint {
 public:
-    ClothBalloonConstraint(const std::vector<Particle *> &particles, float pressure, float volume) : Constraint(
+    ClothBalloonConstraint(const std::vector<std::shared_ptr<Particle>> &particles, float pressure, float volume) : Constraint(
             particles, 1, EQUALITY) {
         _pressure = pressure;
         _volume = volume;

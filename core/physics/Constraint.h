@@ -7,6 +7,7 @@
 
 #include <functional>
 #include <utility>
+#include <memory>
 #include "Particle.h"
 #include "Core"
 
@@ -17,7 +18,7 @@ enum ConstraintType {
 
 class Constraint {
 public:
-    Constraint(std::vector<Particle *> particles, float stiffness, ConstraintType type) : _particles(
+    Constraint(std::vector<std::shared_ptr<Particle>> particles, float stiffness, ConstraintType type) : _particles(
             std::move(particles)), _stiffness(stiffness), _type(type) {
         _cardinality = _particles.size();
         _gradient = Eigen::MatrixXf::Zero(3, _cardinality);
@@ -38,11 +39,11 @@ public:
         }
     }
 
-    std::vector<Particle *> particles() const {
+    std::vector<std::shared_ptr<Particle>> particles() const {
         return _particles;
     }
 
-    void setParticles(std::vector<Particle *> particles) {
+    void setParticles(std::vector<std::shared_ptr<Particle>> particles) {
         _particles = std::move(particles);
     }
 
@@ -100,7 +101,7 @@ protected:
     unsigned int _cardinality{};
 
     /// Particles involved in the constraint
-    std::vector<Particle *> _particles;
+    std::vector<std::shared_ptr<Particle>> _particles;
 
     /// Stiffness of the constraint (between 0 and 1)
     float _stiffness{};

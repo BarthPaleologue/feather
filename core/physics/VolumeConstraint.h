@@ -10,7 +10,7 @@
 
 class VolumeConstraint : public Constraint {
 public:
-    VolumeConstraint(Particle *p1, Particle *p2, Particle *p3, Particle *p4, float restVolume, float stiffness) : Constraint(
+    VolumeConstraint(std::shared_ptr< Particle> p1, std::shared_ptr< Particle> p2, std::shared_ptr< Particle> p3, std::shared_ptr< Particle> p4, float restVolume, float stiffness) : Constraint(
             {p1, p2, p3, p4}, stiffness, EQUALITY), _restVolume(restVolume) {};
 
 private:

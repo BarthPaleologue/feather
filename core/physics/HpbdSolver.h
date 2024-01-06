@@ -17,16 +17,9 @@ class HpbdSolver {
 public:
     HpbdSolver() = default;
 
-    ~HpbdSolver() {
-        for (auto body: _physicsBodies) {
-            for (auto particle: body->particles()) {
-                delete particle;
-            }
-            delete body;
-        }
-    }
+    ~HpbdSolver() = default;
 
-    void addBody(PhysicsBody *pBody) {
+    void addBody(std::shared_ptr<PhysicsBody> pBody) {
         pBody->buildParticleHierarchy(1);
         _physicsBodies.push_back(pBody);
     }
@@ -134,7 +127,7 @@ public:
 
 private:
     int _iterations = 16;
-    std::vector<PhysicsBody *> _physicsBodies;
+    std::vector<std::shared_ptr<PhysicsBody>> _physicsBodies;
     std::vector<std::shared_ptr<UniformAccelerationField>> _fields;
 };
 

@@ -11,7 +11,7 @@
 
 class CollisionConstraint : public Constraint {
 public:
-    CollisionConstraint(Particle *q, Particle *p1, Particle *p2, Particle *p3, float h) : Constraint(
+    CollisionConstraint(std::shared_ptr<Particle> q, std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2, std::shared_ptr<Particle> p3, float h) : Constraint(
             {q, p1, p2, p3}, 1.0f, INEQUALITY), _h(h) {};
 
 private:

@@ -73,7 +73,7 @@ int main() {
     clothMesh->transform()->setScale(10);
     clothMesh->transform()->setPosition(0, 7, 0);
 
-    auto cloth = new SoftBody(clothMesh, 1.0f, 0.02f, 0.02f);
+    auto cloth = std::make_shared<SoftBody>(clothMesh, 1.0f, 0.02f, 0.02f);
     // Seed the random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -149,7 +149,7 @@ int main() {
     cube->transform()->setPosition(5.0, 4, -8.0);
     cube->setMaterial(cubeMaterial);
 
-    auto cubeBody = new RigidBody(cube, 1.0f);
+    auto cubeBody = std::make_shared<RigidBody>(cube, 1.0f);
     solver.addBody(cubeBody);
     shadowRenderer->addShadowCaster(cube);
 
@@ -159,7 +159,7 @@ int main() {
     auto cube2 = MeshBuilder::makeUVCube("cube2", scene);
     cube2->transform()->setPosition(-7.0, 4, 0.0);
     cube2->setMaterial(cubeMaterial);
-    auto cube2Body = new SoftBody(cube2, 1.0f, 0.0005f, 0.0005f);
+    auto cube2Body = std::make_shared<SoftBody>(cube2, 1.0f, 0.0005f, 0.0005f);
     solver.addBody(cube2Body);
     shadowRenderer->addShadowCaster(cube2);
 
@@ -174,7 +174,7 @@ int main() {
     sphere->setMaterial(sphereMaterial);
 
     shadowRenderer->addShadowCaster(sphere);
-    auto sphereBody = new SoftBody(sphere, 1.0f, 0.2f, 0.2f);
+    auto sphereBody = std::make_shared<SoftBody>(sphere, 1.0f, 0.2f, 0.2f);
     solver.addBody(sphereBody);
 
     solver.onBeforeSolveObservable.addOnce(
@@ -193,7 +193,7 @@ int main() {
     simplifiedBunny->transform()->translate(glm::vec3(10, 3.0, -2));
     shadowRenderer->addShadowCaster(simplifiedBunny);
 
-    auto softBunny = new SoftBody(simplifiedBunny, 1.0, 0.5f, 0.5f);
+    auto softBunny = std::make_shared<SoftBody>(simplifiedBunny, 1.0, 0.5f, 0.5f);
     solver.addBody(softBunny);
 
     auto ground = MeshBuilder::makePlane("ground", scene, 2);
@@ -209,7 +209,7 @@ int main() {
 
     ground->setMaterial(groundMaterial);
 
-    auto groundBody = new RigidBody(ground, 0.0f);
+    auto groundBody = std::make_shared<RigidBody>(ground, 0.0f);
     solver.addBody(groundBody);
 
     auto createCollisionsConstraints = [](PhysicsBody *collider, PhysicsBody *collided) {
@@ -228,11 +228,11 @@ int main() {
         }
     };
 
-    createCollisionsConstraints(cubeBody, groundBody);
-    createCollisionsConstraints(softBunny, groundBody);
-    createCollisionsConstraints(cloth, groundBody);
-    createCollisionsConstraints(cube2Body, groundBody);
-    createCollisionsConstraints(sphereBody, groundBody);
+    createCollisionsConstraints(cubeBody.get(), groundBody.get());
+    createCollisionsConstraints(softBunny.get(), groundBody.get());
+    createCollisionsConstraints(cloth.get(), groundBody.get());
+    createCollisionsConstraints(cube2Body.get(), groundBody.get());
+    createCollisionsConstraints(sphereBody.get(), groundBody.get());
     //createCollisionsConstraints(softBunny, cubeBody);
 
     bool realTimePhysics = false;

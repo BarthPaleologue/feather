@@ -14,7 +14,7 @@
  */
 class BendConstraint : public DistanceConstraint {
 public:
-    BendConstraint(Particle *p0, Particle *p1, Particle *p2, Particle *p3, float stiffness)
+    BendConstraint(std::shared_ptr<Particle> p0, std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2, std::shared_ptr<Particle> p3, float stiffness)
             : DistanceConstraint(
             p2, p3, glm::length(p2->position - p3->position), stiffness) {
     };
