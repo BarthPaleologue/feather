@@ -38,9 +38,9 @@ public:
         onBeforeSolveObservable.notifyObservers();
 
         // apply force fields
-        for (auto body: _physicsBodies) {
-            for (auto particle: body->particles()) {
-                for (auto field: _fields) {
+        for (const auto& body: _physicsBodies) {
+            for (const auto& particle: body->particles()) {
+                for (const auto& field: _fields) {
                     particle->forces.push_back(
                             field->computeAcceleration() * particle->mass);
                 }
@@ -51,15 +51,15 @@ public:
         float subTimeStep = deltaTime / (float) _iterations;
         for (unsigned int i = 0; i < _iterations; i++) {
             // apply resultingForce
-            for (auto body: _physicsBodies) {
-                for (auto particle: body->particles()) {
+            for (const auto& body: _physicsBodies) {
+                for (const auto& particle: body->particles()) {
                     particle->velocity += subTimeStep * particle->invMass * particle->resultingForce();
                 }
             }
 
             // predict positions
-            for (auto body: _physicsBodies) {
-                for (auto particle: body->particles()) {
+            for (const auto& body: _physicsBodies) {
+                for (const auto& particle: body->particles()) {
                     particle->predictedPosition = particle->position + subTimeStep * particle->velocity;
                 }
             }
@@ -85,15 +85,15 @@ public:
 
             // solve constraints
             //for (unsigned int i = 0; i < _iterations; i++) {
-            for (auto body: _physicsBodies) {
+            for (const auto& body: _physicsBodies) {
                 for (auto constraint: body->constraints()) {
                     constraint->solve();
                 }
             }
             //}
 
-            for (auto body: _physicsBodies) {
-                for (auto particle: body->particles()) {
+            for (const auto& body: _physicsBodies) {
+                for (const auto& particle: body->particles()) {
                     particle->velocity = (particle->predictedPosition - particle->position) / subTimeStep;
                     particle->position = particle->predictedPosition;
 
@@ -103,20 +103,9 @@ public:
             }
         }
 
-        for (auto body: _physicsBodies) {
-            for (auto particle: body->particles()) {
-                particle->forces.clear();
-
-                auto particleLocalPosition = particle->position - *body->transform()->position();
-
-                // update actual mesh vertex data
-                body->mesh()->vertexData().positions[particle->positionIndex] = particleLocalPosition.x;
-                body->mesh()->vertexData().positions[particle->positionIndex + 1] = particleLocalPosition.y;
-                body->mesh()->vertexData().positions[particle->positionIndex + 2] = particleLocalPosition.z;
-            }
-
-            body->mesh()->vertexData().computeNormals();
-            body->mesh()->sendVertexDataToGPU();
+        // update mesh vertex data at the end of the simulation step
+        for (const auto& body: _physicsBodies) {
+            body->updateVertexData();
         }
 
         onAfterSolveObservable.notifyObservers();

@@ -14,7 +14,7 @@
 
 class Mesh : public Transformable {
 public:
-    explicit Mesh(const char *name) : Transformable(), _name(name), _vao(0), _vbo(0) {
+    explicit Mesh(const char *name) : Transformable(), _name(name) {
         _id = UUID::generate_uuid_v4();
         _material = std::make_shared<DefaultMaterial>();
     }
@@ -60,12 +60,12 @@ private:
     std::string _id;
     VertexData _vertexData;
 
-    GLuint _vao;
-    GLuint _vbo;
-    GLuint _ibo;
-    GLuint _normalVbo;
-    GLuint _uvVbo;
-    GLuint _colVbo;
+    GLuint _vao{};
+    GLuint _vbo{};
+    GLuint _ibo{};
+    GLuint _normalVbo{};
+    GLuint _uvVbo{};
+    GLuint _colVbo{};
 
     bool _enabled = true;
 protected:

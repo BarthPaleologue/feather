@@ -48,6 +48,22 @@ public:
         }
     }
 
+    void updateVertexData() {
+        for (const auto& particle: _particles) {
+            particle->forces.clear();
+
+            auto particleLocalPosition = particle->position - *transform()->position();
+
+            // update actual mesh vertex data
+            mesh()->vertexData().positions[particle->positionIndex] = particleLocalPosition.x;
+            mesh()->vertexData().positions[particle->positionIndex + 1] = particleLocalPosition.y;
+            mesh()->vertexData().positions[particle->positionIndex + 2] = particleLocalPosition.z;
+        }
+
+        mesh()->vertexData().computeNormals();
+        mesh()->sendVertexDataToGPU();
+    }
+
     std::vector<std::shared_ptr<Particle>> &particles() {
         return _particles;
     }
@@ -118,7 +134,7 @@ public:
     }
 
     void reset() {
-        for (auto particle: _particles) {
+        for (const auto& particle: _particles) {
             particle->reset();
         }
     }

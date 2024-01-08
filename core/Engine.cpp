@@ -5,7 +5,6 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <stdexcept>
-#include <iostream>
 #include "Engine.h"
 
 Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Project") {
