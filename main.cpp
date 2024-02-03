@@ -97,18 +97,16 @@ int main() {
 
     auto distanceConstraintMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
     distanceConstraintMaterial->setAmbientColor(1.0, 0.0, 0.0);
-    for(auto constraint: cloth->distanceConstraintsPerLevel()[1]) {
-        if(constraint->particles().size() == 2) {
-            auto p1 = constraint->particles()[0];
-            auto p2 = constraint->particles()[1];
+    for (auto constraint: cloth->distanceConstraintsPerLevel()[2]) {
+        auto p1 = constraint->particles()[0];
+        auto p2 = constraint->particles()[1];
 
-            auto position1 = glm::vec4(p1->position, 1.0f);
-            auto position2 = glm::vec4(p2->position, 1.0f);
+        auto position1 = glm::vec4(p1->position, 1.0f);
+        auto position2 = glm::vec4(p2->position, 1.0f);
 
-            auto line = MeshBuilder::makeLine("line", scene, position1, position2);
-            line->setMaterial(distanceConstraintMaterial);
-            line->transform()->translate(glm::vec3(1.0, 0.0, 0.0));
-        }
+        auto line = MeshBuilder::makeLine("line", scene, position1, position2);
+        line->setMaterial(distanceConstraintMaterial);
+        line->transform()->translate(glm::vec3(1.0, 0.0, 0.0));
     }
 
     /*auto bendConstraintMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
@@ -137,9 +135,6 @@ int main() {
     cloth->mesh()->setMaterial(clothMaterial);
 
     shadowRenderer->addShadowCaster(cloth->mesh());
-
-    auto simpleCloth = MeshBuilder::Simplify("simpleCloth", cloth->mesh().get(), 1, scene);
-    simpleCloth->material()->setWireframe(true);
 
     /*auto cubeMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     cubeMaterial->setAlbedoColor(1.0, 1.0, 0.0);

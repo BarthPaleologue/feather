@@ -20,7 +20,7 @@ public:
     ~HpbdSolver() = default;
 
     void addBody(std::shared_ptr<PhysicsBody> pBody) {
-        pBody->buildParticleHierarchy(2);
+        pBody->buildParticleHierarchy(3);
         _physicsBodies.push_back(pBody);
     }
 

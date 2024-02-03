@@ -39,8 +39,12 @@ public:
         triangulations.push_back(mesh()->vertexData().indices);
 
         std::vector<std::vector<GLint>> closestCoarseVertexIndicesPerLevel;
+        closestCoarseVertexIndicesPerLevel.push_back(std::vector<GLint>());
+        for(int i = 0; i < _particles.size(); i++) {
+            closestCoarseVertexIndicesPerLevel[0].push_back(i);
+        }
 
-        for (unsigned int i = 0; i < nbLevels; i++) {
+        for (unsigned int level = 1; level <= nbLevels; level++) {
             std::vector<GLint> coarseVertexIndices;
             std::vector<GLint> closestCoarseVertexIndices;
             std::vector<GLint> newTriangulation;
@@ -70,19 +74,13 @@ public:
 
                 auto constraintCopy = new DistanceConstraint(*constraint);
 
-                for (auto &particle: constraint->particles()) {
+                for (auto &particle: constraintCopy->particles()) {
                     unsigned long particleIndex = particle->positionIndex / 3;
 
                     // check if the index is in the triangulation. If it is, the particle is in the current level
                     if (std::find(triangulations[level].begin(), triangulations[level].end(), particleIndex) !=
                         triangulations[level].end())
                         continue;
-
-                    if(closestCoarseVertexIndicesPerLevel[level][particleIndex] == -1) {
-                        //std::cout << "Particle " << particleIndex << " has no closest coarse vertex" << std::endl;
-                        shouldBeKept = false;
-                        continue;
-                    }
 
                     // the particle does not belong in this coarser level, we have to change it
 
@@ -91,6 +89,10 @@ public:
 
                     // replace the particle in the constraint
                     constraintCopy->replaceParticle(particle, _particles[closestParticleIndex]);
+                }
+
+                if(constraintCopy->particles()[0] == constraintCopy->particles()[1]) {
+                    shouldBeKept = false;
                 }
 
                 if(shouldBeKept) {
