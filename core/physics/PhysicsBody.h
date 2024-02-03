@@ -38,6 +38,8 @@ public:
         std::vector<std::vector<GLint>> triangulations;
         triangulations.push_back(mesh()->vertexData().indices);
 
+        std::vector<std::vector<GLint>> closestCoarseVertexIndicesPerLevel;
+
         for (unsigned int i = 0; i < nbLevels; i++) {
             std::vector<GLint> coarseVertexIndices;
             std::vector<GLint> closestCoarseVertexIndices;
@@ -49,45 +51,61 @@ public:
                                         newTriangulation);
 
             triangulations.push_back(newTriangulation);
+            closestCoarseVertexIndicesPerLevel.push_back(closestCoarseVertexIndices);
         }
 
-        for (unsigned int i = 0; i < nbLevels; i++) {
-            if (i == 0) {
-                _nonCollisionConstraintsPerLevel.emplace_back(_nonCollisionConstraints);
-            } else {
-                _nonCollisionConstraintsPerLevel.emplace_back(_nonCollisionConstraintsPerLevel[i - 1]);
+        for (unsigned int level = 0; level < nbLevels; level++) {
+            if (level == 0) {
+                _distanceConstraintsPerLevel.emplace_back(_distanceConstraints);
+                continue;
             }
 
+            _distanceConstraintsPerLevel.emplace_back(_distanceConstraintsPerLevel[level - 1]);
+
+            std::vector<DistanceConstraint *> filteredConstraints{};
+
             // for each constraint, if a particle is not in the current level, change to constraint to use the closest particle in the current level
-            for (auto &constraint: _nonCollisionConstraintsPerLevel[i]) {
+            for (auto &constraint: _distanceConstraintsPerLevel[level]) {
+                bool shouldBeKept = true;
+
+                auto constraintCopy = new DistanceConstraint(*constraint);
+
                 for (auto &particle: constraint->particles()) {
                     unsigned long particleIndex = particle->positionIndex / 3;
 
                     // check if the index is in the triangulation. If it is, the particle is in the current level
-                    if (std::find(triangulations[i].begin(), triangulations[i].end(), particleIndex) !=
-                        triangulations[i].end())
+                    if (std::find(triangulations[level].begin(), triangulations[level].end(), particleIndex) !=
+                        triangulations[level].end())
                         continue;
+
+                    if(closestCoarseVertexIndicesPerLevel[level][particleIndex] == -1) {
+                        //std::cout << "Particle " << particleIndex << " has no closest coarse vertex" << std::endl;
+                        shouldBeKept = false;
+                        continue;
+                    }
 
                     // the particle does not belong in this coarser level, we have to change it
 
                     // find the closest particle in the current level
-                    float minDistance = std::numeric_limits<float>::max();
-                    std::shared_ptr<Particle> closestParticle = nullptr;
-                    for (auto &currentParticle: _particles) {
-                        if (std::find(triangulations[i].begin(), triangulations[i].end(),
-                                      currentParticle->positionIndex / 3) != triangulations[i].end()) {
-                            float distance = glm::distance(particle->position, currentParticle->position);
-                            if (distance < minDistance) {
-                                minDistance = distance;
-                                closestParticle = currentParticle;
-                            }
-                        }
-                    }
+                    GLint closestParticleIndex = closestCoarseVertexIndicesPerLevel[level][particleIndex];
 
                     // replace the particle in the constraint
-                    constraint->replaceParticle(particle, closestParticle);
+                    constraintCopy->replaceParticle(particle, _particles[closestParticleIndex]);
+                }
+
+                if(shouldBeKept) {
+                    filteredConstraints.push_back(constraintCopy);
                 }
             }
+
+            _distanceConstraintsPerLevel[level] = filteredConstraints;
+        }
+
+        // how many levels
+        std::cout << "There are " << _distanceConstraintsPerLevel.size() << " levels" << std::endl;
+        for(int i = 0; i < _distanceConstraintsPerLevel.size(); i++) {
+            // how many constraints are there in this level
+            std::cout << "Level " << i << " has " << _distanceConstraintsPerLevel[i].size() << " constraints" << std::endl;
         }
     }
 
@@ -148,6 +166,10 @@ public:
         _collisionConstraints.push_back(constraint);
     }
 
+    std::vector<std::vector<DistanceConstraint *>> &distanceConstraintsPerLevel() {
+        return _distanceConstraintsPerLevel;
+    }
+
     std::vector<Constraint *> &nonCollisionConstraints() {
         return _nonCollisionConstraints;
     }
@@ -193,7 +215,8 @@ protected:
     std::vector<std::shared_ptr<Particle>> _particles;
 
 private:
-    std::vector<std::vector<Constraint *>> _nonCollisionConstraintsPerLevel;
+    std::vector<std::vector<DistanceConstraint *>> _distanceConstraintsPerLevel;
+
     std::vector<Constraint *> _nonCollisionConstraints;
 
     std::vector<FixedConstraint *> _fixedConstraints;

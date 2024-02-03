@@ -7,6 +7,7 @@
 #include "physics/RigidBody.h"
 #include "physics/SoftBody.h"
 #include "physics/UniformAccelerationField.h"
+#include "BlinnPhongMaterial.h"
 
 const int WINDOW_WIDTH = 1300;
 const int WINDOW_HEIGHT = 800;
@@ -94,17 +95,15 @@ int main() {
 
     solver.addBody(cloth);
 
-    /*auto clothWorld = cloth->transform()->computeWorldMatrix();
-
     auto distanceConstraintMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
     distanceConstraintMaterial->setAmbientColor(1.0, 0.0, 0.0);
-    for(auto constraint: cloth->distanceConstraints()) {
+    for(auto constraint: cloth->distanceConstraintsPerLevel()[1]) {
         if(constraint->particles().size() == 2) {
             auto p1 = constraint->particles()[0];
             auto p2 = constraint->particles()[1];
 
-            auto position1 = clothWorld * glm::vec4(p1->position, 1.0f);
-            auto position2 = clothWorld * glm::vec4(p2->position, 1.0f);
+            auto position1 = glm::vec4(p1->position, 1.0f);
+            auto position2 = glm::vec4(p2->position, 1.0f);
 
             auto line = MeshBuilder::makeLine("line", scene, position1, position2);
             line->setMaterial(distanceConstraintMaterial);
@@ -112,7 +111,7 @@ int main() {
         }
     }
 
-    auto bendConstraintMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
+    /*auto bendConstraintMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
     bendConstraintMaterial->setAmbientColor(0.0, 1.0, 0.0);
     for(auto constraint: cloth->bendConstraints()) {
         if(constraint->particles().size() == 2) {
@@ -139,7 +138,10 @@ int main() {
 
     shadowRenderer->addShadowCaster(cloth->mesh());
 
-    auto cubeMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
+    auto simpleCloth = MeshBuilder::Simplify("simpleCloth", cloth->mesh().get(), 1, scene);
+    simpleCloth->material()->setWireframe(true);
+
+    /*auto cubeMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     cubeMaterial->setAlbedoColor(1.0, 1.0, 0.0);
     cubeMaterial->setMetallic(0.8);
     cubeMaterial->setRoughness(0.2);
@@ -251,7 +253,7 @@ int main() {
     createCollisionsConstraints(cloth.get(), groundBody.get());
     createCollisionsConstraints(cube2Body.get(), groundBody.get());
     createCollisionsConstraints(sphereBody.get(), groundBody.get());
-    createCollisionsConstraints(dressBody.get(), groundBody.get());
+    createCollisionsConstraints(dressBody.get(), groundBody.get());*/
     //createCollisionsConstraints(softBunny, cubeBody);
 
     bool realTimePhysics = false;
@@ -259,11 +261,11 @@ int main() {
     engine.onKeyPressObservable.add([&](int key) {
         if (key == GLFW_KEY_W) {
             clothMaterial->setWireframe(!clothMaterial->wireframe());
-            sphereMaterial->setWireframe(!sphereMaterial->wireframe());
+            /*sphereMaterial->setWireframe(!sphereMaterial->wireframe());
             cubeMaterial->setWireframe(!cubeMaterial->wireframe());
             bunnyMaterial->setWireframe(!bunnyMaterial->wireframe());
             groundMaterial->setWireframe(!groundMaterial->wireframe());
-            dressMaterial->setWireframe(!dressMaterial->wireframe());
+            dressMaterial->setWireframe(!dressMaterial->wireframe());*/
         }
         if (key == GLFW_KEY_R) solver.reset();
         if (key == GLFW_KEY_SPACE) realTimePhysics = !realTimePhysics;

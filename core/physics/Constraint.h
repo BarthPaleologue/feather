@@ -24,6 +24,11 @@ public:
         _gradient = Eigen::MatrixXf::Zero(3, _cardinality);
     }
 
+    Constraint(const Constraint &other) : _particles(other._particles), _stiffness(other._stiffness), _type(other._type) {
+        _cardinality = _particles.size();
+        _gradient = Eigen::MatrixXf::Zero(3, _cardinality);
+    }
+
     /**
      * Updates the predicted position of the particles according to the constraint
      */

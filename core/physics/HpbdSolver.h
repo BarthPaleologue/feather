@@ -20,7 +20,7 @@ public:
     ~HpbdSolver() = default;
 
     void addBody(std::shared_ptr<PhysicsBody> pBody) {
-        pBody->buildParticleHierarchy(1);
+        pBody->buildParticleHierarchy(2);
         _physicsBodies.push_back(pBody);
     }
 
@@ -38,9 +38,9 @@ public:
         onBeforeSolveObservable.notifyObservers();
 
         // apply force fields
-        for (const auto& body: _physicsBodies) {
-            for (const auto& particle: body->particles()) {
-                for (const auto& field: _fields) {
+        for (const auto &body: _physicsBodies) {
+            for (const auto &particle: body->particles()) {
+                for (const auto &field: _fields) {
                     particle->forces.push_back(
                             field->computeAcceleration() * particle->mass);
                 }
@@ -51,15 +51,15 @@ public:
         float subTimeStep = deltaTime / (float) _iterations;
         for (unsigned int i = 0; i < _iterations; i++) {
             // apply resultingForce
-            for (const auto& body: _physicsBodies) {
-                for (const auto& particle: body->particles()) {
+            for (const auto &body: _physicsBodies) {
+                for (const auto &particle: body->particles()) {
                     particle->velocity += subTimeStep * particle->invMass * particle->resultingForce();
                 }
             }
 
             // predict positions
-            for (const auto& body: _physicsBodies) {
-                for (const auto& particle: body->particles()) {
+            for (const auto &body: _physicsBodies) {
+                for (const auto &particle: body->particles()) {
                     particle->predictedPosition = particle->position + subTimeStep * particle->velocity;
                 }
             }
@@ -85,18 +85,29 @@ public:
 
             // solve nonCollisionConstraints
             //for (unsigned int i = 0; i < _iterations; i++) {
-            for (const auto& body: _physicsBodies) {
-                for (auto nonCollisionConstraint: body->nonCollisionConstraints()) {
+            for (const auto &body: _physicsBodies) {
+                /*for (auto nonCollisionConstraint: body->nonCollisionConstraints()) {
                     nonCollisionConstraint->solve();
+                }*/
+                for (const auto &distanceConstraints: body->distanceConstraintsPerLevel()) {
+                    for (auto distanceConstraint: distanceConstraints) {
+                        distanceConstraint->solve();
+                    }
                 }
-                for(auto collisionConstraint: body->collisionConstraints()) {
+                for (auto bendConstraint: body->bendConstraints()) {
+                    bendConstraint->solve();
+                }
+                for (auto fixedConstraint: body->fixedConstraints()) {
+                    fixedConstraint->solve();
+                }
+                for (auto collisionConstraint: body->collisionConstraints()) {
                     collisionConstraint->solve();
                 }
             }
             //}
 
-            for (const auto& body: _physicsBodies) {
-                for (const auto& particle: body->particles()) {
+            for (const auto &body: _physicsBodies) {
+                for (const auto &particle: body->particles()) {
                     particle->velocity = (particle->predictedPosition - particle->position) / subTimeStep;
                     particle->position = particle->predictedPosition;
 
@@ -107,7 +118,7 @@ public:
         }
 
         // update mesh vertex data at the end of the simulation step
-        for (const auto& body: _physicsBodies) {
+        for (const auto &body: _physicsBodies) {
             body->updateVertexData();
         }
 
@@ -118,7 +129,7 @@ public:
     Observable<> onAfterSolveObservable;
 
 private:
-    int _iterations = 16;
+    int _iterations = 8;
     std::vector<std::shared_ptr<PhysicsBody>> _physicsBodies;
     std::vector<std::shared_ptr<UniformAccelerationField>> _fields;
 };

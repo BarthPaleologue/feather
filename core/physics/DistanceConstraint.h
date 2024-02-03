@@ -14,6 +14,10 @@ public:
         _restLength = glm::length(p1->position - p2->position);
     }
 
+    DistanceConstraint(const DistanceConstraint &other) : Constraint(other) {
+        _restLength = other._restLength;
+    }
+
 private:
     float _restLength{};
 
