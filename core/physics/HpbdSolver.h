@@ -64,7 +64,7 @@ public:
                 }
             }
 
-            // collision constraints
+            // collision nonCollisionConstraints
             /*auto ground1 = new Particle(0.0f, -1.0f, -3.0f, 0.0f);
             auto ground2 = new Particle(0.0f, 1.0f, -3.0f, 0.0f);
             auto ground3 = new Particle(0.0f, 0.0f, -3.0f, -1.0f);
@@ -73,7 +73,7 @@ public:
                 body->collisionConstraints().clear();
                 for (auto particle: body->particles()) {
                     auto constraint = new CollisionConstraint(particle, ground1, ground2, ground3, 0.1f);
-                    body->constraints().push_back(constraint);
+                    body->nonCollisionConstraints().push_back(constraint);
                     body->collisionConstraints().push_back(constraint);
                 }
             }*/
@@ -83,11 +83,14 @@ public:
                 body->buildParticleHierarchy(1);
             }*/
 
-            // solve constraints
+            // solve nonCollisionConstraints
             //for (unsigned int i = 0; i < _iterations; i++) {
             for (const auto& body: _physicsBodies) {
-                for (auto constraint: body->constraints()) {
-                    constraint->solve();
+                for (auto nonCollisionConstraint: body->nonCollisionConstraints()) {
+                    nonCollisionConstraint->solve();
+                }
+                for(auto collisionConstraint: body->collisionConstraints()) {
+                    collisionConstraint->solve();
                 }
             }
             //}

@@ -27,8 +27,10 @@ public:
         _particles.reserve(nbParticles);
 
         for (unsigned int i = 0; i < mesh->vertexData().positions.size(); i += 3) {
-            auto particlePosition = glm::vec3(mesh->vertexData().positions[i], mesh->vertexData().positions[i + 1], mesh->vertexData().positions[i + 2]);
-            _particles.push_back(std::make_shared<Particle>(mass / (float)nbParticles, particlePosition + meshPosition, i));
+            auto particlePosition = glm::vec3(mesh->vertexData().positions[i], mesh->vertexData().positions[i + 1],
+                                              mesh->vertexData().positions[i + 2]);
+            _particles.push_back(
+                    std::make_shared<Particle>(mass / (float) nbParticles, particlePosition + meshPosition, i));
         }
     };
 
@@ -36,21 +38,30 @@ public:
         std::vector<std::vector<GLint>> triangulations;
         triangulations.push_back(mesh()->vertexData().indices);
 
-        for(unsigned int i = 0; i < nbLevels; i++) {
+        for (unsigned int i = 0; i < nbLevels; i++) {
             std::vector<GLint> coarseVertexIndices;
             std::vector<GLint> closestCoarseVertexIndices;
             std::vector<GLint> newTriangulation;
 
             std::vector<GLint> previousTriangulation = triangulations[triangulations.size() - 1];
 
-            mesh()->vertexData().subset(previousTriangulation, coarseVertexIndices, closestCoarseVertexIndices, newTriangulation);
+            mesh()->vertexData().subset(previousTriangulation, coarseVertexIndices, closestCoarseVertexIndices,
+                                        newTriangulation);
 
             triangulations.push_back(newTriangulation);
+        }
+
+        for (unsigned int i = 0; i < nbLevels; i++) {
+            if(i == 0) {
+                _nonCollisionConstraintsPerLevel.push_back(std::vector<Constraint *>(_nonCollisionConstraints));
+            } else {
+                _nonCollisionConstraintsPerLevel.push_back(std::vector<Constraint *>(_nonCollisionConstraintsPerLevel[i - 1]));
+            }
         }
     }
 
     void updateVertexData() {
-        for (const auto& particle: _particles) {
+        for (const auto &particle: _particles) {
             particle->forces.clear();
 
             auto particleLocalPosition = particle->position - *transform()->position();
@@ -78,37 +89,36 @@ public:
     }
 
     void addFixedConstraint(FixedConstraint *constraint) {
-        _constraints.push_back(constraint);
+        _nonCollisionConstraints.push_back(constraint);
         _fixedConstraints.push_back(constraint);
     }
 
     void addDistanceConstraint(DistanceConstraint *constraint) {
-        _constraints.push_back(constraint);
+        _nonCollisionConstraints.push_back(constraint);
         _distanceConstraints.push_back(constraint);
     }
 
     void addBendConstraint(BendConstraint *constraint) {
-        _constraints.push_back(constraint);
+        _nonCollisionConstraints.push_back(constraint);
         _bendConstraints.push_back(constraint);
     }
 
     void addIsometricBendConstraint(IsometricBendConstraint *constraint) {
-        _constraints.push_back(constraint);
+        _nonCollisionConstraints.push_back(constraint);
         _isometricBendConstraints.push_back(constraint);
     }
 
     void addVolumeConstraint(VolumeConstraint *constraint) {
-        _constraints.push_back(constraint);
+        _nonCollisionConstraints.push_back(constraint);
         _volumeConstraints.push_back(constraint);
     }
 
     void addCollisionConstraint(CollisionConstraint *constraint) {
-        _constraints.push_back(constraint);
         _collisionConstraints.push_back(constraint);
     }
 
-    std::vector<Constraint *> &constraints() {
-        return _constraints;
+    std::vector<Constraint *> &nonCollisionConstraints() {
+        return _nonCollisionConstraints;
     }
 
     std::vector<FixedConstraint *> &fixedConstraints() {
@@ -140,7 +150,7 @@ public:
     }
 
     void reset() {
-        for (const auto& particle: _particles) {
+        for (const auto &particle: _particles) {
             particle->reset();
         }
     }
@@ -152,7 +162,9 @@ protected:
     std::vector<std::shared_ptr<Particle>> _particles;
 
 private:
-    std::vector<Constraint *> _constraints;
+    std::vector<std::vector<Constraint *>> _nonCollisionConstraintsPerLevel;
+    std::vector<Constraint *> _nonCollisionConstraints;
+
     std::vector<FixedConstraint *> _fixedConstraints;
     std::vector<DistanceConstraint *> _distanceConstraints;
     std::vector<BendConstraint *> _bendConstraints;
