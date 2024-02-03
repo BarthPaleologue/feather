@@ -41,6 +41,10 @@ private:
         _gradient.col(2) = Eigen::Vector3f(g3.x, g3.y, g3.z);
         _gradient.col(3) = Eigen::Vector3f(g4.x, g4.y, g4.z);
     }
+
+    void recomputeTargetValue() override {
+        //TODO: implement
+    }
 };
 
 #endif //FEATHERGL_VOLUMECONSTRAINT_H

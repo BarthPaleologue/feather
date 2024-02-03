@@ -25,7 +25,7 @@ public:
 private:
     glm::vec3 _targetPosition;
 
-    void computeGradient() {
+    void computeGradient() override {
         glm::vec3 p1 = _particles[0]->predictedPosition;
         glm::vec3 p2 = _targetPosition;
 
@@ -36,6 +36,10 @@ private:
 
     float evaluate() const override {
         return glm::length(_particles[0]->predictedPosition - _targetPosition);
+    }
+
+    void recomputeTargetValue() override {
+        _targetPosition = _particles[0]->predictedPosition;
     }
 };
 

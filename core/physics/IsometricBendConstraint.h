@@ -20,10 +20,6 @@ public:
             glm::vec3 p_2 = _particles[2]->position;
             glm::vec3 p_3 = _particles[3]->position;
 
-            std::cout << "POSITIONS: " << toString(p_0) << toString(p_1) << toString(p_2) << toString(p_3) << std::endl;
-
-            //glm::vec3 sharedEdgeDir = glm::normalize(p1 - p0);
-
             glm::vec3 n1 = glm::normalize(glm::cross(p_1 - p_0, p_2 - p_0));
             glm::vec3 n2 = glm::normalize(glm::cross(p_1 - p_0, p_3 - p_0));
 
@@ -32,9 +28,6 @@ public:
             // clamp dot product to -1..1 because of floating point precision
             if (dot > 1.0f) dot = 1.0f;
             if (dot < -1.0f) dot = -1.0f;
-            //if(glm::dot(glm::cross(n1, n2), sharedEdgeDir) > 0.0f) phi = 2.0f * M_PIf - phi;
-
-            //std::cout << "PHI: " << phi - _phi << std::endl;
 
             _phi = acosf(dot);
             std::cout << "PHI: " << _phi << std::endl;
@@ -121,6 +114,24 @@ private:
         //std::cout << "PHI: " << phi - _phi << std::endl;
 
         return phi - _phi;
+    }
+
+    void recomputeTargetValue() override {
+        glm::vec3 p_0 = _particles[0]->position;
+        glm::vec3 p_1 = _particles[1]->position;
+        glm::vec3 p_2 = _particles[2]->position;
+        glm::vec3 p_3 = _particles[3]->position;
+
+        glm::vec3 n1 = glm::normalize(glm::cross(p_1 - p_0, p_2 - p_0));
+        glm::vec3 n2 = glm::normalize(glm::cross(p_1 - p_0, p_3 - p_0));
+
+        float dot = glm::dot(n1, n2);
+
+        // clamp dot product to -1..1 because of floating point precision
+        if (dot > 1.0f) dot = 1.0f;
+        if (dot < -1.0f) dot = -1.0f;
+
+        _phi = acosf(dot);
     }
 };
 

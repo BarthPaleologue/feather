@@ -33,6 +33,10 @@ private:
 
         return glm::dot(v, n) - _thickness;
     }
+
+    void recomputeTargetValue() override {
+        _thickness = 0.01f;
+    }
 };
 
 #endif //FEATHERGL_SELFCOLLISIONCONSTRAINT_H

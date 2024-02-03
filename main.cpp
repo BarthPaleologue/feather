@@ -240,7 +240,7 @@ int main() {
                 auto p1 = groundParticles[index1];
                 auto p2 = groundParticles[index2];
                 auto p3 = groundParticles[index3];
-                auto constraint = new CollisionConstraint(particle, p1, p2, p3, 0.01f);
+                auto constraint = new CollisionConstraint(particle, p1, p2, p3);
                 collider->addCollisionConstraint(constraint);
             }
         }

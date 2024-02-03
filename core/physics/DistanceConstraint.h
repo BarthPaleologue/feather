@@ -10,12 +10,16 @@
 
 class DistanceConstraint : public Constraint {
 public:
-    DistanceConstraint(std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2, float restLength, float stiffness) : Constraint({p1, p2}, stiffness, EQUALITY) {
-        _restLength = restLength;
+    DistanceConstraint(std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2, float stiffness) : Constraint({p1, p2}, stiffness, EQUALITY) {
+        _restLength = glm::length(p1->position - p2->position);
     }
 
 private:
-    float _restLength;
+    float _restLength{};
+
+    void recomputeTargetValue() override {
+        _restLength = glm::length(_particles[0]->position - _particles[1]->position);
+    }
 
     void computeGradient() override {
         glm::vec3 p1 = _particles[0]->predictedPosition;

@@ -37,6 +37,10 @@ private:
 
         return volume - _volume * _pressure;
     }
+
+    void recomputeTargetValue() override {
+        //TODO: implement
+    }
 };
 
 #endif //FEATHERGL_CLOTHBALLOONCONSTRAINT_H

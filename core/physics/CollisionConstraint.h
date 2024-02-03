@@ -11,8 +11,8 @@
 
 class CollisionConstraint : public Constraint {
 public:
-    CollisionConstraint(std::shared_ptr<Particle> q, std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2, std::shared_ptr<Particle> p3, float h) : Constraint(
-            {q, p1, p2, p3}, 1.0f, INEQUALITY), _h(h) {};
+    CollisionConstraint(std::shared_ptr<Particle> q, std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2, std::shared_ptr<Particle> p3) : Constraint(
+            {q, p1, p2, p3}, 1.0f, INEQUALITY), _h(0.01f) {};
 
 private:
     float _h;
@@ -39,6 +39,10 @@ private:
         _gradient.col(1) = Eigen::Vector3f(-n.x, -n.y, -n.z);
         _gradient.col(2) = Eigen::Vector3f(0, 0, 0);
         _gradient.col(3) = Eigen::Vector3f(0, 0, 0);
+    }
+
+    void recomputeTargetValue() override {
+        _h = 0.01f;
     }
 };
 

@@ -47,6 +47,15 @@ public:
         _particles = std::move(particles);
     }
 
+    void replaceParticle(std::shared_ptr<Particle> oldParticle, std::shared_ptr<Particle> newParticle) {
+        for (auto & _particle : _particles) {
+            if (_particle != oldParticle) continue;
+
+            _particle = newParticle;
+        }
+        recomputeTargetValue();
+    }
+
 protected:
     /**
      * Computes the gradient of the constraint
@@ -96,6 +105,8 @@ protected:
 
         throw std::runtime_error("Constraint type not handled");
     }
+
+    virtual void recomputeTargetValue() = 0;
 
     /// Number of particles involved in the constraint
     unsigned int _cardinality{};

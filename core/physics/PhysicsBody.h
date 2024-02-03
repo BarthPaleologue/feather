@@ -52,10 +52,41 @@ public:
         }
 
         for (unsigned int i = 0; i < nbLevels; i++) {
-            if(i == 0) {
-                _nonCollisionConstraintsPerLevel.push_back(std::vector<Constraint *>(_nonCollisionConstraints));
+            if (i == 0) {
+                _nonCollisionConstraintsPerLevel.emplace_back(_nonCollisionConstraints);
             } else {
-                _nonCollisionConstraintsPerLevel.push_back(std::vector<Constraint *>(_nonCollisionConstraintsPerLevel[i - 1]));
+                _nonCollisionConstraintsPerLevel.emplace_back(_nonCollisionConstraintsPerLevel[i - 1]);
+            }
+
+            // for each constraint, if a particle is not in the current level, change to constraint to use the closest particle in the current level
+            for (auto &constraint: _nonCollisionConstraintsPerLevel[i]) {
+                for (auto &particle: constraint->particles()) {
+                    unsigned long particleIndex = particle->positionIndex / 3;
+
+                    // check if the index is in the triangulation. If it is, the particle is in the current level
+                    if (std::find(triangulations[i].begin(), triangulations[i].end(), particleIndex) !=
+                        triangulations[i].end())
+                        continue;
+
+                    // the particle does not belong in this coarser level, we have to change it
+
+                    // find the closest particle in the current level
+                    float minDistance = std::numeric_limits<float>::max();
+                    std::shared_ptr<Particle> closestParticle = nullptr;
+                    for (auto &currentParticle: _particles) {
+                        if (std::find(triangulations[i].begin(), triangulations[i].end(),
+                                      currentParticle->positionIndex / 3) != triangulations[i].end()) {
+                            float distance = glm::distance(particle->position, currentParticle->position);
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                closestParticle = currentParticle;
+                            }
+                        }
+                    }
+
+                    // replace the particle in the constraint
+                    constraint->replaceParticle(particle, closestParticle);
+                }
             }
         }
     }
