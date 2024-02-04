@@ -12,7 +12,7 @@ class DirectionalLight : public Light {
 public:
     DirectionalLight(const char *name, float x, float y, float z);
 
-    inline glm::vec3 *getDirection() { return &_direction; }
+    inline glm::vec3 getDirection() { return _direction; }
 
     inline void setDirection(glm::vec3 direction) { _direction = direction; }
 

@@ -21,7 +21,7 @@ public:
 
         _mesh->bakeRotationIntoVertexData();
         _mesh->bakeScalingIntoVertexData();
-        auto meshPosition = *_mesh->transform()->position();
+        auto meshPosition = _mesh->transform()->position();
 
         unsigned int nbParticles = mesh->vertexData().positions.size() / 3;
         _particles.reserve(nbParticles);
@@ -119,7 +119,7 @@ public:
         for (const auto &particle: _particles) {
             particle->forces.clear();
 
-            auto particleLocalPosition = particle->position - *transform()->position();
+            auto particleLocalPosition = particle->position - transform()->position();
 
             // update actual mesh vertex data
             mesh()->vertexData().positions[particle->positionIndex] = particleLocalPosition.x;

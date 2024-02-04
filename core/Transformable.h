@@ -9,12 +9,7 @@
 
 class Transformable {
 public:
-    Transform *transform() {
-        return &_transform;
-    }
-
-private:
-    Transform _transform{};
+    virtual Transform *transform() = 0;
 };
 
 #endif //FEATHERGL_TRANSFORMABLE_H

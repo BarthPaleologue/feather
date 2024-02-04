@@ -15,14 +15,14 @@ public:
     explicit Light(const char *name);
 
     inline void setColor(float r, float g, float b) {
-        _color->x = r;
-        _color->y = g;
-        _color->z = b;
+        _color.x = r;
+        _color.y = g;
+        _color.z = b;
 
-        onColorChanged.notifyObservers(_color->x, _color->y, _color->z);
+        onColorChanged.notifyObservers(_color.x, _color.y, _color.z);
     }
 
-    inline glm::vec3 *color() { return _color; };
+    inline glm::vec3 color() { return _color; };
 
     float intensity() const { return _intensity; };
 
@@ -33,7 +33,7 @@ private:
 
     float _intensity = 1.0f;
 
-    glm::vec3 *_color = new glm::vec3(1.0f);
+    glm::vec3 _color = glm::vec3(1.0f);
 };
 
 

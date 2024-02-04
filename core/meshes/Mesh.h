@@ -11,16 +11,21 @@
 #include "VertexData.h"
 #include "DefaultMaterial.h"
 #include "../utils/Uuid.h"
+#include "Renderable.h"
 
-class Mesh : public Transformable {
+class Mesh : public Transformable, public Renderable {
 public:
-    explicit Mesh(const char *name) : Transformable(), _name(name) {
+    explicit Mesh(const char *name) : Transformable(), Renderable(), _name(name) {
         _id = UUID::generate_uuid_v4();
         _material = std::make_shared<DefaultMaterial>();
     }
 
     bool operator==(const Mesh &other) const {
         return _id == other._id;
+    }
+
+    Transform *transform() override {
+        return &_transform;
     }
 
     static std::shared_ptr<Mesh> FromVertexData(const char *name, VertexData &vertexData);
@@ -59,6 +64,8 @@ private:
     std::string _name;
     std::string _id;
     VertexData _vertexData;
+
+    Transform _transform;
 
     GLuint _vao{};
     GLuint _vbo{};

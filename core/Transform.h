@@ -13,7 +13,7 @@ class Transform {
 public:
     Transform();
 
-    glm::vec3 *position();
+    glm::vec3 position();
 
     glm::vec3 getForwardDirection();
 
@@ -33,11 +33,11 @@ public:
 
     glm::vec3 getAbsolutePosition();
 
-    void setRotationX(float angle) { _rotation->x = angle; };
+    void setRotationX(float angle) { _rotation.x = angle; };
 
-    void setRotationY(float angle) { _rotation->y = angle; };
+    void setRotationY(float angle) { _rotation.y = angle; };
 
-    void setRotationZ(float angle) { _rotation->z = angle; };
+    void setRotationZ(float angle) { _rotation.z = angle; };
 
     void setRotation(float x, float y, float z) {
         setRotationX(x);
@@ -53,16 +53,20 @@ public:
 
     glm::mat4 computeRotationMatrix() {
         glm::mat4 rotation = glm::mat4(1.0f);
-        rotation = glm::rotate(rotation, _rotation->x, glm::vec3(1.0f, 0.0f, 0.0f));
-        rotation = glm::rotate(rotation, _rotation->y, glm::vec3(0.0f, 1.0f, 0.0f));
-        rotation = glm::rotate(rotation, _rotation->z, glm::vec3(0.0f, 0.0f, 1.0f));
+        rotation = glm::rotate(rotation, _rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+        rotation = glm::rotate(rotation, _rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+        rotation = glm::rotate(rotation, _rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
         return rotation;
     }
 
     void setScale(float scale);
 
+    void setScaling(glm::vec3 scale) {
+        _scaling = scale;
+    }
+
     glm::vec3 scaling() {
-        return *_scaling;
+        return _scaling;
     }
 
     /**
@@ -75,9 +79,9 @@ public:
     }
 
 protected:
-    glm::vec3 *_position = new glm::vec3(0.0);
-    glm::vec3 *_scaling = new glm::vec3(1.0);
-    glm::vec3 *_rotation = new glm::vec3(0.0);
+    glm::vec3 _position = glm::vec3(0.0);
+    glm::vec3 _scaling = glm::vec3(1.0);
+    glm::vec3 _rotation = glm::vec3(0.0);
     Transform *_parent = nullptr;
 
 };

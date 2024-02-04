@@ -80,12 +80,12 @@ public:
         glUniform2f(glGetUniformLocation(_program, uniformName), x, y);
     }
 
-    void setVec2(const char *uniformName, const glm::vec2 *vector) const {
-        glUniform2fv(glGetUniformLocation(_program, uniformName), 1, glm::value_ptr(*vector));
+    void setVec2(const char *uniformName, const glm::vec2 vector) const {
+        glUniform2fv(glGetUniformLocation(_program, uniformName), 1, glm::value_ptr(vector));
     }
 
-    void setVec3(const char *uniformName, const glm::vec3 *vector) const {
-        glUniform3fv(glGetUniformLocation(_program, uniformName), 1, glm::value_ptr(*vector));
+    void setVec3(const char *uniformName, const glm::vec3 vector) const {
+        glUniform3fv(glGetUniformLocation(_program, uniformName), 1, glm::value_ptr(vector));
     }
 
     void setInt(const char *uniformName, int integer) const {

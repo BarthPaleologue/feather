@@ -36,6 +36,7 @@ public:
 
         shader()->setVec3("albedoColor", _albedoColor);
         shader()->setVec3("ambientColor", _ambientColor);
+        if(_hasAlphaColor) shader()->setVec3("alphaColor", _alphaColor);
 
         shader()->setFloat("metallic", metallic);
         shader()->setFloat("roughness", roughness);
@@ -86,9 +87,9 @@ public:
     }
 
     void setAlbedoColor(float r, float g, float b) {
-        _albedoColor->x = r;
-        _albedoColor->y = g;
-        _albedoColor->z = b;
+        _albedoColor.x = r;
+        _albedoColor.y = g;
+        _albedoColor.z = b;
     }
 
     void setAlbedoTexture(Texture *texture) {
@@ -102,9 +103,9 @@ public:
     }
 
     void setAmbientColor(float r, float g, float b) {
-        _ambientColor->x = r;
-        _ambientColor->y = g;
-        _ambientColor->z = b;
+        _ambientColor.x = r;
+        _ambientColor.y = g;
+        _ambientColor.z = b;
     }
 
 
@@ -117,9 +118,10 @@ private:
     Texture *_roughnessTexture = nullptr;
     Texture *_aoTexture = nullptr;
 
-    glm::vec3 *_albedoColor = new glm::vec3(1.0);
-    glm::vec3 *_ambientColor = new glm::vec3(0.0);
-    glm::vec3 *_alphaColor = nullptr;
+    glm::vec3 _albedoColor = glm::vec3(1.0);
+    glm::vec3 _ambientColor = glm::vec3(0.0);
+    bool _hasAlphaColor = false;
+    glm::vec3 _alphaColor = glm::vec3(0.0);
 
     float metallic = 1.0f;
     float roughness = 0.5f;

@@ -51,7 +51,7 @@ void BlinnPhongMaterial::bind() {
     }
     shader()->setVec3("diffuseColor", _diffuseColor);
     shader()->setVec3("ambientColor", _ambientColor);
-    if (_alphaColor != nullptr) shader()->setVec3("alphaColor", _alphaColor);
+    if (_hasAlphaColor) shader()->setVec3("alphaColor", _alphaColor);
     shader()->setBool("lightingEnabled", _lightingEnabled);
 
     auto *pointLights = _scene->pointLights();
@@ -85,26 +85,25 @@ void BlinnPhongMaterial::unbind() {
 }
 
 void BlinnPhongMaterial::setAmbientColor(float r, float g, float b) {
-    _ambientColor->x = r;
-    _ambientColor->y = g;
-    _ambientColor->z = b;
+    _ambientColor.x = r;
+    _ambientColor.y = g;
+    _ambientColor.z = b;
 }
 
 void BlinnPhongMaterial::setDiffuseColor(float r, float g, float b) {
-    _diffuseColor->x = r;
-    _diffuseColor->y = g;
-    _diffuseColor->z = b;
+    _diffuseColor.x = r;
+    _diffuseColor.y = g;
+    _diffuseColor.z = b;
 }
 
 void BlinnPhongMaterial::setAlphaColor(float r, float g, float b) {
-    if (_alphaColor == nullptr) {
+    if (!_hasAlphaColor) {
         shader()->setDefine("ALPHA_COLOR");
-        _alphaColor = new glm::vec3(r, g, b);
-    } else {
-        _alphaColor->x = r;
-        _alphaColor->y = g;
-        _alphaColor->z = b;
+        _hasAlphaColor = true;
     }
+    _alphaColor.x = r;
+    _alphaColor.y = g;
+    _alphaColor.z = b;
 }
 
 void BlinnPhongMaterial::setAmbientTextureFromFile(const char *filePath) {

@@ -26,8 +26,8 @@ public:
 
     void setAlphaColor(float r, float g, float b);
 
-    void setAmbientColor(glm::vec3 *color) {
-        *_ambientColor = *color;
+    void setAmbientColor(glm::vec3 color) {
+        _ambientColor = color;
     }
 
     void setAmbientColor(float r, float g, float b);
@@ -45,9 +45,11 @@ public:
 private:
     std::shared_ptr<Texture> _diffuseTexture = nullptr;
     std::shared_ptr<Texture> _ambientTexture = nullptr;
-    glm::vec3 *_alphaColor = nullptr;
-    glm::vec3 *_diffuseColor = new glm::vec3(0.0);
-    glm::vec3 *_ambientColor = new glm::vec3(0.0);
+
+    bool _hasAlphaColor = false;
+    glm::vec3 _alphaColor = glm::vec3(0.0);
+    glm::vec3 _diffuseColor = glm::vec3(0.0);
+    glm::vec3 _ambientColor = glm::vec3(0.0);
 
     float _shininess = 8.0f;
 
