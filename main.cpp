@@ -68,7 +68,7 @@ int main() {
     auto gravity = std::make_shared<UniformAccelerationField>(glm::vec3(0.0, -9.81, 0.0));
     solver.addField(gravity);
 
-    auto clothMesh = MeshBuilder::makePlane("cloth", scene, 32);
+    auto clothMesh = MeshBuilder::makePlane("cloth", scene, 8);
     clothMesh->transform()->setRotationZ(-3.14 / 2.0);
     clothMesh->transform()->setRotationY(3.14);
     clothMesh->transform()->setScale(10);
@@ -203,30 +203,6 @@ int main() {
         new AABBHelper(mesh->aabb(), scene);
     }
 
-    auto createCollisionsConstraints = [](PhysicsBody *collider, PhysicsBody *collided) {
-        auto groundParticles = collided->particles();
-        for (auto particle: collider->particles()) {
-            for (unsigned int i = 0; i < collided->mesh()->vertexData().indices.size(); i += 3) {
-                auto index1 = collided->mesh()->vertexData().indices[i];
-                auto index2 = collided->mesh()->vertexData().indices[i + 1];
-                auto index3 = collided->mesh()->vertexData().indices[i + 2];
-                auto p1 = groundParticles[index1];
-                auto p2 = groundParticles[index2];
-                auto p3 = groundParticles[index3];
-                auto constraint = new CollisionConstraint(particle, p1, p2, p3);
-                collider->addCollisionConstraint(constraint);
-            }
-        }
-    };
-
-    createCollisionsConstraints(cubeBody.get(), groundBody.get());
-    createCollisionsConstraints(softBunny.get(), groundBody.get());
-    createCollisionsConstraints(cloth.get(), groundBody.get());
-    createCollisionsConstraints(cube2Body.get(), groundBody.get());
-    createCollisionsConstraints(sphereBody.get(), groundBody.get());
-    createCollisionsConstraints(dressBody.get(), groundBody.get());
-    //createCollisionsConstraints(softBunny, cubeBody);
-
     bool realTimePhysics = false;
 
     engine.onKeyPressObservable.add([&](int key) {
@@ -243,8 +219,24 @@ int main() {
         if (!realTimePhysics && key == GLFW_KEY_ENTER) solver.solve(1.0f / 60.0f);
     });
 
+    int i = 0;
     scene.onBeforeRenderObservable.add([&]() {
         float deltaTime = engine.getDeltaSeconds();
+
+        if(realTimePhysics && i % 150 == 0) {
+            auto cube = MeshBuilder::makeUVCube("cube", scene);
+            cube->transform()->setPosition(5.0, 20, -8.0);
+            cube->setMaterial(cubeMaterial);
+
+            auto cubeBody = std::make_shared<RigidBody>(cube, 1.0f);
+            solver.addBody(cubeBody);
+            shadowRenderer->addShadowCaster(cube);
+
+            new AABBHelper(cube->aabb(), scene);
+
+            cubeBody->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 50.0f);
+        }
+        if(realTimePhysics) i++;
 
         float theta = 0.1f * engine.getElapsedSeconds() + 3.14f;
         glm::vec3 newLightDirection = glm::normalize(glm::vec3(cosf(theta), 1.0f, sinf(theta)));

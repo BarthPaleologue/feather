@@ -25,6 +25,10 @@ public:
         return _id == other._id;
     }
 
+    const std::string &name() const {
+        return _name;
+    }
+
     Transform *transform() override {
         return &_transform;
     }

@@ -25,6 +25,26 @@ public:
                (_min.z <= other._max.z && _max.z >= other._min.z);
     }
 
+    static AABB* intersection(const AABB *a, const AABB *b) {
+        if (!a->intersects(*b)) {
+            return nullptr;
+        }
+
+        glm::vec3 min = glm::max(a->_min, b->_min);
+        glm::vec3 max = glm::min(a->_max, b->_max);
+
+        return new AABB(min, max);
+    }
+
+    bool intersectsTriangle(glm::vec3 t0, glm::vec3 t1, glm::vec3 t2) const {
+        AABB triangleAABB{};
+        triangleAABB.expand(t0);
+        triangleAABB.expand(t1);
+        triangleAABB.expand(t2);
+
+        return intersects(triangleAABB);
+    }
+
     bool contains(const glm::vec3 &point) const {
         return (point.x >= _min.x && point.x <= _max.x) &&
                (point.y >= _min.y && point.y <= _max.y) &&
@@ -77,6 +97,8 @@ public:
             _max.y = std::max(transformedPosition.y, _max.y);
             _max.z = std::max(transformedPosition.z, _max.z);
         }
+
+        expand(0.15);
     }
 };
 
