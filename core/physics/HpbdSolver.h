@@ -20,7 +20,8 @@ public:
     ~HpbdSolver() = default;
 
     void addBody(std::shared_ptr<PhysicsBody> pBody) {
-        pBody->buildParticleHierarchy(3);
+        if(pBody->mass() > 0) pBody->buildParticleHierarchy(3);
+        else pBody->buildParticleHierarchy(1);
         _physicsBodies.push_back(pBody);
     }
 
@@ -48,6 +49,7 @@ public:
         }
 
         // this is coming from XPBD where the time step is divided into sub time steps at the top level
+        //float subTimeStep = deltaTime;
         float subTimeStep = deltaTime / (float) _iterations;
         for (unsigned int i = 0; i < _iterations; i++) {
             // apply resultingForce
@@ -89,6 +91,9 @@ public:
                 /*for (auto nonCollisionConstraint: body->nonCollisionConstraints()) {
                     nonCollisionConstraint->solve();
                 }*/
+                for (auto bendConstraint: body->bendConstraints()) {
+                    bendConstraint->solve();
+                }
                 for (const auto &distanceConstraints: body->distanceConstraintsPerLevel()) {
                     for (auto distanceConstraint: distanceConstraints) {
                         distanceConstraint->solve();

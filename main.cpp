@@ -8,6 +8,7 @@
 #include "physics/SoftBody.h"
 #include "physics/UniformAccelerationField.h"
 #include "BlinnPhongMaterial.h"
+#include "physics/ConstraintHelper.h"
 
 const int WINDOW_WIDTH = 1300;
 const int WINDOW_HEIGHT = 800;
@@ -68,7 +69,7 @@ int main() {
     auto gravity = std::make_shared<UniformAccelerationField>(glm::vec3(0.0, -9.81, 0.0));
     solver.addField(gravity);
 
-    auto clothMesh = MeshBuilder::makePlane("cloth", scene, 16);
+    auto clothMesh = MeshBuilder::makePlane("cloth", scene, 32);
     clothMesh->transform()->setRotationZ(-3.14 / 2.0);
     clothMesh->transform()->setRotationY(3.14);
     clothMesh->transform()->setScale(10);
@@ -95,36 +96,6 @@ int main() {
 
     solver.addBody(cloth);
 
-    auto distanceConstraintMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
-    distanceConstraintMaterial->setAmbientColor(1.0, 0.0, 0.0);
-    for (auto constraint: cloth->distanceConstraintsPerLevel()[2]) {
-        auto p1 = constraint->particles()[0];
-        auto p2 = constraint->particles()[1];
-
-        auto position1 = glm::vec4(p1->position, 1.0f);
-        auto position2 = glm::vec4(p2->position, 1.0f);
-
-        auto line = MeshBuilder::makeLine("line", scene, position1, position2);
-        line->setMaterial(distanceConstraintMaterial);
-        line->transform()->translate(glm::vec3(1.0, 0.0, 0.0));
-    }
-
-    /*auto bendConstraintMaterial = std::make_shared<BlinnPhongMaterial>(std::shared_ptr<Scene>(&scene));
-    bendConstraintMaterial->setAmbientColor(0.0, 1.0, 0.0);
-    for(auto constraint: cloth->bendConstraints()) {
-        if(constraint->particles().size() == 2) {
-            auto p1 = constraint->particles()[0];
-            auto p2 = constraint->particles()[1];
-
-            auto position1 = clothWorld * glm::vec4(p1->position, 1.0f);
-            auto position2 = clothWorld * glm::vec4(p2->position, 1.0f);
-
-            auto line = MeshBuilder::makeLine("line", scene, position1, position2);
-            line->setMaterial(bendConstraintMaterial);
-            line->transform()->translate(glm::vec3(2.0, 0.0, 0.0));
-        }
-    }*/
-
     auto clothMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     clothMaterial->setAlbedoColor(2.0, 2.0, 2.0);
     clothMaterial->setAlbedoTexture(new Texture("./assets/textures/carpet.jpg"));
@@ -136,7 +107,7 @@ int main() {
 
     shadowRenderer->addShadowCaster(cloth->mesh());
 
-    /*auto cubeMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
+    auto cubeMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     cubeMaterial->setAlbedoColor(1.0, 1.0, 0.0);
     cubeMaterial->setMetallic(0.8);
     cubeMaterial->setRoughness(0.2);
@@ -191,6 +162,11 @@ int main() {
 
     auto softBunny = std::make_shared<SoftBody>(simplifiedBunny, 1.0, 0.5f, 0.5f);
     solver.addBody(softBunny);
+
+
+    /*for (auto constraint: softBunny->distanceConstraintsPerLevel()[1]) {
+        new ConstraintHelper(constraint, scene);
+    }*/
 
     auto rawDress = MeshBuilder::FromObjFile("../assets/models/dress/untitled.obj", scene);
     rawDress->setEnabled(false);
@@ -248,7 +224,7 @@ int main() {
     createCollisionsConstraints(cloth.get(), groundBody.get());
     createCollisionsConstraints(cube2Body.get(), groundBody.get());
     createCollisionsConstraints(sphereBody.get(), groundBody.get());
-    createCollisionsConstraints(dressBody.get(), groundBody.get());*/
+    createCollisionsConstraints(dressBody.get(), groundBody.get());
     //createCollisionsConstraints(softBunny, cubeBody);
 
     bool realTimePhysics = false;

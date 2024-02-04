@@ -86,6 +86,10 @@ public:
 
                     // find the closest particle in the current level
                     GLint closestParticleIndex = closestCoarseVertexIndicesPerLevel[level][particleIndex];
+                    if(closestParticleIndex == -1) {
+                        shouldBeKept = false;
+                        continue;
+                    }
 
                     // replace the particle in the constraint
                     constraintCopy->replaceParticle(particle, _particles[closestParticleIndex]);
