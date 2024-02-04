@@ -7,8 +7,6 @@
 #include "physics/RigidBody.h"
 #include "physics/SoftBody.h"
 #include "physics/UniformAccelerationField.h"
-#include "BlinnPhongMaterial.h"
-#include "physics/ConstraintHelper.h"
 
 const int WINDOW_WIDTH = 1300;
 const int WINDOW_HEIGHT = 800;
@@ -75,7 +73,7 @@ int main() {
     clothMesh->transform()->setScale(10);
     clothMesh->transform()->setPosition(0, 7, 0);
 
-    auto cloth = std::make_shared<SoftBody>(clothMesh, 1.0f, 0.02f, 0.02f);
+    auto cloth = std::make_shared<SoftBody>(clothMesh, 1.0f, 0.02f, 0.4f);
     // Seed the random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -232,11 +230,11 @@ int main() {
     engine.onKeyPressObservable.add([&](int key) {
         if (key == GLFW_KEY_W) {
             clothMaterial->setWireframe(!clothMaterial->wireframe());
-            /*sphereMaterial->setWireframe(!sphereMaterial->wireframe());
+            sphereMaterial->setWireframe(!sphereMaterial->wireframe());
             cubeMaterial->setWireframe(!cubeMaterial->wireframe());
             bunnyMaterial->setWireframe(!bunnyMaterial->wireframe());
             groundMaterial->setWireframe(!groundMaterial->wireframe());
-            dressMaterial->setWireframe(!dressMaterial->wireframe());*/
+            dressMaterial->setWireframe(!dressMaterial->wireframe());
         }
         if (key == GLFW_KEY_R) solver.reset();
         if (key == GLFW_KEY_SPACE) realTimePhysics = !realTimePhysics;
