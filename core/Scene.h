@@ -60,6 +60,10 @@ public:
         }
     }
 
+    std::vector<std::shared_ptr<Mesh>> meshes() {
+        return _meshes;
+    }
+
     Observable<> onBeforeRenderObservable{};
     Observable<> onAfterRenderObservable{};
 

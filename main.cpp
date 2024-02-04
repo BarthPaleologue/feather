@@ -7,6 +7,7 @@
 #include "physics/RigidBody.h"
 #include "physics/SoftBody.h"
 #include "physics/UniformAccelerationField.h"
+#include "AABBHelper.h"
 
 const int WINDOW_WIDTH = 1300;
 const int WINDOW_HEIGHT = 800;
@@ -139,8 +140,9 @@ int main() {
     sphere->setMaterial(sphereMaterial);
 
     shadowRenderer->addShadowCaster(sphere);
-    auto sphereBody = std::make_shared<SoftBody>(sphere, 1.0f, 0.2f, 0.2f);
+    auto sphereBody = std::make_shared<SoftBody>(sphere, 1.0f, 0.2f, 0.05f);
     solver.addBody(sphereBody);
+
 
     solver.onBeforeSolveObservable.addOnce(
             [&] { sphereBody->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 50.0f); });
@@ -160,11 +162,6 @@ int main() {
 
     auto softBunny = std::make_shared<SoftBody>(simplifiedBunny, 1.0, 0.5f, 0.5f);
     solver.addBody(softBunny);
-
-
-    /*for (auto constraint: softBunny->distanceConstraintsPerLevel()[1]) {
-        new ConstraintHelper(constraint, scene);
-    }*/
 
     auto rawDress = MeshBuilder::FromObjFile("../assets/models/dress/untitled.obj", scene);
     rawDress->setEnabled(false);
@@ -201,10 +198,15 @@ int main() {
     auto groundBody = std::make_shared<RigidBody>(ground, 0.0f);
     solver.addBody(groundBody);
 
+    // display bounding boxes
+    for(const auto& mesh: scene.meshes()) {
+        new AABBHelper(mesh->aabb(), scene);
+    }
+
     auto createCollisionsConstraints = [](PhysicsBody *collider, PhysicsBody *collided) {
         auto groundParticles = collided->particles();
-        for(auto particle: collider->particles()) {
-            for(unsigned int i = 0; i < collided->mesh()->vertexData().indices.size(); i+=3) {
+        for (auto particle: collider->particles()) {
+            for (unsigned int i = 0; i < collided->mesh()->vertexData().indices.size(); i += 3) {
                 auto index1 = collided->mesh()->vertexData().indices[i];
                 auto index2 = collided->mesh()->vertexData().indices[i + 1];
                 auto index3 = collided->mesh()->vertexData().indices[i + 2];

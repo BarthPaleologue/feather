@@ -26,7 +26,7 @@ void writeTextureToPPM(GLuint textureHandle, const char *filename);
 
 void writeDepthTextureToPPM(GLuint textureHandle, const char *filename);
 
-std::string toString(glm::vec3 &vec);
+std::string toString(glm::vec3 vec);
 
 class Utils {
 public:

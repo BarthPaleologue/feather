@@ -12,6 +12,7 @@
 #include "DefaultMaterial.h"
 #include "../utils/Uuid.h"
 #include "Renderable.h"
+#include "AABB.h"
 
 class Mesh : public Transformable, public Renderable {
 public:
@@ -26,6 +27,10 @@ public:
 
     Transform *transform() override {
         return &_transform;
+    }
+
+    AABB *aabb() {
+        return &_aabb;
     }
 
     static std::shared_ptr<Mesh> FromVertexData(const char *name, VertexData &vertexData);
@@ -66,6 +71,7 @@ private:
     VertexData _vertexData;
 
     Transform _transform;
+    AABB _aabb;
 
     GLuint _vao{};
     GLuint _vbo{};

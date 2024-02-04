@@ -106,6 +106,6 @@ void writeDepthTextureToPPM(GLuint textureHandle, const char *filename) {
     ofs.close();
 }
 
-std::string toString(glm::vec3 &vec) {
+std::string toString(glm::vec3 vec) {
     return "(" + std::to_string(vec.x) + ", " + std::to_string(vec.y) + ", " + std::to_string(vec.z) + ")";
 }

@@ -8,26 +8,27 @@
 #include "MeshBuilder.h"
 #include "Constraint.h"
 
-class ConstraintHelper : public Mesh {
+class ConstraintHelper {
 public:
-    ConstraintHelper(Constraint *constraint, Scene &scene) : Mesh(
-            *MeshBuilder::makeLine("ConstraintHelper", scene, constraint->particles()[0]->initialPosition,
+    ConstraintHelper(Constraint *constraint, Scene &scene) : _mesh(
+            MeshBuilder::makeLine("ConstraintHelper", scene, constraint->particles()[0]->initialPosition,
                                   constraint->particles()[1]->initialPosition)), _constraint(constraint) {
         scene.onBeforeRenderObservable.add([this] {
             // update the line positions
-            this->vertexData().positions[0] = _constraint->particles()[0]->position.x;
-            this->vertexData().positions[1] = _constraint->particles()[0]->position.y;
-            this->vertexData().positions[2] = _constraint->particles()[0]->position.z;
+            _mesh->vertexData().positions[0] = _constraint->particles()[0]->position.x;
+            _mesh->vertexData().positions[1] = _constraint->particles()[0]->position.y;
+            _mesh->vertexData().positions[2] = _constraint->particles()[0]->position.z;
 
-            this->vertexData().positions[3] = _constraint->particles()[1]->position.x;
-            this->vertexData().positions[4] = _constraint->particles()[1]->position.y;
-            this->vertexData().positions[5] = _constraint->particles()[1]->position.z;
+            _mesh->vertexData().positions[3] = _constraint->particles()[1]->position.x;
+            _mesh->vertexData().positions[4] = _constraint->particles()[1]->position.y;
+            _mesh->vertexData().positions[5] = _constraint->particles()[1]->position.z;
 
-            this->sendVertexDataToGPU();
+            _mesh->sendVertexDataToGPU();
         });
     }
 
 private:
+    std::shared_ptr<Mesh> _mesh;
     Constraint *_constraint;
 };
 

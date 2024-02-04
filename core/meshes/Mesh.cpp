@@ -80,13 +80,15 @@ void Mesh::setMaterial(std::shared_ptr<Material> material) {
 void Mesh::render(glm::mat4 projectionViewMatrix, Shader *shaderOverride) {
     if(!_enabled) return;
 
+    const glm::mat4 world = transform()->computeWorldMatrix();
+    const glm::mat4 normalMatrix = transform()->computeNormalMatrix();
+
+    _aabb.updateWithVertexData(vertexData(), world);
+
     auto shader = shaderOverride == nullptr ? _material->shader() : shaderOverride;
 
     if (shaderOverride == nullptr) _material->bind();
     else shader->bind();
-
-    const glm::mat4 world = transform()->computeWorldMatrix();
-    const glm::mat4 normalMatrix = transform()->computeNormalMatrix();
 
     shader->setMat4("projectionView", &projectionViewMatrix);
     shader->setMat4("world", &world);
