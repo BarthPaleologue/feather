@@ -15,7 +15,7 @@ public:
     glm::vec3 _min;
     glm::vec3 _max;
 
-    AABB() : _min(glm::vec3(0)), _max(glm::vec3(0)) {}
+    AABB() : _min(std::numeric_limits<float>::max()), _max(-_min) {}
 
     AABB(glm::vec3 min, glm::vec3 max) : _min(min), _max(max) {}
 
@@ -89,13 +89,7 @@ public:
             glm::vec4 position = glm::vec4(positions[i], positions[i + 1], positions[i + 2], 1.0f);
             glm::vec4 transformedPosition = worldMatrix * position;
 
-            _min.x = std::min(transformedPosition.x, _min.x);
-            _min.y = std::min(transformedPosition.y, _min.y);
-            _min.z = std::min(transformedPosition.z, _min.z);
-
-            _max.x = std::max(transformedPosition.x, _max.x);
-            _max.y = std::max(transformedPosition.y, _max.y);
-            _max.z = std::max(transformedPosition.z, _max.z);
+            expand(glm::vec3(transformedPosition));
         }
 
         expand(0.15);

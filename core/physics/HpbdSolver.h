@@ -12,6 +12,7 @@
 #include "PhysicsBody.h"
 #include "CollisionConstraint.h"
 #include "UniformAccelerationField.h"
+#include "AABBHelper.h"
 
 class HpbdSolver {
 public:
@@ -80,12 +81,10 @@ public:
                 for(int k_otherBody = k_body + 1; k_otherBody < _physicsBodies.size(); k_otherBody++) {
                     auto otherBody = _physicsBodies[k_otherBody];
 
-                    if(otherBody == body) continue;
-
                     AABB* intersection = AABB::intersection(body->mesh()->aabb(), otherBody->mesh()->aabb());
                     if(intersection == nullptr) continue;
 
-                    std::cout << "Found collision between " << body->mesh()->name() << " and " << otherBody->mesh()->name() << std::endl;
+                    std::cout << "Found AABB intersection between " << body->mesh()->name() << " and " << otherBody->mesh()->name() << std::endl;
 
                     // find particles from both bodies that are in the intersection
                     std::vector<std::shared_ptr<Particle>> bodyParticlesInIntersection;
@@ -127,8 +126,15 @@ public:
                         otherBodyTrianglesInIntersection.push_back({otherBodyIndices[k], otherBodyIndices[k + 1], otherBodyIndices[k + 2]});
                     }
 
+                    std::cout << "Found " << bodyParticlesInIntersection.size() << " particles in intersection" << std::endl;
+                    std::cout << "Found " << otherBodyParticlesInIntersection.size() << " particles in intersection" << std::endl;
+
+                    std::cout << "Found " << bodyTrianglesInIntersection.size() << " triangles in intersection" << std::endl;
+                    std::cout << "Found " << otherBodyTrianglesInIntersection.size() << " triangles in intersection" << std::endl;
+
                     // create collision constraints
                     // for each particle from one body, create a collision constraint with every triangle from the other body
+                    std::cout << "Creating " << bodyParticlesInIntersection.size() * otherBodyTrianglesInIntersection.size() << " collision constraints" << std::endl;
                     for(const auto& particle: bodyParticlesInIntersection) {
                         for(const auto& triangle: otherBodyTrianglesInIntersection) {
                             auto collisionConstraint = new CollisionConstraint(particle, otherBody->particles()[triangle[0]], otherBody->particles()[triangle[1]], otherBody->particles()[triangle[2]]);
@@ -136,12 +142,15 @@ public:
                         }
                     }
 
+                    std::cout << "Creating " << otherBodyParticlesInIntersection.size() * bodyTrianglesInIntersection.size() << " collision constraints" << std::endl;
                     for(const auto& particle: otherBodyParticlesInIntersection) {
                         for(const auto& triangle: bodyTrianglesInIntersection) {
                             auto collisionConstraint = new CollisionConstraint(particle, body->particles()[triangle[0]], body->particles()[triangle[1]], body->particles()[triangle[2]]);
                             otherBody->collisionConstraints().push_back(collisionConstraint);
                         }
                     }
+
+                    delete intersection;
                 }
             }
 
