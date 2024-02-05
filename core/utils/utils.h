@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <glm/vec3.hpp>
 #include <iostream>
 #include <glm/gtc/random.hpp>
@@ -103,6 +104,50 @@ public:
         }
 
         indices = newIndices;
+    }
+
+    static void MergeVertices(std::vector<float>& positions, std::vector<int>& indices) {
+        std::vector<float> newPositions;
+        std::vector<int> newIndices;
+
+        // remove vertices that share the same position
+        for(int i = 0; i < positions.size(); i += 3) {
+            glm::vec3 vertex = glm::vec3(positions[i], positions[i + 1], positions[i + 2]);
+            bool isDuplicated = false;
+            int originalIndex = -1;
+            for(int j = 0; j < positions.size() - 3; j+= 3) {
+                glm::vec3 otherVertex = glm::vec3(positions[j], positions[j + 1], positions[j + 2]);
+                if(glm::distance(vertex, otherVertex) < 0.001f) {
+                    isDuplicated = true;
+                    originalIndex = j;
+                    break;
+                }
+            }
+            if(!isDuplicated) continue;
+
+            if(i / 3 == originalIndex / 3) {
+                continue;
+            }
+
+            for(int j = 0; j < indices.size(); j++) {
+                if(indices[j] == i / 3) {
+                    indices[j] = originalIndex / 3;
+                }
+            }
+
+            // decrease all indices greater than i / 3 by 1
+            for(int j = 0; j < indices.size(); j++) {
+                if(indices[j] > i / 3) {
+                    indices[j]--;
+                }
+            }
+
+            // remove vertex
+            positions.erase(positions.begin() + i, positions.begin() + i + 3);
+            i -= 3;
+        }
+
+
     }
 
     static Eigen::MatrixXf crossProdMat(Eigen::VectorXf _p) {

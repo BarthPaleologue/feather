@@ -418,13 +418,15 @@ public:
                 2, 7, 11
         };
 
-        for(unsigned int i = 0; i < nbSubdivisions; i++) {
+        for (unsigned int i = 0; i < nbSubdivisions; i++) {
             Utils::loopSubdivision(vertexData.positions, vertexData.indices);
+            Utils::MergeVertices(vertexData.positions, vertexData.indices);
         }
 
         // normalize all vertices and compute uv coordinates
-        for(unsigned int i = 0; i < vertexData.positions.size(); i += 3) {
-            glm::vec3 position = glm::vec3(vertexData.positions[i], vertexData.positions[i + 1], vertexData.positions[i + 2]);
+        for (unsigned int i = 0; i < vertexData.positions.size(); i += 3) {
+            glm::vec3 position = glm::vec3(vertexData.positions[i], vertexData.positions[i + 1],
+                                           vertexData.positions[i + 2]);
             position = glm::normalize(position);
             vertexData.positions[i] = position.x;
             vertexData.positions[i + 1] = position.y;

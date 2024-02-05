@@ -132,7 +132,8 @@ int main() {
 
     auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 2);
     sphere->transform()->setScale(2.0);
-    sphere->transform()->setPosition(4, 5, 10);
+    //sphere->transform()->setPosition(4, 5, 10);
+    sphere->transform()->setPosition(0, 10, 0);
 
     auto sphereMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     sphereMaterial->setAlbedoTexture(new Texture("./assets/textures/earth.jpg"));
@@ -141,7 +142,7 @@ int main() {
     sphere->setMaterial(sphereMaterial);
 
     shadowRenderer->addShadowCaster(sphere);
-    auto sphereBody = std::make_shared<SoftBody>(sphere, 1.0f, 0.2f, 0.05f);
+    auto sphereBody = std::make_shared<SoftBody>(sphere, 1.0f, 1.0f, 1.0f);
     solver.addBody(sphereBody);
 
 
