@@ -131,7 +131,7 @@ int main() {
     shadowRenderer->addShadowCaster(cube2);
 
     auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 2);
-    sphere->transform()->setScale(2.0);
+    //sphere->transform()->setScale(2.0);
     //sphere->transform()->setPosition(4, 5, 10);
     sphere->transform()->setPosition(0, 10, 0);
 

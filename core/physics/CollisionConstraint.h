@@ -61,7 +61,7 @@ private:
         _gradient.col(0) = Eigen::Vector3f(n.x, n.y, n.z);
         _gradient.col(1) = gradP2 * _qEigen;
         _gradient.col(2) = gradP3 * _qEigen;
-        _gradient.col(3) = -_gradient.col(1) - _gradient.col(2);
+        _gradient.col(3) = -_gradient.col(0) - _gradient.col(1) - _gradient.col(2);
     }
 
     void recomputeTargetValue() override {
