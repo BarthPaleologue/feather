@@ -163,7 +163,7 @@ public:
                 // for each particle from one body, create a collision constraint with every triangle from the other body
                 //std::cout << "Creating " << bodyParticlesInIntersection.size() * otherBodyTrianglesInIntersection.size() << " collision constraints" << std::endl;
 
-                for (const auto &particle: bodyParticlesInIntersection) {
+                /*for (const auto &particle: bodyParticlesInIntersection) {
                     for (const auto &triangle: otherBodyTrianglesInIntersection) {
                         auto collisionConstraint = new CollisionConstraint(particle,
                                                                            otherBody->particles()[triangle[0]],
@@ -171,9 +171,10 @@ public:
                                                                            otherBody->particles()[triangle[2]]);
                         body->collisionConstraints().push_back(collisionConstraint);
                     }
-                }
+                }*/
 
                 //std::cout << "Creating " << otherBodyParticlesInIntersection.size() * bodyTrianglesInIntersection.size() << " collision constraints" << std::endl;
+                std::vector<std::shared_ptr<Particle>> handledParticles;
                 for (const auto &particle: otherBodyParticlesInIntersection) {
                     for (const auto &triangle: bodyTrianglesInIntersection) {
                         auto collisionConstraint = new CollisionConstraint(particle,
@@ -181,6 +182,28 @@ public:
                                                                            body->particles()[triangle[1]],
                                                                            body->particles()[triangle[2]]);
                         otherBody->collisionConstraints().push_back(collisionConstraint);
+
+                        handledParticles.push_back(particle);
+                        handledParticles.push_back(body->particles()[triangle[0]]);
+                        handledParticles.push_back(body->particles()[triangle[1]]);
+                        handledParticles.push_back(body->particles()[triangle[2]]);
+                    }
+                }
+
+                for (const auto &particle: bodyParticlesInIntersection) {
+                    for (const auto &triangle: otherBodyTrianglesInIntersection) {
+
+                        // if any of the 4 particles is already handled, skip this collision constraint
+                        if (std::find(handledParticles.begin(), handledParticles.end(), particle) != handledParticles.end()) continue;
+                        if (std::find(handledParticles.begin(), handledParticles.end(), otherBody->particles()[triangle[0]]) != handledParticles.end()) continue;
+                        if (std::find(handledParticles.begin(), handledParticles.end(), otherBody->particles()[triangle[1]]) != handledParticles.end()) continue;
+                        if (std::find(handledParticles.begin(), handledParticles.end(), otherBody->particles()[triangle[2]]) != handledParticles.end()) continue;
+
+                        auto collisionConstraint = new CollisionConstraint(particle,
+                                                                           otherBody->particles()[triangle[0]],
+                                                                           otherBody->particles()[triangle[1]],
+                                                                           otherBody->particles()[triangle[2]]);
+                        body->collisionConstraints().push_back(collisionConstraint);
                     }
                 }
 

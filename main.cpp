@@ -133,7 +133,7 @@ int main() {
     auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 2);
     //sphere->transform()->setScale(2.0);
     //sphere->transform()->setPosition(4, 5, 10);
-    sphere->transform()->setPosition(0, 10, 0);
+    sphere->transform()->setPosition(0, 9, 0);
 
     auto sphereMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     sphereMaterial->setAlbedoTexture(new Texture("./assets/textures/earth.jpg"));
@@ -146,8 +146,8 @@ int main() {
     solver.addBody(sphereBody);
 
 
-    solver.onBeforeSolveObservable.addOnce(
-            [&] { sphereBody->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 50.0f); });
+    /*solver.onBeforeSolveObservable.addOnce(
+            [&] { sphereBody->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 50.0f); });*/
 
     auto bunnyMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     bunnyMaterial->setAlbedoColor(0.4, 0.4, 1.0);
