@@ -38,13 +38,7 @@ public:
 
         computeGradient();
         computeS();
-        float correctedStiffness = (1 - powf(1 - _stiffness, 1.0f / (float)_cardinality));
-
-        /*float massSum = 0.0;
-        for(const auto& particle: particles()) {
-            massSum += particle->invMass;
-        }
-        if(massSum == 0.0) massSum = 1.0f;*/
+        float correctedStiffness = (1 - powf(1 - _stiffness, 1.0f / 8.0f));
 
         for (unsigned int i = 0; i < _particles.size(); i++) {
             glm::vec3 gradient = glm::vec3(_gradient.col(i).x(), _gradient.col(i).y(), _gradient.col(i).z());
