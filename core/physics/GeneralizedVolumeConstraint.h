@@ -13,8 +13,8 @@
 class GeneralizedVolumeConstraint : public Constraint {
 public:
     GeneralizedVolumeConstraint(std::vector<std::shared_ptr<Particle>> particles, std::vector<GLint> indices,
-                                float restVolumeFactor, float stiffness) : Constraint(
-            particles, stiffness, EQUALITY), _restVolumeFactor(restVolumeFactor), _indices(indices) {
+                                float pressure, float stiffness) : Constraint(
+            particles, stiffness, EQUALITY), _pressure(pressure), _indices(indices) {
 
         float volume = 0;
         for(int i = 0; i < _indices.size(); i+=3) {
@@ -25,7 +25,7 @@ public:
             volume += glm::dot(t0, glm::cross(t1, t2)) / 6.0f;
         }
 
-        _restVolume = volume * _restVolumeFactor;
+        _restVolume = volume;
     };
 
 private:
@@ -39,7 +39,7 @@ private:
             volume += glm::dot(t0, glm::cross(t1, t2)) / 6.0f;
         }
 
-        return volume - _restVolume * _restVolumeFactor;
+        return volume - _restVolume * _pressure;
     }
 
     void computeGradient() override {
@@ -73,7 +73,7 @@ private:
     }
 
     float _restVolume{};
-    float _restVolumeFactor{};
+    float _pressure{};
     std::vector<GLint> _indices;
 };
 
