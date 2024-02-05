@@ -222,11 +222,14 @@ public:
                 for (auto bendConstraint: body->bendConstraints()) {
                     bendConstraint->solve();
                 }
-                for (auto fixedConstraint: body->fixedConstraints()) {
-                    fixedConstraint->solve();
+                for (auto volumeConstraint: body->generalizedVolumeConstraints()) {
+                    volumeConstraint->solve();
                 }
                 for (auto collisionConstraint: body->collisionConstraints()) {
                     collisionConstraint->solve();
+                }
+                for (auto fixedConstraint: body->fixedConstraints()) {
+                    fixedConstraint->solve();
                 }
             }
         }

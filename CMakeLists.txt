@@ -20,7 +20,8 @@ add_executable(featherGL ${SRCS}
         core/physics/ConstraintHelper.h
         core/Renderable.h
         core/AABB.h
-        core/AABBHelper.h)
+        core/AABBHelper.h
+        core/physics/GeneralizedVolumeConstraint.h)
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 

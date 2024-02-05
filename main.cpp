@@ -163,6 +163,8 @@ int main() {
     shadowRenderer->addShadowCaster(simplifiedBunny);
 
     auto softBunny = std::make_shared<SoftBody>(simplifiedBunny, 1.0, 1.0f, 1.0f);
+    softBunny->addGeneralizedVolumeConstraint(new GeneralizedVolumeConstraint(softBunny->particles(), simplifiedBunny->vertexData().indices, 1.0f, 0.8f));
+
     solver.addBody(softBunny);
 
     auto rawDress = MeshBuilder::FromObjFile("../assets/models/dress/untitled.obj", scene);

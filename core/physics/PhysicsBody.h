@@ -14,6 +14,7 @@
 #include "BendConstraint.h"
 #include "VolumeConstraint.h"
 #include "DihedralBendConstraint.h"
+#include "GeneralizedVolumeConstraint.h"
 
 class PhysicsBody {
 public:
@@ -168,6 +169,11 @@ public:
         _volumeConstraints.push_back(constraint);
     }
 
+    void addGeneralizedVolumeConstraint(GeneralizedVolumeConstraint *constraint) {
+        _nonCollisionConstraints.push_back(constraint);
+        _generalizedVolumeConstraints.push_back(constraint);
+    }
+
     void addCollisionConstraint(CollisionConstraint *constraint) {
         _collisionConstraints.push_back(constraint);
     }
@@ -194,6 +200,10 @@ public:
 
     std::vector<VolumeConstraint *> &volumeConstraints() {
         return _volumeConstraints;
+    }
+
+    std::vector<GeneralizedVolumeConstraint *> &generalizedVolumeConstraints() {
+        return _generalizedVolumeConstraints;
     }
 
     std::vector<CollisionConstraint *> &collisionConstraints() {
@@ -230,6 +240,7 @@ private:
     std::vector<BendConstraint *> _bendConstraints;
     std::vector<DihedralBendConstraint *> _isometricBendConstraints;
     std::vector<VolumeConstraint *> _volumeConstraints;
+    std::vector<GeneralizedVolumeConstraint *> _generalizedVolumeConstraints;
     std::vector<CollisionConstraint *> _collisionConstraints;
 };
 
