@@ -43,18 +43,19 @@ private:
     }
 
     void computeGradient() override {
+        _gradient = Eigen::MatrixXf::Zero(3, _particles.size());
         for(int i = 0; i < _indices.size(); i+=3) {
             glm::vec3 p0 = _particles[_indices[i]]->predictedPosition;
             glm::vec3 p1 = _particles[_indices[i+1]]->predictedPosition;
             glm::vec3 p2 = _particles[_indices[i+2]]->predictedPosition;
 
-            glm::vec3 g1 = glm::cross(p1 - p0, p2 - p0) / 6.0f;
-            glm::vec3 g2 = glm::cross(p2 - p0, p1 - p0) / 6.0f;
-            glm::vec3 g0 = -g1 - g2;
+            glm::vec3 g1 = glm::cross(p1, p2) / 6.0f;
+            glm::vec3 g2 = glm::cross(p2, p0) / 6.0f;
+            glm::vec3 g3 = glm::cross(p0, p1) / 6.0f;
 
-            _gradient.col(_indices[i]) = Eigen::Vector3f(g0.x, g0.y, g0.z);
-            _gradient.col(_indices[i+1]) = Eigen::Vector3f(g1.x, g1.y, g1.z);
-            _gradient.col(_indices[i+2]) = Eigen::Vector3f(g2.x, g2.y, g2.z);
+            _gradient.col(_indices[i]) += Eigen::Vector3f(g1.x, g1.y, g1.z);
+            _gradient.col(_indices[i+1]) += Eigen::Vector3f(g2.x, g2.y, g2.z);
+            _gradient.col(_indices[i+2]) += Eigen::Vector3f(g3.x, g3.y, g3.z);
         }
     }
 

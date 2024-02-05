@@ -77,16 +77,6 @@ int main() {
     clothMesh->transform()->setPosition(0, 7, 0);
 
     auto cloth = std::make_shared<SoftBody>(clothMesh, 1.0f, 0.8f, 0.8f);
-    // Seed the random number generator
-    /*std::random_device rd;
-    std::mt19937 gen(rd());
-
-    // Define the distribution for indices
-    std::uniform_int_distribution<> distribution(0, cloth->particles().size() - 1);*/
-
-    // Generate a random index
-    /*int randomIndex1 = distribution(gen);
-    int randomIndex2 = distribution(gen);*/
 
     // fixed particles
     cloth->addFixedConstraint(new FixedConstraint(cloth->particles()[0]));
@@ -127,7 +117,7 @@ int main() {
     cube2->transform()->setPosition(-7.0, 4, 0.0);
     cube2->setMaterial(cubeMaterial);
     auto cube2Body = std::make_shared<SoftBody>(cube2, 1.0f, 0.0005f, 0.8f);
-    solver.addBody(cube2Body);
+    //solver.addBody(cube2Body);
     shadowRenderer->addShadowCaster(cube2);
 
     auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 2);
@@ -143,6 +133,7 @@ int main() {
 
     shadowRenderer->addShadowCaster(sphere);
     auto sphereBody = std::make_shared<SoftBody>(sphere, 1.0f, 1.0f, 1.0f);
+    sphereBody->addGeneralizedVolumeConstraint(new GeneralizedVolumeConstraint(sphereBody->particles(), sphere->vertexData().indices, 1.0f, 0.8f));
     solver.addBody(sphereBody);
 
 
@@ -159,11 +150,11 @@ int main() {
 
     auto simplifiedBunny = MeshBuilder::Simplify("simpleBunny", bunny.get(), 2, scene);
     simplifiedBunny->setMaterial(bunnyMaterial);
-    simplifiedBunny->transform()->translate(glm::vec3(10, 3.0, -2));
+    simplifiedBunny->transform()->translate(glm::vec3(10, 3.0, -8));
     shadowRenderer->addShadowCaster(simplifiedBunny);
 
     auto softBunny = std::make_shared<SoftBody>(simplifiedBunny, 1.0, 1.0f, 1.0f);
-    softBunny->addGeneralizedVolumeConstraint(new GeneralizedVolumeConstraint(softBunny->particles(), simplifiedBunny->vertexData().indices, 1.0f, 0.8f));
+    softBunny->addGeneralizedVolumeConstraint(new GeneralizedVolumeConstraint(softBunny->particles(), simplifiedBunny->vertexData().indices, 1.2f, 1.0f));
 
     solver.addBody(softBunny);
 
@@ -223,24 +214,33 @@ int main() {
         if (!realTimePhysics && key == GLFW_KEY_ENTER) solver.solve(1.0f / 60.0f);
     });
 
+    // Seed the random number generator
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    // Define the distribution for indices
+    std::uniform_real_distribution<> distribution(-10.0, 10.0);
+
+    // Generate a random index
+    /*int randomIndex1 = distribution(gen);
+    int randomIndex2 = distribution(gen);*/
+
     int i = 0;
     scene.onBeforeRenderObservable.add([&]() {
         float deltaTime = engine.getDeltaSeconds();
 
-        if(realTimePhysics && i % 150 == 0) {
+        /*if(realTimePhysics && i % 150 == 0) {
             auto cube = MeshBuilder::makeUVCube("cube", scene);
-            cube->transform()->setPosition(5.0, 20, -8.0);
+            cube->transform()->setPosition((float)distribution(gen), 10, (float)distribution(gen));
             cube->setMaterial(cubeMaterial);
 
             auto cubeBody = std::make_shared<RigidBody>(cube, 1.0f);
             solver.addBody(cubeBody);
             shadowRenderer->addShadowCaster(cube);
 
-            //new AABBHelper(cube->aabb(), scene);
-
             cubeBody->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 20.0f);
         }
-        if(realTimePhysics) i++;
+        if(realTimePhysics) i++;*/
 
         float theta = 0.1f * engine.getElapsedSeconds() + 3.14f;
         glm::vec3 newLightDirection = glm::normalize(glm::vec3(cosf(theta), 1.0f, sinf(theta)));
