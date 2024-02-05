@@ -15,7 +15,12 @@ file(GLOB SRCS ./*.h ./*.cpp
         core/shadows/*.cpp core/shadows/*.h
 )
 add_executable(featherGL ${SRCS}
-        core/physics/UniformAccelerationField.h)
+        core/physics/UniformAccelerationField.h
+        core/physics/IsometricBendConstraint.h
+        core/physics/ConstraintHelper.h
+        core/Renderable.h
+        core/AABB.h
+        core/AABBHelper.h)
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 

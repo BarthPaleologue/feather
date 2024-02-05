@@ -94,6 +94,11 @@ public:
 
         expand(0.15);
     }
+
+    float volume() const {
+        glm::vec3 s = size();
+        return s.x * s.y * s.z;
+    }
 };
 
 #endif //FEATHERGL_AABB_H

@@ -68,13 +68,13 @@ int main() {
     auto gravity = std::make_shared<UniformAccelerationField>(glm::vec3(0.0, -9.81, 0.0));
     solver.addField(gravity);
 
-    auto clothMesh = MeshBuilder::makePlane("cloth", scene, 8);
+    auto clothMesh = MeshBuilder::makePlane("cloth", scene, 32);
     clothMesh->transform()->setRotationZ(-3.14 / 2.0);
     clothMesh->transform()->setRotationY(3.14);
     clothMesh->transform()->setScale(10);
     clothMesh->transform()->setPosition(0, 7, 0);
 
-    auto cloth = std::make_shared<SoftBody>(clothMesh, 1.0f, 0.02f, 0.4f);
+    auto cloth = std::make_shared<SoftBody>(clothMesh, 1.0f, 0.8f, 0.4f);
     // Seed the random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -125,7 +125,7 @@ int main() {
     auto cube2 = MeshBuilder::makeUVCube("cube2", scene);
     cube2->transform()->setPosition(-7.0, 4, 0.0);
     cube2->setMaterial(cubeMaterial);
-    auto cube2Body = std::make_shared<SoftBody>(cube2, 1.0f, 0.0005f, 0.0005f);
+    auto cube2Body = std::make_shared<SoftBody>(cube2, 1.0f, 0.0005f, 0.8f);
     solver.addBody(cube2Body);
     shadowRenderer->addShadowCaster(cube2);
 
@@ -160,7 +160,7 @@ int main() {
     simplifiedBunny->transform()->translate(glm::vec3(10, 3.0, -2));
     shadowRenderer->addShadowCaster(simplifiedBunny);
 
-    auto softBunny = std::make_shared<SoftBody>(simplifiedBunny, 1.0, 0.5f, 0.5f);
+    auto softBunny = std::make_shared<SoftBody>(simplifiedBunny, 1.0, 1.0f, 1.0f);
     solver.addBody(softBunny);
 
     auto rawDress = MeshBuilder::FromObjFile("../assets/models/dress/untitled.obj", scene);
@@ -179,7 +179,7 @@ int main() {
     dressMaterial->setBackFaceCullingEnabled(false);
     dress->setMaterial(dressMaterial);
 
-    auto dressBody = std::make_shared<SoftBody>(dress, 1.0, 0.05f, 0.005f);
+    auto dressBody = std::make_shared<SoftBody>(dress, 1.0, 0.5f, 0.5f);
     solver.addBody(dressBody);
 
     auto ground = MeshBuilder::makePlane("ground", scene, 2);
@@ -199,9 +199,9 @@ int main() {
     solver.addBody(groundBody);
 
     // display bounding boxes
-    for(const auto& mesh: scene.meshes()) {
+    /*for(const auto& mesh: scene.meshes()) {
         new AABBHelper(mesh->aabb(), scene);
-    }
+    }*/
 
     bool realTimePhysics = false;
 
@@ -224,7 +224,7 @@ int main() {
         float deltaTime = engine.getDeltaSeconds();
 
         if(realTimePhysics && i % 150 == 0) {
-            auto cube = MeshBuilder::makeUVCube("cube", scene);
+            auto cube = MeshBuilder::makeCube("cube", scene);
             cube->transform()->setPosition(5.0, 20, -8.0);
             cube->setMaterial(cubeMaterial);
 
@@ -232,9 +232,9 @@ int main() {
             solver.addBody(cubeBody);
             shadowRenderer->addShadowCaster(cube);
 
-            new AABBHelper(cube->aabb(), scene);
+            //new AABBHelper(cube->aabb(), scene);
 
-            cubeBody->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 50.0f);
+            cubeBody->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 20.0f);
         }
         if(realTimePhysics) i++;
 

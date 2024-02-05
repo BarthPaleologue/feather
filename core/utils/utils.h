@@ -12,6 +12,7 @@
 #include <glm/gtc/random.hpp>
 #include <glm/ext/scalar_constants.hpp>
 #include "glad/glad.h"
+#include "Core"
 
 /**
  * Load file given by filename to the stringBuffer
@@ -102,6 +103,30 @@ public:
         }
 
         indices = newIndices;
+    }
+
+    static Eigen::MatrixXf crossProdMat(Eigen::VectorXf _p) {
+        Eigen::MatrixXf crossMat(3,3);
+        crossMat << 0, -_p.z(), _p.y(),
+                _p.z(), 0, -_p.x(),
+                -_p.y(), _p.x(), 0;
+        return crossMat;
+    }
+
+    static Eigen::MatrixXf crossProdGrad_p1(Eigen::Vector3f _p1, Eigen::Vector3f _p2) {
+        Eigen::MatrixXf _pTilde = crossProdMat(_p2);
+        Eigen::Vector3f _n = _p1.cross(_p2);
+        double crossNorm = _n.norm();
+        _n = _n.normalized();
+        return (- _pTilde + _n*(_n.cross(_p2).transpose()))/crossNorm;
+    }
+
+    static Eigen::MatrixXf crossProdGrad_p2(Eigen::Vector3f _p1, Eigen::Vector3f _p2) {
+        Eigen::MatrixXf _pTilde = crossProdMat(_p1);
+        Eigen::Vector3f _n = _p1.cross(_p2);
+        double crossNorm = _n.norm();
+        _n = _n.normalized();
+        return -(- _pTilde + _n*(_n.cross(_p1).transpose()))/crossNorm;
     }
 };
 

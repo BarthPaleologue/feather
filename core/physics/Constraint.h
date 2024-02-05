@@ -38,9 +38,17 @@ public:
 
         computeGradient();
         computeS();
+        float correctedStiffness = (1 - powf(1 - _stiffness, 1.0f / (float)_cardinality));
+
+        /*float massSum = 0.0;
+        for(const auto& particle: particles()) {
+            massSum += particle->invMass;
+        }
+        if(massSum == 0.0) massSum = 1.0f;*/
+
         for (unsigned int i = 0; i < _particles.size(); i++) {
             glm::vec3 gradient = glm::vec3(_gradient.col(i).x(), _gradient.col(i).y(), _gradient.col(i).z());
-            _particles[i]->predictedPosition -= _s * _particles[i]->invMass * gradient * _stiffness;
+            _particles[i]->predictedPosition -= _s * _particles[i]->invMass * gradient * correctedStiffness;
         }
     }
 
@@ -86,12 +94,17 @@ protected:
             denominator += _particles[i]->invMass * _gradient.col(i).dot(_gradient.col(i));
         }
 
-        if (denominator == 0) {
+        if (denominator < 1e-6) {
             _s = 0;
             return;
         }
 
         _s = numerator / denominator;
+
+        if(std::isnan(_s)) {
+            std::cout << "S is NAN" << std::endl;
+            _s = 0.0;
+        }
     }
 
     /**
