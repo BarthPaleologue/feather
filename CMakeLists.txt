@@ -16,7 +16,7 @@ file(GLOB SRCS ./*.h ./*.cpp
 )
 add_executable(featherGL ${SRCS}
         core/physics/UniformAccelerationField.h
-        core/physics/IsometricBendConstraint.h
+        core/physics/DihedralBendConstraint.h
         core/physics/ConstraintHelper.h
         core/Renderable.h
         core/AABB.h

@@ -2,17 +2,17 @@
 // Created by barth on 03/02/24.
 //
 
-#ifndef FEATHERGL_ISOMETRICBENDCONSTRAINT_H
-#define FEATHERGL_ISOMETRICBENDCONSTRAINT_H
+#ifndef FEATHERGL_DIHEDRALBENDCONSTRAINT_H
+#define FEATHERGL_DIHEDRALBENDCONSTRAINT_H
 
 #include <glm/geometric.hpp>
 #include <iostream>
 #include "Constraint.h"
 #include "utils.h"
 
-class IsometricBendConstraint: public Constraint {
+class DihedralBendConstraint: public Constraint {
 public:
-    IsometricBendConstraint(std::shared_ptr<Particle> p0, std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2, std::shared_ptr<Particle> p3, float stiffness) : Constraint(
+    DihedralBendConstraint(std::shared_ptr<Particle> p0, std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2, std::shared_ptr<Particle> p3, float stiffness) : Constraint(
     {p0, p1, p2, p3}, stiffness, EQUALITY) {
 
             glm::vec3 p_0 = _particles[0]->position;
@@ -136,4 +136,4 @@ private:
 };
 
 
-#endif //FEATHERGL_ISOMETRICBENDCONSTRAINT_H
+#endif //FEATHERGL_DIHEDRALBENDCONSTRAINT_H

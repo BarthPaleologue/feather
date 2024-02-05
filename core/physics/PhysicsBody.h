@@ -13,7 +13,7 @@
 #include "CollisionConstraint.h"
 #include "BendConstraint.h"
 #include "VolumeConstraint.h"
-#include "IsometricBendConstraint.h"
+#include "DihedralBendConstraint.h"
 
 class PhysicsBody {
 public:
@@ -158,7 +158,7 @@ public:
         _bendConstraints.push_back(constraint);
     }
 
-    void addIsometricBendConstraint(IsometricBendConstraint *constraint) {
+    void addIsometricBendConstraint(DihedralBendConstraint *constraint) {
         _nonCollisionConstraints.push_back(constraint);
         _isometricBendConstraints.push_back(constraint);
     }
@@ -228,7 +228,7 @@ private:
     std::vector<FixedConstraint *> _fixedConstraints;
     std::vector<DistanceConstraint *> _distanceConstraints;
     std::vector<BendConstraint *> _bendConstraints;
-    std::vector<IsometricBendConstraint *> _isometricBendConstraints;
+    std::vector<DihedralBendConstraint *> _isometricBendConstraints;
     std::vector<VolumeConstraint *> _volumeConstraints;
     std::vector<CollisionConstraint *> _collisionConstraints;
 };
