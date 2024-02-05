@@ -68,30 +68,31 @@ int main() {
     auto gravity = std::make_shared<UniformAccelerationField>(glm::vec3(0.0, -9.81, 0.0));
     solver.addField(gravity);
 
-    auto clothMesh = MeshBuilder::makePlane("cloth", scene, 32);
-    clothMesh->transform()->setRotationZ(-3.14 / 2.0);
-    clothMesh->transform()->setRotationY(3.14);
+    const int clothResolution = 32;
+
+    auto clothMesh = MeshBuilder::makePlane("cloth", scene, clothResolution);
+    //clothMesh->transform()->setRotationZ(-3.14 / 2.0);
+    //clothMesh->transform()->setRotationY(3.14);
     clothMesh->transform()->setScale(10);
     clothMesh->transform()->setPosition(0, 7, 0);
 
-    auto cloth = std::make_shared<SoftBody>(clothMesh, 1.0f, 0.8f, 0.4f);
+    auto cloth = std::make_shared<SoftBody>(clothMesh, 1.0f, 0.8f, 0.8f);
     // Seed the random number generator
-    std::random_device rd;
+    /*std::random_device rd;
     std::mt19937 gen(rd());
 
     // Define the distribution for indices
-    std::uniform_int_distribution<> distribution(0, cloth->particles().size() - 1);
+    std::uniform_int_distribution<> distribution(0, cloth->particles().size() - 1);*/
 
     // Generate a random index
-    int randomIndex1 = distribution(gen);
-    int randomIndex2 = distribution(gen);
+    /*int randomIndex1 = distribution(gen);
+    int randomIndex2 = distribution(gen);*/
 
     // fixed particles
-    auto topLeft = new FixedConstraint(cloth->particles()[randomIndex1], cloth->particles()[randomIndex1]->position);
-    cloth->addFixedConstraint(topLeft);
-
-    auto topRight = new FixedConstraint(cloth->particles()[randomIndex2], cloth->particles()[randomIndex2]->position);
-    cloth->addFixedConstraint(topRight);
+    cloth->addFixedConstraint(new FixedConstraint(cloth->particles()[0]));
+    cloth->addFixedConstraint(new FixedConstraint(cloth->particles()[clothResolution - 1]));
+    cloth->addFixedConstraint(new FixedConstraint(cloth->particles()[clothResolution * (clothResolution - 1)]));
+    cloth->addFixedConstraint(new FixedConstraint(cloth->particles()[clothResolution * clothResolution - 1]));
 
     solver.addBody(cloth);
 
@@ -224,7 +225,7 @@ int main() {
         float deltaTime = engine.getDeltaSeconds();
 
         if(realTimePhysics && i % 150 == 0) {
-            auto cube = MeshBuilder::makeCube("cube", scene);
+            auto cube = MeshBuilder::makeUVCube("cube", scene);
             cube->transform()->setPosition(5.0, 20, -8.0);
             cube->setMaterial(cubeMaterial);
 

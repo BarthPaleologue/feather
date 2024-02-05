@@ -12,7 +12,7 @@
 
 class FixedConstraint : public Constraint {
 public:
-    FixedConstraint(std::shared_ptr<Particle> p, glm::vec3 position) : Constraint({p}, 1.0, EQUALITY), _targetPosition(position) {
+    FixedConstraint(std::shared_ptr<Particle> p) : Constraint({p}, 1.0, EQUALITY), _targetPosition(p->position) {
         p->mass = 0.0f;
         p->invMass = 0.0f;
     };
