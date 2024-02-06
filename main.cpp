@@ -195,21 +195,6 @@ int main() {
         new AABBHelper(mesh->aabb(), scene);
     }*/
 
-    bool realTimePhysics = false;
-
-    engine.onKeyPressObservable.add([&](int key) {
-        if (key == GLFW_KEY_W) {
-            clothMaterial->setWireframe(!clothMaterial->wireframe());
-            sphereMaterial->setWireframe(!sphereMaterial->wireframe());
-            cubeMaterial->setWireframe(!cubeMaterial->wireframe());
-            bunnyMaterial->setWireframe(!bunnyMaterial->wireframe());
-            groundMaterial->setWireframe(!groundMaterial->wireframe());
-            dressMaterial->setWireframe(!dressMaterial->wireframe());
-        }
-        if (key == GLFW_KEY_R) solver.reset();
-        if (key == GLFW_KEY_SPACE) realTimePhysics = !realTimePhysics;
-        if (!realTimePhysics && key == GLFW_KEY_ENTER) solver.solve(1.0f / 60.0f);
-    });
 
     // Seed the random number generator
     std::random_device rd;
@@ -218,10 +203,48 @@ int main() {
     // Define the distribution for indices
     std::uniform_real_distribution<> distribution(-10.0, 10.0);
 
-    scene.onRenderGuiObservable.add([] {
-        ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-        ImGui::Text("This is some useful text.");
+    bool realTimePhysics = false;
+    float bunnyPressure = 1.0f;
+    bool wireframe = false;
+
+    scene.onRenderGuiObservable.add([&] {
+        ImGui::Begin("HPBD Controls");
+        ImGui::Checkbox("Real-time physics", &realTimePhysics);
+
+        // set bunny pressure
+        ImGui::SliderFloat("Bunny pressure", &bunnyPressure, 0.0f, 4.0f);
+        softBunny->generalizedVolumeConstraints()[0]->setPressure(bunnyPressure);
+
+        // set wireframe
+        ImGui::Checkbox("Wireframe", &wireframe);
+        clothMaterial->setWireframe(wireframe);
+        sphereMaterial->setWireframe(wireframe);
+        cubeMaterial->setWireframe(wireframe);
+        bunnyMaterial->setWireframe(wireframe);
+        groundMaterial->setWireframe(wireframe);
+        dressMaterial->setWireframe(wireframe);
+
+        // start button
+        if (ImGui::Button("Start simulation")) {
+            realTimePhysics = true;
+        }
+
+        // reset button
+        if (ImGui::Button("Reset simulation")) {
+            solver.reset();
+        }
+
         ImGui::End();
+    });
+
+
+    engine.onKeyPressObservable.add([&](int key) {
+        if (key == GLFW_KEY_W) {
+            wireframe = !wireframe;
+        }
+        if (key == GLFW_KEY_R) solver.reset();
+        if (key == GLFW_KEY_SPACE) realTimePhysics = !realTimePhysics;
+        if (!realTimePhysics && key == GLFW_KEY_ENTER) solver.solve(1.0f / 60.0f);
     });
 
     int i = 0;
