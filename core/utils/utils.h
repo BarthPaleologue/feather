@@ -173,6 +173,37 @@ public:
         _n = _n.normalized();
         return -(- _pTilde + _n*(_n.cross(_p1).transpose()))/crossNorm;
     }
+
+    /**
+     * Compute the Euler-Poincare characteristic of a given triangulation in 3D
+     * @param indices the indices of the triangulation
+     * @return the Euler-Poincare characteristic. Returns 2 if it is a convex polyhedron
+     */
+    static int EulerPoincareCharacteristic(std::vector<int> &indices) {
+        int numberOfFaces = indices.size() / 3;
+
+        // compute number of vertices
+        std::map<int, int> vertexDegree;
+        for(int i = 0; i < indices.size(); i++) {
+            vertexDegree[indices[i]]++;
+        }
+        int numberOfVertices = vertexDegree.size();
+
+        // compute number of edges
+        std::map<std::pair<int, int>, int> edgeCount;
+        for(int i = 0; i < indices.size(); i += 3) {
+            int v1 = indices[i];
+            int v2 = indices[i + 1];
+            int v3 = indices[i + 2];
+
+            edgeCount[std::make_pair(std::min(v1, v2), std::max(v1, v2))]++;
+            edgeCount[std::make_pair(std::min(v2, v3), std::max(v2, v3))]++;
+            edgeCount[std::make_pair(std::min(v1, v3), std::max(v1, v3))]++;
+        }
+        int numberOfEdges = edgeCount.size();
+
+        return numberOfVertices - numberOfEdges + numberOfFaces;
+    }
 };
 
 #endif //FEATHERGL_UTILS_H
