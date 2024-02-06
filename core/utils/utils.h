@@ -204,6 +204,36 @@ public:
 
         return numberOfVertices - numberOfEdges + numberOfFaces;
     }
+
+    /**
+     * Check if a given triangulation is closed by checking if each edge is shared by exactly 2 faces
+     * @param indices the indices of the triangulation
+     * @return true if the triangulation is closed, false otherwise
+     */
+    static bool IsTriangulationClosed(std::vector<int> &indices) {
+        std::map<std::pair<int, int>, int> edgeCount;
+        for(int i = 0; i < indices.size(); i += 3) {
+            int v1 = indices[i];
+            int v2 = indices[i + 1];
+            int v3 = indices[i + 2];
+
+            edgeCount[std::make_pair(std::min(v1, v2), std::max(v1, v2))]++;
+            edgeCount[std::make_pair(std::min(v2, v3), std::max(v2, v3))]++;
+            edgeCount[std::make_pair(std::min(v1, v3), std::max(v1, v3))]++;
+        }
+
+        return std::all_of(edgeCount.begin(), edgeCount.end(), [](std::pair<std::pair<int, int>, int> edge) {
+            return edge.second == 2;
+        });
+
+        /*for(auto &edge: edgeCount) {
+            if(edge.second != 2) {
+                return false;
+            }
+        }
+
+        return true;*/
+    }
 };
 
 #endif //FEATHERGL_UTILS_H
