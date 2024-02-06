@@ -36,12 +36,6 @@ int main() {
 
     Scene scene((std::shared_ptr<Engine>(&engine)));
 
-    scene.onRenderGuiObservable.add([] {
-        ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-        ImGui::Text("This is some useful text.");
-        ImGui::End();
-    });
-
     srand(time(0));
 
     OrbitCamera camera(&engine);
@@ -224,9 +218,11 @@ int main() {
     // Define the distribution for indices
     std::uniform_real_distribution<> distribution(-10.0, 10.0);
 
-    // Generate a random index
-    /*int randomIndex1 = distribution(gen);
-    int randomIndex2 = distribution(gen);*/
+    scene.onRenderGuiObservable.add([] {
+        ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+        ImGui::Text("This is some useful text.");
+        ImGui::End();
+    });
 
     int i = 0;
     scene.onBeforeRenderObservable.add([&]() {
