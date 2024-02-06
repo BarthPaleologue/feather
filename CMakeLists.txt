@@ -13,15 +13,19 @@ file(GLOB SRCS ./*.h ./*.cpp
         core/utils/*.cpp core/utils/*.h
         core/physics/*.cpp core/physics/*.h
         core/shadows/*.cpp core/shadows/*.h
+        imgui/*.cpp imgui/*.h
 )
-add_executable(featherGL ${SRCS}
+
+
+add_executable(featherGL ${SRCS} ${IMGUI_SRC}
         core/physics/UniformAccelerationField.h
         core/physics/DihedralBendConstraint.h
         core/physics/ConstraintHelper.h
         core/Renderable.h
         core/AABB.h
         core/AABBHelper.h
-        core/physics/GeneralizedVolumeConstraint.h)
+        core/physics/GeneralizedVolumeConstraint.h
+)
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 

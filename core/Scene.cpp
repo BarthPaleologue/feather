@@ -4,6 +4,9 @@
 
 #include "Scene.h"
 #include "DepthMaterial.h"
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_impl_opengl3.h"
+#include "../imgui/imgui_impl_glfw.h"
 
 void Scene::addMesh(std::shared_ptr<Mesh> mesh) {
     _meshes.push_back(mesh);
@@ -24,6 +27,7 @@ void Scene::render() {
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     for (auto _drawable: _meshes) {
         _drawable->render(_activeCamera->projectionViewMatrix());
     }
@@ -34,6 +38,18 @@ void Scene::render() {
         }
         _postProcesses[_postProcesses.size() - 1]->RenderToScreen();
     }
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+    ImGui::Text("This is some useful text.");
+    ImGui::End();
+
+    ImGui::Render();
+
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     onAfterRenderObservable.notifyObservers();
 }

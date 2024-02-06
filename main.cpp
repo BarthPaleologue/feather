@@ -9,6 +9,10 @@
 #include "physics/UniformAccelerationField.h"
 #include "AABBHelper.h"
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_opengl3.h"
+#include "imgui/imgui_impl_glfw.h"
+
 const int WINDOW_WIDTH = 1300;
 const int WINDOW_HEIGHT = 800;
 
@@ -31,6 +35,18 @@ void showNormals(Mesh *mesh, Scene &scene) {
 
 int main() {
     Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "HPBD Cloth Simulation");
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplGlfw_InitForOpenGL(engine.getWindow(), true);
+    ImGui_ImplOpenGL3_Init("#version 450");
 
     Scene scene((std::shared_ptr<Engine>(&engine)));
 
