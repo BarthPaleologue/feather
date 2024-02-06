@@ -28,7 +28,7 @@ void Scene::render() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    for (auto _drawable: _meshes) {
+    for (const auto& _drawable: _meshes) {
         _drawable->render(_activeCamera->projectionViewMatrix());
     }
 

@@ -1,7 +1,6 @@
 #include "Scene.h"
 #include "cameras/OrbitCamera.h"
 #include "Engine.h"
-#include "MeshLoader.h"
 #include "physics/HpbdSolver.h"
 #include "PbrMaterial.h"
 #include "physics/RigidBody.h"
@@ -116,10 +115,10 @@ int main() {
             [&] { cubeBody->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 500.0f); });
 
     auto cube2 = MeshBuilder::makeUVCube("cube2", scene);
-    cube2->transform()->setPosition(-7.0, 4, 0.0);
+    cube2->transform()->setPosition(-10.0, 4, 0.0);
     cube2->setMaterial(cubeMaterial);
     auto cube2Body = std::make_shared<SoftBody>(cube2, 1.0f, 0.0005f, 0.8f);
-    //solver.addBody(cube2Body);
+    solver.addBody(cube2Body);
     shadowRenderer->addShadowCaster(cube2);
 
     auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 2);
