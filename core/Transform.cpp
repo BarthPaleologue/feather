@@ -18,15 +18,18 @@ glm::vec3 Transform::position() {
 }
 
 glm::vec3 Transform::getForwardDirection() {
-    return {0, 0, -1};
+    glm::vec3 localForward = {0, 0, -1};
+    return glm::normalize(glm::vec3(computeWorldMatrix() * glm::vec4(localForward, 0.0f)));
 }
 
 glm::vec3 Transform::getUpwardDirection() {
-    return {0, 1, 0};
+    glm::vec3 localUp = {0, 1, 0};
+    return glm::normalize(glm::vec3(computeWorldMatrix() * glm::vec4(localUp, 0.0f)));
 }
 
 glm::vec3 Transform::getLeftDirection() {
-    return {1, 0, 0};
+    glm::vec3 localLeft = {-1, 0, 0};
+    return glm::normalize(glm::vec3(computeWorldMatrix() * glm::vec4(localLeft, 0.0f)));
 }
 
 void Transform::setParent(Transform *parent) {

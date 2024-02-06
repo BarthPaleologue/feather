@@ -10,14 +10,7 @@
 
 #include "imgui/imgui.h"
 
-const int WINDOW_WIDTH = 1300;
-const int WINDOW_HEIGHT = 800;
-
-float random01() {
-    return (float) rand() / (float) RAND_MAX;
-}
-
-void showNormals(Mesh *mesh, Scene &scene) {
+/*void showNormals(Mesh *mesh, Scene &scene) {
     for (unsigned int i = 0; i < mesh->vertexData().positions.size(); i += 3) {
         glm::vec3 p1 = glm::vec3(mesh->vertexData().positions[i], mesh->vertexData().positions[i + 1],
                                  mesh->vertexData().positions[i + 2]);
@@ -28,10 +21,10 @@ void showNormals(Mesh *mesh, Scene &scene) {
         auto line = MeshBuilder::makeLine("line", scene, p1, p2);
         line->transform()->setParent(mesh->transform());
     }
-}
+}*/
 
 int main() {
-    Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT, "HPBD Cloth Simulation");
+    Engine engine(1300, 800, "HPBD Cloth Simulation");
 
     Scene scene((std::shared_ptr<Engine>(&engine)));
 
@@ -50,19 +43,16 @@ int main() {
     auto shadowRenderer = std::make_shared<ShadowRenderer>(std::shared_ptr<DirectionalLight>(&light), 4096, 4096);
     scene.addShadowRenderer(shadowRenderer);
 
-    /*PostProcessing colorCorrection("./assets/shaders/colorCorrection", &engine);
+    PostProcessing colorCorrection("./assets/shaders/colorCorrection", &engine);
     colorCorrection.onBeforeRenderObservable.add([&]() {
-        colorCorrection.shader()->setFloat("gamma", 1.0f / 2.2f);
+        colorCorrection.shader()->setFloat("gamma", 1.0f);
         colorCorrection.shader()->setFloat("exposure", 1.0f);
-        colorCorrection.shader()->setFloat("contrast", 1.0f);
-        colorCorrection.shader()->setFloat("saturation", 1.0f);
+        colorCorrection.shader()->setFloat("contrast", 1.1f);
+        colorCorrection.shader()->setFloat("saturation", 1.1f);
         colorCorrection.shader()->setFloat("brightness", 0.0f);
     });
 
-    scene.addPostProcess(std::shared_ptr<PostProcessing>(&colorCorrection));*/
-
-    /*PostProcessing invert("./assets/shaders/invertPostProcess", &engine);
-    scene.addPostProcess(std::shared_ptr<PostProcessing>(&invert));*/
+    scene.addPostProcess(std::shared_ptr<PostProcessing>(&colorCorrection));
 
     HpbdSolver solver;
 
@@ -72,8 +62,6 @@ int main() {
     const int clothResolution = 32;
 
     auto clothMesh = MeshBuilder::makePlane("cloth", scene, clothResolution);
-    //clothMesh->transform()->setRotationZ(-3.14 / 2.0);
-    //clothMesh->transform()->setRotationY(3.14);
     clothMesh->transform()->setScale(10);
     clothMesh->transform()->setPosition(0, 7, 0);
 
@@ -166,7 +154,8 @@ int main() {
     shadowRenderer->addShadowCaster(armadillo);
 
     auto armadilloBody = std::make_shared<RigidBody>(armadillo, 1.0f);
-    armadilloBody->addGeneralizedVolumeConstraint(new GeneralizedVolumeConstraint(armadilloBody->particles(), armadillo->vertexData().indices, 1.0f, 1.0f));
+    armadilloBody->addGeneralizedVolumeConstraint(
+            new GeneralizedVolumeConstraint(armadilloBody->particles(), armadillo->vertexData().indices, 1.0f, 1.0f));
     solver.addBody(armadilloBody);
 
     auto ground = MeshBuilder::makePlane("ground", scene, 2);
@@ -269,6 +258,16 @@ int main() {
             cubeBody->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 20.0f);
         }
         if(realTimePhysics) i++;*/
+
+        glm::vec3 rayOrigin = camera.position();
+        glm::vec2 mousePos = engine.getMousePosition();
+        glm::vec2 windowSize = engine.getWindowSize();
+
+        glm::vec3 rayDirection = camera.getRayFromMouse(mousePos.x, mousePos.y, windowSize.x, windowSize.y);
+
+        float t = rayOrigin.y / -rayDirection.y;
+        glm::vec3 hitPoint = rayOrigin + t * rayDirection;
+        sphere->transform()->setPosition(hitPoint);
 
         float theta = 0.1f * engine.getElapsedSeconds() + 3.14f;
         glm::vec3 newLightDirection = glm::normalize(glm::vec3(cosf(theta), 1.0f, sinf(theta)));

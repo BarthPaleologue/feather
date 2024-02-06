@@ -11,6 +11,7 @@
 #include "../imgui/imgui_impl_opengl3.h"
 #include <GLFW/glfw3.h>
 #include <map>
+#include <glm/vec2.hpp>
 
 class Engine {
 public:
@@ -72,6 +73,18 @@ public:
         }
 
         glfwTerminate();
+    }
+
+    glm::vec2 getMousePosition() {
+        double x, y;
+        glfwGetCursorPos(window, &x, &y);
+        return {x, y};
+    }
+
+    glm::vec2 getWindowSize() {
+        int width, height;
+        glfwGetWindowSize(window, &width, &height);
+        return {width, height};
     }
 
     Observable<> onExecuteLoopObservable{};
