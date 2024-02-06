@@ -54,6 +54,10 @@ public:
         _particles = std::move(particles);
     }
 
+    void setStiffness(float stiffness) {
+        _stiffness = stiffness;
+    }
+
     void replaceParticle(std::shared_ptr<Particle> oldParticle, std::shared_ptr<Particle> newParticle) {
         for (auto & _particle : _particles) {
             if (_particle != oldParticle) continue;

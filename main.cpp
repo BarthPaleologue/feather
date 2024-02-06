@@ -141,12 +141,7 @@ int main() {
 
     shadowRenderer->addShadowCaster(sphere);
     auto sphereBody = std::make_shared<SoftBody>(sphere, 1.0f, 1.0f, 1.0f);
-    sphereBody->addGeneralizedVolumeConstraint(new GeneralizedVolumeConstraint(sphereBody->particles(), sphere->vertexData().indices, 1.0f, 0.8f));
     solver.addBody(sphereBody);
-
-
-    /*solver.onBeforeSolveObservable.addOnce(
-            [&] { sphereBody->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 50.0f); });*/
 
     auto bunnyMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     bunnyMaterial->setAlbedoColor(0.4, 0.4, 1.0);
@@ -162,7 +157,7 @@ int main() {
     shadowRenderer->addShadowCaster(simplifiedBunny);
 
     auto softBunny = std::make_shared<SoftBody>(simplifiedBunny, 1.0, 1.0f, 1.0f);
-    softBunny->addGeneralizedVolumeConstraint(new GeneralizedVolumeConstraint(softBunny->particles(), simplifiedBunny->vertexData().indices, 1.2f, 1.0f));
+    softBunny->generalizedVolumeConstraints()[0]->setPressure(1.2f);
 
     solver.addBody(softBunny);
 

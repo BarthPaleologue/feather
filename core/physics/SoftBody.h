@@ -13,7 +13,6 @@
 class SoftBody : public PhysicsBody {
 public:
     SoftBody(std::shared_ptr<Mesh> mesh, float mass, float stretchStiffness = 0.5f, float bendStiffness = 0.2f) : PhysicsBody(mesh, mass) {
-
         // iterate over all triangles and create distance constraints
         for (unsigned int i = 0; i < mesh->vertexData().indices.size(); i += 3) {
             auto index1 = mesh->vertexData().indices[i];
@@ -79,6 +78,11 @@ public:
             if(notSharedVertices.size() != 2) continue;
 
             addBendConstraint(new BendConstraint(_particles[edge.first], _particles[edge.second], _particles[notSharedVertices[0]], _particles[notSharedVertices[1]], bendStiffness));
+        }
+
+        if(Utils::isMergedTriangulationClosed(mesh->vertexData().indices, mesh->vertexData().positions)) {
+            // volume constraints
+            addGeneralizedVolumeConstraint(new GeneralizedVolumeConstraint(_particles, mesh->vertexData().indices, 1.0f, 1.0f));
         }
     }
 };

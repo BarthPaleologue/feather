@@ -28,6 +28,10 @@ public:
         _restVolume = volume;
     };
 
+    void setPressure(float pressure) {
+        _pressure = pressure;
+    }
+
 private:
     float evaluate() const override {
         float volume = 0;

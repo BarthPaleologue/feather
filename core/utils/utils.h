@@ -225,14 +225,18 @@ public:
         return std::all_of(edgeCount.begin(), edgeCount.end(), [](std::pair<std::pair<int, int>, int> edge) {
             return edge.second == 2;
         });
+    }
 
-        /*for(auto &edge: edgeCount) {
-            if(edge.second != 2) {
-                return false;
-            }
-        }
+    static bool isMergedTriangulationClosed(std::vector<int> &indices, std::vector<GLfloat> &positions) {
+        // make a copy of the indices and the positions
+        std::vector<int> indicesCopy = std::vector<int>(indices);
+        std::vector<GLfloat> positionsCopy = std::vector<GLfloat>(positions);
 
-        return true;*/
+        // merge vertices that share the same position
+        MergeVertices(positionsCopy, indicesCopy);
+
+        // now check if the triangulation is closed
+        return IsTriangulationClosed(indicesCopy);
     }
 };
 

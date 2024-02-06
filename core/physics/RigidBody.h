@@ -80,6 +80,11 @@ public:
 
             addBendConstraint(new BendConstraint(_particles[edge.first], _particles[edge.second], _particles[notSharedVertices[0]], _particles[notSharedVertices[1]], 1.0f));
         }
+
+        if(Utils::isMergedTriangulationClosed(mesh->vertexData().indices, mesh->vertexData().positions)) {
+            // volume constraints
+            addGeneralizedVolumeConstraint(new GeneralizedVolumeConstraint(_particles, mesh->vertexData().indices, 1.0f, 1.0f));
+        }
     }
 };
 
