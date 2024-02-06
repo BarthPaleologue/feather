@@ -16,8 +16,17 @@ OrbitCamera::OrbitCamera(Engine *engine) : Camera(engine), _target(0.0f), _radiu
 
     engine->onMouseMoveObservable.add([this](double mouseDX, double mouseDY) {
         if (!this->_engine->isMousePressed()) return;
-        this->rotatePhi(-(float) mouseDX / 200.0f);
-        this->rotateTheta(-(float) mouseDY / 200.0f);
+        if(!_engine->isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
+            this->rotatePhi(-(float) mouseDX / 200.0f);
+            this->rotateTheta(-(float) mouseDY / 200.0f);
+        } else {
+
+            glm::vec3 forward = glm::normalize(_target - _position);
+            glm::vec3 right = glm::normalize(glm::cross(forward, getUpwardDirection()));
+
+            _target -= right * (float) mouseDX / 100.0f;
+            _target += getUpwardDirection() * (float) mouseDY / 100.0f;
+        }
     });
 }
 
