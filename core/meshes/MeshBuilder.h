@@ -419,7 +419,7 @@ public:
         };
 
         for (unsigned int i = 0; i < nbSubdivisions; i++) {
-            Utils::loopSubdivision(vertexData.positions, vertexData.indices);
+            Utils::Subdivide(vertexData.positions, vertexData.indices);
             Utils::MergeVertices(vertexData.positions, vertexData.indices);
         }
 

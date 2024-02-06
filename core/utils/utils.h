@@ -54,7 +54,7 @@ public:
         return {glm::sin(phi) * glm::cos(theta), glm::cos(phi), glm::sin(phi) * glm::sin(theta)};
     }
 
-    static void loopSubdivision(std::vector<float>& positions, std::vector<int>& indices) {
+    static void Subdivide(std::vector<float>& positions, std::vector<int>& indices) {
         std::vector<int> newIndices;
 
         for(int i = 0; i < indices.size(); i += 3) {
