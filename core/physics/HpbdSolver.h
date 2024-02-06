@@ -234,6 +234,26 @@ public:
             }
         }
 
+        // tear edges apart when distance constraints are violated too much
+        /*for (const auto &body: _physicsBodies) {
+            for (const auto &distanceConstraints: body->distanceConstraintsPerLevel()) {
+                for (auto distanceConstraint: distanceConstraints) {
+                    if(distanceConstraint->evaluate() > 0.3f) {
+                        Utils::RemoveEdge(body->mesh()->vertexData().indices, distanceConstraint->particles()[0]->positionIndex / 3, distanceConstraint->particles()[1]->positionIndex / 3);
+
+                        // for all non collision constraints, if they contain the two particles, set their stiffness to 0
+                        //for(const auto &otherConstraint: body->nonCollisionConstraints()) {
+                        //    if(otherConstraint == distanceConstraint) continue;
+                        //    if(std::find(otherConstraint->particles().begin(), otherConstraint->particles().end(), distanceConstraint->particles()[0]) != otherConstraint->particles().end() &&
+                        //       std::find(otherConstraint->particles().begin(), otherConstraint->particles().end(), distanceConstraint->particles()[1]) != otherConstraint->particles().end()) {
+                        //        otherConstraint->setStiffness(0.0f);
+                        //    }
+                        //}
+                    }
+                }
+            }
+        }*/
+
         for (const auto &body: _physicsBodies) {
             for (const auto &particle: body->particles()) {
                 particle->velocity = (particle->predictedPosition - particle->position) / subTimeStep;

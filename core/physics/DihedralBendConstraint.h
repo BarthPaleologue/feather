@@ -33,6 +33,34 @@ public:
             std::cout << "PHI: " << _phi << std::endl;
     };
 
+
+    float evaluate() const override {
+        glm::vec3 p0 = _particles[0]->predictedPosition;
+        glm::vec3 p1 = _particles[1]->predictedPosition;
+        glm::vec3 p2 = _particles[2]->predictedPosition;
+        glm::vec3 p3 = _particles[3]->predictedPosition;
+
+        //std::cout << "POSITIONS: " << toString(p0) << toString(p1) << toString(p2) << toString(p3) << std::endl;
+
+        glm::vec3 sharedEdgeDir = glm::normalize(p1 - p0);
+
+        glm::vec3 n1 = glm::normalize(glm::cross(p1 - p0, p2 - p0));
+        glm::vec3 n2 = glm::normalize(glm::cross(p1 - p0, p3 - p0));
+
+        float dot = glm::dot(n1, n2);
+
+        // clamp dot product to -1..1 because of floating point precision
+        if (dot > 1.0f) dot = 1.0f;
+        if (dot < -1.0f) dot = -1.0f;
+
+        float phi = acosf(dot);
+        if(glm::dot(glm::cross(n1, n2), sharedEdgeDir) < 0.0f) phi = 2.0f * M_PIf - phi;
+
+        //std::cout << "PHI: " << phi - _phi << std::endl;
+
+        return phi - _phi;
+    }
+
 private:
     float _phi;
 
@@ -87,33 +115,6 @@ private:
         _gradient.col(1) = grad1;
         _gradient.col(2) = grad2;
         _gradient.col(3) = grad3;
-    }
-
-    float evaluate() const override {
-        glm::vec3 p0 = _particles[0]->predictedPosition;
-        glm::vec3 p1 = _particles[1]->predictedPosition;
-        glm::vec3 p2 = _particles[2]->predictedPosition;
-        glm::vec3 p3 = _particles[3]->predictedPosition;
-
-        //std::cout << "POSITIONS: " << toString(p0) << toString(p1) << toString(p2) << toString(p3) << std::endl;
-
-        glm::vec3 sharedEdgeDir = glm::normalize(p1 - p0);
-
-        glm::vec3 n1 = glm::normalize(glm::cross(p1 - p0, p2 - p0));
-        glm::vec3 n2 = glm::normalize(glm::cross(p1 - p0, p3 - p0));
-
-        float dot = glm::dot(n1, n2);
-
-        // clamp dot product to -1..1 because of floating point precision
-        if (dot > 1.0f) dot = 1.0f;
-        if (dot < -1.0f) dot = -1.0f;
-
-        float phi = acosf(dot);
-        if(glm::dot(glm::cross(n1, n2), sharedEdgeDir) < 0.0f) phi = 2.0f * M_PIf - phi;
-
-        //std::cout << "PHI: " << phi - _phi << std::endl;
-
-        return phi - _phi;
     }
 
     void recomputeTargetValue() override {

@@ -14,9 +14,6 @@ public:
                      std::shared_ptr<Particle> p4, float restVolume, float stiffness) : Constraint(
             {p1, p2, p3, p4}, stiffness, EQUALITY), _restVolume(restVolume) {};
 
-private:
-    float _restVolume;
-
     float evaluate() const override {
         glm::vec3 p1 = _particles[0]->predictedPosition;
         glm::vec3 p2 = _particles[1]->predictedPosition;
@@ -27,6 +24,9 @@ private:
 
         return glm::dot(cross, (p4 - p1)) - _restVolume;
     }
+
+private:
+    float _restVolume;
 
     void computeGradient() override {
         glm::vec3 p0 = _particles[0]->predictedPosition;

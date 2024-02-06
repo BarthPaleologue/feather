@@ -18,13 +18,11 @@ public:
         _restLength = other._restLength;
     }
 
-private:
-    float _restLength{};
-
-    void recomputeTargetValue() override {
-        _restLength = glm::length(_particles[0]->position - _particles[1]->position);
+    float evaluate() const override {
+        return glm::length(_particles[0]->predictedPosition - _particles[1]->predictedPosition) - _restLength;
     }
 
+private:
     void computeGradient() override {
         glm::vec3 p1 = _particles[0]->predictedPosition;
         glm::vec3 p2 = _particles[1]->predictedPosition;
@@ -36,9 +34,11 @@ private:
         _gradient.col(1) = Eigen::Vector3f(g2.x, g2.y, g2.z);
     }
 
-    float evaluate() const override {
-        return glm::length(_particles[0]->predictedPosition - _particles[1]->predictedPosition) - _restLength;
+    void recomputeTargetValue() override {
+        _restLength = glm::length(_particles[0]->position - _particles[1]->position);
     }
+
+    float _restLength{};
 };
 
 #endif //FEATHERGL_DISTANCECONSTRAINT_H

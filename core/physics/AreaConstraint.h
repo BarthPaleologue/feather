@@ -14,9 +14,6 @@ public:
     AreaConstraint(std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2, std::shared_ptr<Particle> p3, float a0) : Constraint(
             {p1, p2, p3}, 0.7, EQUALITY), _a0(a0) {};
 
-private:
-    float _a0;
-
     float evaluate() const override {
         glm::vec3 p1 = _particles[0]->predictedPosition;
         glm::vec3 p2 = _particles[1]->predictedPosition;
@@ -26,6 +23,9 @@ private:
 
         return glm::length(cross) / 2.0f - _a0;
     }
+
+private:
+    float _a0;
 
     void computeGradient() override {
         //TODO: implement

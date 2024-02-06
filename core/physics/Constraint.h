@@ -67,17 +67,17 @@ public:
         recomputeTargetValue();
     }
 
-protected:
-    /**
-     * Computes the gradient of the constraint
-     */
-    virtual void computeGradient() = 0;
-
     /**
      * Computes the constraint value
      * @return a float representing the constraint value
      */
     virtual float evaluate() const = 0;
+
+protected:
+    /**
+     * Computes the gradient of the constraint
+     */
+    virtual void computeGradient() = 0;
 
     /**
      * Computes the s factor used to solve the constraint according to PBD paper

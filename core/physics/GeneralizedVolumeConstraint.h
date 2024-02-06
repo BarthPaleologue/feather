@@ -32,7 +32,6 @@ public:
         _pressure = pressure;
     }
 
-private:
     float evaluate() const override {
         float volume = 0;
         for(int i = 0; i < _indices.size(); i+=3) {
@@ -46,6 +45,7 @@ private:
         return volume - _restVolume * _pressure;
     }
 
+private:
     void computeGradient() override {
         _gradient = Eigen::MatrixXf::Zero(3, _particles.size());
         for(int i = 0; i < _indices.size(); i+=3) {

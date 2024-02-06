@@ -15,13 +15,6 @@ public:
         _thickness = thickness;
     }
 
-private:
-    float _thickness;
-
-    void computeGradient() override {
-        //TODO: implement
-    }
-
     float evaluate() const override {
         glm::vec3 q = _particles[0]->predictedPosition;
         glm::vec3 p1 = _particles[1]->predictedPosition;
@@ -32,6 +25,13 @@ private:
         glm::vec3 v = q - p1;
 
         return glm::dot(v, n) - _thickness;
+    }
+
+private:
+    float _thickness;
+
+    void computeGradient() override {
+        //TODO: implement
     }
 
     void recomputeTargetValue() override {

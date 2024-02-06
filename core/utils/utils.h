@@ -146,8 +146,34 @@ public:
             positions.erase(positions.begin() + i, positions.begin() + i + 3);
             i -= 3;
         }
+    }
 
-
+    static bool rayTriangleIntersection(glm::vec3 r0, glm::vec3 r1, glm::vec3 t0, glm::vec3 t1, glm::vec3 t2, glm::vec3 &result) {
+        glm::vec3 e1 = t1 - t0;
+        glm::vec3 e2 = t2 - t0;
+        glm::vec3 h = glm::cross(r1, e2);
+        float a = glm::dot(e1, h);
+        if (a > -0.00001f && a < 0.00001f) {
+            return false;
+        }
+        float f = 1.0f / a;
+        glm::vec3 s = r0 - t0;
+        float u = f * glm::dot(s, h);
+        if (u < 0.0f || u > 1.0f) {
+            return false;
+        }
+        glm::vec3 q = glm::cross(s, e1);
+        float v = f * glm::dot(r1, q);
+        if (v < 0.0f || u + v > 1.0f) {
+            return false;
+        }
+        float t = f * glm::dot(e2, q);
+        if (t > 0.00001f) {
+            result = r0 + t * r1;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     static Eigen::MatrixXf crossProdMat(Eigen::VectorXf _p) {
@@ -237,6 +263,31 @@ public:
 
         // now check if the triangulation is closed
         return IsTriangulationClosed(indicesCopy);
+    }
+
+    /**
+     * Remove an edge in all triangles inside the triangulation
+     * @param indices the indices of the triangulation
+     * @param edge0 the first vertex of the edge
+     * @param edge1 the second vertex of the edge
+     */
+    static void RemoveEdge(std::vector<int> &indices, int edge0, int edge1) {
+        for(int i = 0; i < indices.size(); i += 3) {
+            int v1 = indices[i];
+            int v2 = indices[i + 1];
+            int v3 = indices[i + 2];
+
+            if((v1 == edge0 && v2 == edge1) || (v1 == edge1 && v2 == edge0)) {
+                indices.erase(indices.begin() + i, indices.begin() + i + 3);
+                i -= 3;
+            } else if((v2 == edge0 && v3 == edge1) || (v2 == edge1 && v3 == edge0)) {
+                indices.erase(indices.begin() + i, indices.begin() + i + 3);
+                i -= 3;
+            } else if((v1 == edge0 && v3 == edge1) || (v1 == edge1 && v3 == edge0)) {
+                indices.erase(indices.begin() + i, indices.begin() + i + 3);
+                i -= 3;
+            }
+        }
     }
 };
 
