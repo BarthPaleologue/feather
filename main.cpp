@@ -100,9 +100,9 @@ int main() {
     shadowRenderer->addShadowCaster(cloth->mesh());
 
     auto cubeMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
-    cubeMaterial->setAlbedoColor(1.0, 1.0, 0.0);
-    cubeMaterial->setMetallic(0.8);
-    cubeMaterial->setRoughness(0.2);
+    cubeMaterial->setAlbedoColor(1.0, 0.6, 0.0);
+    cubeMaterial->setMetallic(0.2);
+    cubeMaterial->setRoughness(0.8);
 
     auto cube = MeshBuilder::makeUVCube("cube", scene);
     cube->transform()->setPosition(5.0, 4, -8.0);
@@ -140,7 +140,7 @@ int main() {
     auto bunnyMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     bunnyMaterial->setAlbedoColor(0.4, 0.4, 1.0);
     bunnyMaterial->setMetallic(0.1);
-    bunnyMaterial->setRoughness(0.4);
+    bunnyMaterial->setRoughness(0.8);
 
     auto bunny = MeshBuilder::FromObjFile("../assets/models/bunny.obj", scene);
     bunny->setEnabled(false);
@@ -209,7 +209,6 @@ int main() {
 
     scene.onRenderGuiObservable.add([&] {
         ImGui::Begin("HPBD Controls");
-        ImGui::Checkbox("Real-time physics", &realTimePhysics);
 
         // set bunny pressure
         ImGui::SliderFloat("Bunny pressure", &bunnyPressure, 0.0f, 4.0f);
@@ -225,9 +224,17 @@ int main() {
         dressMaterial->setWireframe(wireframe);
 
         // start button
-        if (ImGui::Button("Start simulation")) {
-            realTimePhysics = true;
+        if (ImGui::Button("Toggle simulation")) {
+            realTimePhysics = !realTimePhysics;
         }
+        ImGui::SameLine();
+
+
+        // physics step button
+        if (ImGui::Button("Step simulation")) {
+            solver.solve(1.0f / 60.0f);
+        }
+        ImGui::SameLine();
 
         // reset button
         if (ImGui::Button("Reset simulation")) {
