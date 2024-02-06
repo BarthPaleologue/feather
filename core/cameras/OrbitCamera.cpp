@@ -10,11 +10,15 @@
 OrbitCamera::OrbitCamera(Engine *engine) : Camera(engine), _target(0.0f), _radius(20.0f), _theta(3.14f / 2.0f),
                                            _phi(0.0f) {
     engine->onMouseScrollObservable.add([this](double xOffset, double yOffset) {
+        auto& io = ImGui::GetIO();
+        if(io.WantCaptureMouse || io.WantCaptureKeyboard) return;
         float scrollOffset = (float) yOffset / 5.0f;
         this->zoom(scrollOffset);
     });
 
     engine->onMouseMoveObservable.add([this](double mouseDX, double mouseDY) {
+        auto& io = ImGui::GetIO();
+        if(io.WantCaptureMouse || io.WantCaptureKeyboard) return;
         if (!this->_engine->isMousePressed()) return;
         if(!_engine->isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
             this->rotatePhi(-(float) mouseDX / 200.0f);
@@ -36,10 +40,14 @@ glm::mat4 OrbitCamera::computeViewMatrix() {
 
 void OrbitCamera::update() {
     float speed = 0.02f;
-    if (_engine->isKeyPressed(GLFW_KEY_UP)) _theta = std::max(_theta - speed, 0.14f);
-    if (_engine->isKeyPressed(GLFW_KEY_DOWN)) _theta = std::min(_theta + speed, 3.00f);
-    if (_engine->isKeyPressed(GLFW_KEY_LEFT)) _phi -= speed;
-    if (_engine->isKeyPressed(GLFW_KEY_RIGHT)) _phi += speed;
+
+    auto& io = ImGui::GetIO();
+    if(!io.WantCaptureMouse && !io.WantCaptureKeyboard) {
+        if (_engine->isKeyPressed(GLFW_KEY_UP)) _theta = std::max(_theta - speed, 0.14f);
+        if (_engine->isKeyPressed(GLFW_KEY_DOWN)) _theta = std::min(_theta + speed, 3.00f);
+        if (_engine->isKeyPressed(GLFW_KEY_LEFT)) _phi -= speed;
+        if (_engine->isKeyPressed(GLFW_KEY_RIGHT)) _phi += speed;
+    }
 
     _position.x = _target.x + _radius * std::sin(_theta) * std::sin(_phi);
     _position.z = _target.z + _radius * std::sin(_theta) * std::cos(_phi);
