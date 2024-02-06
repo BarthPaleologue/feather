@@ -154,24 +154,20 @@ int main() {
 
     solver.addBody(softBunny);
 
-    auto rawDress = MeshBuilder::FromObjFile("../assets/models/dress/untitled.obj", scene);
-    rawDress->setEnabled(false);
+    auto armadillo = MeshBuilder::FromObjFile("../assets/models/armadillo.obj", scene);
+    auto simplifiedData = armadillo->vertexData();
+    for (unsigned int i = 0; i < 3; i++) {
+        simplifiedData = simplifiedData.simplify();
+    }
+    armadillo->setVertexData(simplifiedData);
+    armadillo->setMaterial(cubeMaterial);
+    armadillo->transform()->setPosition(5, 5, 10);
+    armadillo->transform()->setScale(2.0f);
+    shadowRenderer->addShadowCaster(armadillo);
 
-    auto dress = MeshBuilder::Simplify("dress", rawDress.get(), 1, scene);
-    dress->vertexData().computeNormals();
-    dress->transform()->setScale(0.4f);
-    dress->transform()->setPosition(10, 5, 4);
-    shadowRenderer->addShadowCaster(dress);
-
-    auto dressMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
-    dressMaterial->setAlbedoColor(1.0, 0.0, 0.0);
-    dressMaterial->setMetallic(0.1);
-    dressMaterial->setRoughness(0.4);
-    dressMaterial->setBackFaceCullingEnabled(false);
-    dress->setMaterial(dressMaterial);
-
-    auto dressBody = std::make_shared<SoftBody>(dress, 1.0, 0.5f, 0.5f);
-    solver.addBody(dressBody);
+    auto armadilloBody = std::make_shared<RigidBody>(armadillo, 1.0f);
+    armadilloBody->addGeneralizedVolumeConstraint(new GeneralizedVolumeConstraint(armadilloBody->particles(), armadillo->vertexData().indices, 1.0f, 1.0f));
+    solver.addBody(armadilloBody);
 
     auto ground = MeshBuilder::makePlane("ground", scene, 2);
     ground->transform()->setPosition(0, 0, 0);
@@ -204,6 +200,7 @@ int main() {
 
     bool realTimePhysics = false;
     float bunnyPressure = 1.0f;
+    float armadilloPressure = 1.0f;
     bool wireframe = false;
 
     scene.onRenderGuiObservable.add([&] {
@@ -213,6 +210,10 @@ int main() {
         ImGui::SliderFloat("Bunny pressure", &bunnyPressure, 0.0f, 4.0f);
         softBunny->generalizedVolumeConstraints()[0]->setPressure(bunnyPressure);
 
+        // set armadillo pressure
+        ImGui::SliderFloat("Armadillo pressure", &armadilloPressure, 0.0f, 4.0f);
+        armadilloBody->generalizedVolumeConstraints()[0]->setPressure(armadilloPressure);
+
         // set wireframe
         ImGui::Checkbox("Wireframe", &wireframe);
         clothMaterial->setWireframe(wireframe);
@@ -220,7 +221,6 @@ int main() {
         cubeMaterial->setWireframe(wireframe);
         bunnyMaterial->setWireframe(wireframe);
         groundMaterial->setWireframe(wireframe);
-        dressMaterial->setWireframe(wireframe);
 
         // start button
         if (ImGui::Button("Toggle simulation")) {
