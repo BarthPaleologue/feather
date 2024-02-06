@@ -6,6 +6,9 @@
 #define FEATHERGL_ENGINE_H
 
 #include "Observable.h"
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_impl_glfw.h"
+#include "../imgui/imgui_impl_opengl3.h"
 #include <GLFW/glfw3.h>
 #include <map>
 
@@ -14,6 +17,10 @@ public:
     Engine(int windowWidth, int windowHeight, const char *name);
 
     ~Engine() {
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
+
         glfwDestroyWindow(window);
     }
 

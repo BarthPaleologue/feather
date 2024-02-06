@@ -67,6 +67,8 @@ public:
     Observable<> onBeforeRenderObservable{};
     Observable<> onAfterRenderObservable{};
 
+    Observable<> onRenderGuiObservable{};
+
     void addDirectionalLight(std::shared_ptr<DirectionalLight> pLight);
 
 private:

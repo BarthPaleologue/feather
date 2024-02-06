@@ -76,6 +76,19 @@ Engine::Engine(int windowWidth, int windowHeight, const char *name = "Feather Pr
         engine->onWindowResizeObservable.notifyObservers(width, height);
     });
 
+    // init imgui
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 430");
+
     // blueish background
     setClearColor(0.4f, 0.6f, 0.6f, 1.0f);
 

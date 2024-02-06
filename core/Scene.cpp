@@ -39,16 +39,14 @@ void Scene::render() {
         _postProcesses[_postProcesses.size() - 1]->RenderToScreen();
     }
 
+    // Render UI on top of everything
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-    ImGui::Text("This is some useful text.");
-    ImGui::End();
+    onRenderGuiObservable.notifyObservers();
 
     ImGui::Render();
-
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     onAfterRenderObservable.notifyObservers();
