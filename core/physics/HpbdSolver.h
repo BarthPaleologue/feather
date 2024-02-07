@@ -96,7 +96,6 @@ public:
                 }
                 bodyCenterOfMass /= (float) body->particles().size();
 
-                glm::mat4 world = body->mesh()->transform()->computeWorldMatrix();
                 for (int k_otherBody = k_body + 1; k_otherBody < _physicsBodies.size(); k_otherBody++) {
                     auto otherBody = _physicsBodies[k_otherBody];
                     if(!otherBody->mesh()->isEnabled()) continue;
@@ -107,12 +106,8 @@ public:
                     }
                     otherBodyCenterOfMass /= (float) otherBody->particles().size();
 
-                    auto otherWorld = otherBody->mesh()->transform()->computeWorldMatrix();
-
                     AABB *intersection = AABB::intersection(body->mesh()->aabb(), otherBody->mesh()->aabb());
                     if (intersection == nullptr) continue;
-
-                    //std::cout << "Found AABB intersection between " << body->mesh()->name() << " and " << otherBody->mesh()->name() << std::endl;
 
                     // find particles from both bodies that are in the intersection
                     std::vector<std::shared_ptr<Particle>> bodyParticlesInIntersection;
@@ -132,20 +127,9 @@ public:
                     std::vector<GLfloat> bodyPositions = body->mesh()->vertexData().positions;
                     std::vector<GLint> bodyIndices = body->mesh()->vertexData().indices;
                     for (unsigned int k = 0; k < bodyIndices.size(); k += 3) {
-                        glm::vec3 t0 = glm::vec3(bodyPositions[bodyIndices[k] * 3],
-                                                 bodyPositions[bodyIndices[k] * 3 + 1],
-                                                 bodyPositions[bodyIndices[k] * 3 + 2]);
-                        glm::vec3 t1 = glm::vec3(bodyPositions[bodyIndices[k + 1] * 3],
-                                                 bodyPositions[bodyIndices[k + 1] * 3 + 1],
-                                                 bodyPositions[bodyIndices[k + 1] * 3 + 2]);
-                        glm::vec3 t2 = glm::vec3(bodyPositions[bodyIndices[k + 2] * 3],
-                                                 bodyPositions[bodyIndices[k + 2] * 3 + 1],
-                                                 bodyPositions[bodyIndices[k + 2] * 3 + 2]);
-
-                        // transform triangle to world space
-                        t0 = glm::vec3(world * glm::vec4(t0, 1.0f));
-                        t1 = glm::vec3(world * glm::vec4(t1, 1.0f));
-                        t2 = glm::vec3(world * glm::vec4(t2, 1.0f));
+                        glm::vec3 t0 = body->particles()[bodyIndices[k]]->predictedPosition;
+                        glm::vec3 t1 = body->particles()[bodyIndices[k + 1]]->predictedPosition;
+                        glm::vec3 t2 = body->particles()[bodyIndices[k + 2]]->predictedPosition;
 
                         if (!intersection->intersectsTriangle(t0, t1, t2)) continue;
 
@@ -156,20 +140,9 @@ public:
                     std::vector<GLfloat> otherBodyPositions = otherBody->mesh()->vertexData().positions;
                     std::vector<GLint> otherBodyIndices = otherBody->mesh()->vertexData().indices;
                     for (unsigned int k = 0; k < otherBodyIndices.size(); k += 3) {
-                        glm::vec3 t0 = glm::vec3(otherBodyPositions[otherBodyIndices[k] * 3],
-                                                 otherBodyPositions[otherBodyIndices[k] * 3 + 1],
-                                                 otherBodyPositions[otherBodyIndices[k] * 3 + 2]);
-                        glm::vec3 t1 = glm::vec3(otherBodyPositions[otherBodyIndices[k + 1] * 3],
-                                                 otherBodyPositions[otherBodyIndices[k + 1] * 3 + 1],
-                                                 otherBodyPositions[otherBodyIndices[k + 1] * 3 + 2]);
-                        glm::vec3 t2 = glm::vec3(otherBodyPositions[otherBodyIndices[k + 2] * 3],
-                                                 otherBodyPositions[otherBodyIndices[k + 2] * 3 + 1],
-                                                 otherBodyPositions[otherBodyIndices[k + 2] * 3 + 2]);
-
-                        // transform triangle to world space
-                        t0 = glm::vec3(otherWorld * glm::vec4(t0, 1.0f));
-                        t1 = glm::vec3(otherWorld * glm::vec4(t1, 1.0f));
-                        t2 = glm::vec3(otherWorld * glm::vec4(t2, 1.0f));
+                        glm::vec3 t0 = otherBody->particles()[otherBodyIndices[k]]->predictedPosition;
+                        glm::vec3 t1 = otherBody->particles()[otherBodyIndices[k + 1]]->predictedPosition;
+                        glm::vec3 t2 = otherBody->particles()[otherBodyIndices[k + 2]]->predictedPosition;
 
                         if (!intersection->intersectsTriangle(t0, t1, t2)) continue;
 
