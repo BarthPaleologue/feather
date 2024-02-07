@@ -135,6 +135,23 @@ int main() {
     auto softBunny = std::make_shared<SoftBody>(simplifiedBunny, 1.0, 0.0001f, 0.0001f);
     solver.addBody(softBunny);
 
+    auto megaBunny = MeshBuilder::makeIcoSphere("megaBunny", scene, 1);
+    megaBunny->transform()->setScale(4);
+    megaBunny->transform()->setPosition(0, 1.0f, 0);
+    megaBunny->setMaterial(bunnyMaterial);
+    shadowRenderer->addShadowCaster(simplifiedBunny);
+
+    solver.addBody(std::make_shared<RigidBody>(megaBunny, 0.0));
+
+
+    auto magicCloth = MeshBuilder::makeIcoSphere("magicCloth", scene, 1);
+    magicCloth->transform()->setScale(4);
+    magicCloth->transform()->setPosition(0, 15, 0);
+    magicCloth->setMaterial(clothMaterial);
+    shadowRenderer->addShadowCaster(magicCloth);
+
+    solver.addBody(std::make_shared<SoftBody>(magicCloth, 1.0f, 0.0001f, 0.0001f));
+
     auto armadillo = MeshBuilder::FromObjFile("../assets/models/armadillo.obj", scene);
     auto simplifiedData = armadillo->vertexData();
     for (unsigned int i = 0; i < 3; i++) {
@@ -190,6 +207,8 @@ int main() {
     bool sphereEnabled = true;
     bool bunnyEnabled = true;
     bool armadilloEnabled = false;
+    bool megaBunnyEnabled = false;
+    bool magicClothEnabled = false;
 
     std::shared_ptr<PhysicsBody> currentBody = softBunny;
     float currentBodyPressure = 1.0f;
@@ -263,6 +282,12 @@ int main() {
 
         ImGui::Checkbox("Armadillo enabled", &armadilloEnabled);
         armadillo->setEnabled(armadilloEnabled);
+
+        ImGui::Checkbox("MegaBunny enabled", &megaBunnyEnabled);
+        megaBunny->setEnabled(megaBunnyEnabled);
+
+        ImGui::Checkbox("MagicCloth enabled", &magicClothEnabled);
+        magicCloth->setEnabled(magicClothEnabled);
 
         // start button
         if (ImGui::Button("Toggle simulation")) {
