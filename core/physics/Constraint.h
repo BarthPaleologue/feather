@@ -37,12 +37,12 @@ public:
         if (isSatisfied()) return;
 
         computeGradient();
-        computeS();
+        computeLambda();
         float correctedStiffness = (1 - powf(1 - _stiffness, 1.0f / 8.0f));
 
         for (unsigned int i = 0; i < _particles.size(); i++) {
             glm::vec3 gradient = glm::vec3(_gradient.col(i).x(), _gradient.col(i).y(), _gradient.col(i).z());
-            _particles[i]->predictedPosition -= _s * _particles[i]->invMass * gradient * correctedStiffness;
+            _particles[i]->predictedPosition += _lambda * _particles[i]->invMass * gradient * correctedStiffness;
         }
     }
 
@@ -82,8 +82,8 @@ protected:
     /**
      * Computes the s factor used to solve the constraint according to PBD paper
      */
-    void computeS() {
-        float numerator = evaluate();
+    void computeLambda() {
+        float numerator = -evaluate();
         float denominator = 0;
         if (_particles.size() != _gradient.cols()) {
             throw std::runtime_error("Gradient and particles size mismatch");
@@ -93,15 +93,15 @@ protected:
         }
 
         if (denominator < 1e-6) {
-            _s = 0;
+            _lambda = 0;
             return;
         }
 
-        _s = numerator / denominator;
+        _lambda = numerator / denominator;
 
-        if(std::isnan(_s)) {
+        if(std::isnan(_lambda)) {
             std::cout << "S is NAN" << std::endl;
-            _s = 0.0;
+            _lambda = 0.0;
         }
     }
 
@@ -134,7 +134,7 @@ protected:
     float _stiffness{};
 
     /// s factor used to solve the constraint
-    float _s{};
+    float _lambda{};
 
     /// Type of the constraint (equality or inequality)
     ConstraintType _type;
