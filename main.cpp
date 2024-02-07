@@ -103,13 +103,6 @@ int main() {
     solver.onBeforeSolveObservable.addOnce(
             [&] { cubeBody->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 500.0f); });
 
-    auto cube2 = MeshBuilder::makeUVCube("cube2", scene);
-    cube2->transform()->setPosition(-10.0, 4, 0.0);
-    cube2->setMaterial(cubeMaterial);
-    auto cube2Body = std::make_shared<SoftBody>(cube2, 1.0f, 0.0001f, 0.0001f);
-    solver.addBody(cube2Body);
-    shadowRenderer->addShadowCaster(cube2);
-
     auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 2);
     sphere->transform()->setScale(1.5);
     //sphere->transform()->setPosition(4, 5, 10);
@@ -154,7 +147,8 @@ int main() {
 
     auto armadilloBody = std::make_shared<RigidBody>(armadillo, 1.0f);
     armadilloBody->addGeneralizedVolumeConstraint(
-            new GeneralizedVolumeConstraint(armadilloBody->particles(), armadillo->vertexData().indices, 0.0001f, 0.0001f));
+            new GeneralizedVolumeConstraint(armadilloBody->particles(), armadillo->vertexData().indices, 0.0001f,
+                                            0.0001f));
     solver.addBody(armadilloBody);
 
     auto ground = MeshBuilder::makePlane("ground", scene, 2);
@@ -188,26 +182,62 @@ int main() {
     std::uniform_real_distribution<> distribution(-10.0, 10.0);
 
     bool realTimePhysics = false;
-    float bunnyPressure = 1.0f;
-    float armadilloPressure = 1.0f;
     bool wireframe = false;
 
     bool clothEnabled = true;
-    bool cubeEnabled = true;
+    bool cubeEnabled = false;
     bool sphereEnabled = true;
-    bool bunnyEnabled = false;
+    bool bunnyEnabled = true;
     bool armadilloEnabled = false;
+
+    std::shared_ptr<PhysicsBody> currentBody = softBunny;
+    float currentBodyPressure = 1.0f;
+    float stretchCompliance = 0.0001f;
+    float bendCompliance = 0.0001f;
+    float fixedConstraintCompliance = 0.0f;
 
     scene.onRenderGuiObservable.add([&] {
         ImGui::Begin("HPBD Controls");
 
-        // set bunny pressure
-        ImGui::SliderFloat("Bunny pressure", &bunnyPressure, 0.0f, 4.0f);
-        softBunny->generalizedVolumeConstraints()[0]->setPressure(bunnyPressure);
+        if (currentBody != nullptr) {
+            ImGui::Text("Selected body: %s", currentBody->mesh()->name().c_str());
+        }
 
-        // set armadillo pressure
-        ImGui::SliderFloat("Armadillo pressure", &armadilloPressure, 0.0f, 4.0f);
-        armadilloBody->generalizedVolumeConstraints()[0]->setPressure(armadilloPressure);
+        if (currentBody != nullptr && !currentBody->generalizedVolumeConstraints().empty()) {
+            // pressure slider
+            ImGui::SliderFloat("Pressure", &currentBodyPressure, 0.0001f, 4.0f);
+            currentBody->generalizedVolumeConstraints()[0]->setPressure(currentBodyPressure);
+        }
+
+        if (currentBody != nullptr && !currentBody->distanceConstraints().empty()) {
+            // stretch compliance slider
+            ImGui::SliderFloat("Stretch compliance", &stretchCompliance, 0.0001f, 2.0f, "%.4f");
+            for (const auto &constraint: currentBody->distanceConstraints()) {
+                if (constraint->compliance() > 0.0f) constraint->setCompliance(stretchCompliance);
+            }
+            // apply compliance to hierarchy
+            for (const auto &level: currentBody->distanceConstraintsPerLevel()) {
+                for (const auto &constraint: level) {
+                    if (constraint->compliance() > 0.0f) constraint->setCompliance(stretchCompliance);
+                }
+            }
+        }
+
+        if (currentBody != nullptr && !currentBody->bendConstraints().empty()) {
+            // bend compliance slider
+            ImGui::SliderFloat("Bend compliance", &bendCompliance, 0.0001f, 2.0f, "%.4f");
+            for (const auto &constraint: currentBody->bendConstraints()) {
+                constraint->setCompliance(bendCompliance);
+            }
+        }
+
+        if (currentBody != nullptr && !currentBody->fixedConstraints().empty()) {
+            // fixed constraint compliance slider
+            ImGui::SliderFloat("Fixed constraint compliance", &fixedConstraintCompliance, 0.0f, 30.0f, "%.4f");
+            for (const auto &constraint: currentBody->fixedConstraints()) {
+                constraint->setCompliance(fixedConstraintCompliance);
+            }
+        }
 
         // set wireframe
         ImGui::Checkbox("Wireframe", &wireframe);
@@ -281,7 +311,7 @@ int main() {
         }
         if(realTimePhysics) i++;*/
 
-        if(engine.isMousePressed() && engine.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
+        if (engine.isMousePressed() && engine.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
             glm::vec3 rayOrigin = camera.position();
             glm::vec2 mousePos = engine.getMousePosition();
             glm::vec2 windowSize = engine.getWindowSize();
@@ -292,6 +322,20 @@ int main() {
 
             if (pickResult.second.hasHit) {
                 auto pickedMesh = pickResult.first;
+
+                // find associated physics body
+                for (const auto &body: solver.physicsBodies()) {
+                    if (body->mesh() == pickedMesh) {
+                        currentBody = body;
+                        if (!currentBody->generalizedVolumeConstraints().empty()) currentBodyPressure = currentBody->generalizedVolumeConstraints()[0]->pressure();
+                        if (!currentBody->distanceConstraints().empty()) stretchCompliance = currentBody->distanceConstraints()[0]->compliance();
+                        if (!currentBody->bendConstraints().empty()) bendCompliance = currentBody->bendConstraints()[0]->compliance();
+                        if (!currentBody->fixedConstraints().empty()) fixedConstraintCompliance = currentBody->fixedConstraints()[0]->compliance();
+                        break;
+                    }
+                }
+
+
                 auto hitPoint = pickResult.second.hitPoint;
                 auto index0 = pickResult.second.faceIndex * 3;
                 auto index1 = pickResult.second.faceIndex * 3 + 1;

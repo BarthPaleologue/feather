@@ -32,6 +32,10 @@ public:
         _pressure = pressure;
     }
 
+    float pressure() const {
+        return _pressure;
+    }
+
     float evaluate() const override {
         float volume = 0;
         for(int i = 0; i < _indices.size(); i+=3) {

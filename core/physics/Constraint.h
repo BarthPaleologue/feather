@@ -83,6 +83,10 @@ public:
         _compliance = compliance;
     }
 
+    float compliance() const {
+        return _compliance;
+    }
+
     void replaceParticle(std::shared_ptr<Particle> oldParticle, std::shared_ptr<Particle> newParticle) {
         for (auto & _particle : _particles) {
             if (_particle != oldParticle) continue;

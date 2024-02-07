@@ -36,6 +36,10 @@ public:
         }
     }
 
+    std::vector<std::shared_ptr<PhysicsBody>> &physicsBodies() {
+        return _physicsBodies;
+    }
+
     void solve(float deltaTime) {
         onBeforeSolveObservable.notifyObservers();
 
