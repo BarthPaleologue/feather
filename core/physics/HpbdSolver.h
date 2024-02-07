@@ -260,11 +260,15 @@ public:
         onAfterSolveObservable.notifyObservers();
     }
 
+    void setIterations(int iterations) {
+        _iterations = iterations;
+    }
+
     Observable<> onBeforeSolveObservable;
     Observable<> onAfterSolveObservable;
 
 private:
-    int _iterations = 8;
+    int _iterations = 4;
     std::vector<std::shared_ptr<PhysicsBody>> _physicsBodies;
     std::vector<std::shared_ptr<UniformAccelerationField>> _fields;
 };

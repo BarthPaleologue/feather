@@ -88,6 +88,18 @@ int main() {
 
     shadowRenderer->addShadowCaster(cloth->mesh());
 
+    auto cloth2Mesh = MeshBuilder::makePlane("cloth2", scene, clothResolution);
+    cloth2Mesh->transform()->setScale(10);
+    cloth2Mesh->transform()->setPosition(0, 7, 0);
+    cloth2Mesh->setMaterial(clothMaterial);
+    shadowRenderer->addShadowCaster(cloth2Mesh);
+    auto cloth2 = std::make_shared<SoftBody>(cloth2Mesh, 1.0f, 0.1f, 0.01f);
+    solver.addBody(cloth2);
+
+    // fixed particles
+    cloth2->addFixedConstraint(new FixedConstraint(cloth2->particles()[0]));
+    cloth2->addFixedConstraint(new FixedConstraint(cloth2->particles()[clothResolution * clothResolution / 2 + clothResolution / 2]));
+
     auto cubeMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     cubeMaterial->setAlbedoColor(1.0, 0.6, 0.0);
     cubeMaterial->setMetallic(0.2);
@@ -127,7 +139,7 @@ int main() {
     auto bunny = MeshBuilder::FromObjFile("../assets/models/bunny.obj", scene);
     bunny->setEnabled(false);
 
-    auto simplifiedBunny = MeshBuilder::Simplify("simpleBunny", bunny.get(), 2, scene);
+    auto simplifiedBunny = MeshBuilder::Simplify("simpleBunny", bunny.get(), 3, scene);
     simplifiedBunny->setMaterial(bunnyMaterial);
     simplifiedBunny->transform()->translate(glm::vec3(10, 3.0, -8));
     shadowRenderer->addShadowCaster(simplifiedBunny);
@@ -186,10 +198,12 @@ int main() {
     bool wireframe = false;
 
     bool clothEnabled = true;
+    bool cloth2Enabled = false;
     bool cubeEnabled = false;
     bool sphereEnabled = true;
     bool bunnyEnabled = true;
     bool armadilloEnabled = false;
+    int nbIterations = 4;
 
     std::shared_ptr<PhysicsBody> currentBody = softBunny;
     float currentBodyPressure = 1.0f;
@@ -199,6 +213,13 @@ int main() {
 
     scene.onRenderGuiObservable.add([&] {
         ImGui::Begin("HPBD Controls");
+
+        // show number of FPS
+        ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+
+        // set solver nb iterations
+        ImGui::SliderInt("Solver iterations", &nbIterations, 1, 20);
+        solver.setIterations(nbIterations);
 
         if (currentBody != nullptr) {
             ImGui::Text("Selected body: %s", currentBody->mesh()->name().c_str());
@@ -251,6 +272,9 @@ int main() {
         // set enabled
         ImGui::Checkbox("Cloth enabled", &clothEnabled);
         cloth->mesh()->setEnabled(clothEnabled);
+
+        ImGui::Checkbox("Cloth2 enabled", &cloth2Enabled);
+        cloth2->mesh()->setEnabled(cloth2Enabled);
 
         ImGui::Checkbox("Cube enabled", &cubeEnabled);
         cube->setEnabled(cubeEnabled);
