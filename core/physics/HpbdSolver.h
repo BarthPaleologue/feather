@@ -80,9 +80,13 @@ public:
 
             for (int k_body = 0; k_body < _physicsBodies.size(); k_body++) {
                 auto body = _physicsBodies[k_body];
+                if(!body->mesh()->isEnabled()) continue;
+
                 glm::mat4 world = body->mesh()->transform()->computeWorldMatrix();
                 for (int k_otherBody = k_body + 1; k_otherBody < _physicsBodies.size(); k_otherBody++) {
                     auto otherBody = _physicsBodies[k_otherBody];
+                    if(!otherBody->mesh()->isEnabled()) continue;
+
                     auto otherWorld = otherBody->mesh()->transform()->computeWorldMatrix();
 
                     AABB *intersection = AABB::intersection(body->mesh()->aabb(), otherBody->mesh()->aabb());
@@ -153,73 +157,37 @@ public:
                                 {otherBodyIndices[k], otherBodyIndices[k + 1], otherBodyIndices[k + 2]});
                     }
 
-                    /*std::cout << "Found " << bodyParticlesInIntersection.size() << " particles in intersection" << std::endl;
-                    std::cout << "Found " << otherBodyParticlesInIntersection.size() << " particles in intersection" << std::endl;
-
-                    std::cout << "Found " << bodyTrianglesInIntersection.size() << " triangles in intersection" << std::endl;
-                    std::cout << "Found " << otherBodyTrianglesInIntersection.size() << " triangles in intersection" << std::endl;*/
-
-                    // create collision constraints
-                    // for each particle from one body, create a collision constraint with every triangle from the other body
-                    //std::cout << "Creating " << bodyParticlesInIntersection.size() * otherBodyTrianglesInIntersection.size() << " collision constraints" << std::endl;
-
-                    /*for (const auto &particle: bodyParticlesInIntersection) {
-                        for (const auto &triangle: otherBodyTrianglesInIntersection) {
-                            auto collisionConstraint = new CollisionConstraint(particle,
-                                                                               otherBody->particles()[triangle[0]],
-                                                                               otherBody->particles()[triangle[1]],
-                                                                               otherBody->particles()[triangle[2]]);
-                            body->collisionConstraints().push_back(collisionConstraint);
-                        }
-                    }*/
-
-                    //std::cout << "Creating " << otherBodyParticlesInIntersection.size() * bodyTrianglesInIntersection.size() << " collision constraints" << std::endl;
-                    std::vector<std::shared_ptr<Particle>> handledParticles;
+                    // for each particle in one body, create a collision constraint with each triangle in the other body (if there is a risk of collision)
                     for (const auto &particle: otherBodyParticlesInIntersection) {
                         for (const auto &triangle: bodyTrianglesInIntersection) {
+                            glm::vec3 particleDirection = glm::normalize(particle->velocity);
 
-                            if (particle->mass == 0) continue;
-
-                            /*glm::vec3 oldPosition = particle->hitPoint;
-                            glm::vec3 newPosition = particle->predictedPosition;
-
-                            glm::vec3 intersection;
-                            bool doesIntersect = Utils::rayTriangleIntersection(oldPosition, oldPosition + particle->velocity * subTimeStep * 200.0f,
-                                                                               body->particles()[triangle[0]]->predictedPosition,
-                                                                               body->particles()[triangle[1]]->predictedPosition,
-                                                                               body->particles()[triangle[2]]->predictedPosition, intersection);
-
-                            if(!doesIntersect) continue;*/
+                            // if the trajectory of the particle does not intersect the triangle, skip this collision constraint
+                            glm::vec3 result;
+                            if(!Utils::rayTriangleIntersection(particle->predictedPosition - particleDirection, particleDirection,
+                                                              body->particles()[triangle[0]]->predictedPosition,
+                                                              body->particles()[triangle[1]]->predictedPosition,
+                                                              body->particles()[triangle[2]]->predictedPosition, result)) continue;
 
                             auto collisionConstraint = new CollisionConstraint(particle,
                                                                                body->particles()[triangle[0]],
                                                                                body->particles()[triangle[1]],
                                                                                body->particles()[triangle[2]]);
                             otherBody->collisionConstraints().push_back(collisionConstraint);
-
-                            handledParticles.push_back(particle);
-                            handledParticles.push_back(body->particles()[triangle[0]]);
-                            handledParticles.push_back(body->particles()[triangle[1]]);
-                            handledParticles.push_back(body->particles()[triangle[2]]);
                         }
                     }
 
                     for (const auto &particle: bodyParticlesInIntersection) {
                         for (const auto &triangle: otherBodyTrianglesInIntersection) {
+                            glm::vec3 particleDirection = glm::normalize(particle->velocity);
 
-                            // if any of the 4 particles is already handled, skip this collision constraint
-                            if (std::find(handledParticles.begin(), handledParticles.end(), particle) !=
-                                handledParticles.end())
-                                continue;
-                            if (std::find(handledParticles.begin(), handledParticles.end(),
-                                          otherBody->particles()[triangle[0]]) != handledParticles.end())
-                                continue;
-                            if (std::find(handledParticles.begin(), handledParticles.end(),
-                                          otherBody->particles()[triangle[1]]) != handledParticles.end())
-                                continue;
-                            if (std::find(handledParticles.begin(), handledParticles.end(),
-                                          otherBody->particles()[triangle[2]]) != handledParticles.end())
-                                continue;
+                            // if the trajectory of the particle does not intersect the triangle, skip this collision constraint
+                            glm::vec3 result;
+                            if(!Utils::rayTriangleIntersection(particle->predictedPosition - particleDirection, particleDirection,
+                                                               otherBody->particles()[triangle[0]]->predictedPosition,
+                                                               otherBody->particles()[triangle[1]]->predictedPosition,
+                                                               otherBody->particles()[triangle[2]]->predictedPosition, result)) continue;
+
 
                             auto collisionConstraint = new CollisionConstraint(particle,
                                                                                otherBody->particles()[triangle[0]],
