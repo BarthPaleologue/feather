@@ -335,77 +335,34 @@ int main() {
                     }
                 }
 
-
                 auto hitPoint = pickResult.second.hitPoint;
-                auto index0 = pickResult.second.faceIndex * 3;
-                auto index1 = pickResult.second.faceIndex * 3 + 1;
-                auto index2 = pickResult.second.faceIndex * 3 + 2;
+                auto faceIndex = pickResult.second.faceIndex;
+
+                int index0 = pickedMesh->vertexData().indices[faceIndex * 3];
+                int index1 = pickedMesh->vertexData().indices[faceIndex * 3 + 1];
+                int index2 = pickedMesh->vertexData().indices[faceIndex * 3 + 2];
 
                 std::vector<GLfloat> &positions = pickedMesh->vertexData().positions;
 
-                /*if(index0 < positions.size() / 3) {
-                    std::cout << "index0: " << index0 << std::endl;
-                }
-                if(index1 < positions.size() / 3) {
-                    std::cout << "index1: " << index1 << std::endl;
-                }
-                if(index2 < positions.size() / 3) {
-                    std::cout << "index2: " << index2 << std::endl;
-                }
+                auto particle0 = currentBody->particles()[index0];
+                auto particle1 = currentBody->particles()[index1];
+                auto particle2 = currentBody->particles()[index2];
 
-                positions[index0 * 3] += 0.1f;
-                positions[index0 * 3 + 1] += 0.1f;
-                positions[index0 * 3 + 2] += 0.1f;
-
-                positions[index1 * 3] += 0.1f;
-                positions[index1 * 3 + 1] += 0.1f;
-                positions[index1 * 3 + 2] += 0.1f;
-
-                positions[index2 * 3] += 0.1f;
-                positions[index2 * 3 + 1] += 0.1f;
-                positions[index2 * 3 + 2] += 0.1f;*/
-
-                /*glm::vec3 t0 = glm::vec3(positions[index0 * 3], positions[index0 * 3 + 1], positions[index0 * 3 + 2]);
-                glm::vec3 t1 = glm::vec3(positions[index1 * 3], positions[index1 * 3 + 1], positions[index1 * 3 + 2]);
-                glm::vec3 t2 = glm::vec3(positions[index2 * 3], positions[index2 * 3 + 1], positions[index2 * 3 + 2]);
-
-                glm::mat4 worldMatrix = pickedMesh->transform()->computeWorldMatrix();
-
-                t0 = glm::vec3(worldMatrix * glm::vec4(t0, 1.0f));
-                t1 = glm::vec3(worldMatrix * glm::vec4(t1, 1.0f));
-                t2 = glm::vec3(worldMatrix * glm::vec4(t2, 1.0f));
+                glm::vec3 t0 = particle0->position;
+                glm::vec3 t1 = particle1->position;
+                glm::vec3 t2 = particle2->position;
 
                 glm::vec3 barycenter = (t0 + t1 + t2) / 3.0f;
 
-                glm::vec3 translation = glm::vec3(0.0, 1.0, 0.0); //hitPoint - barycenter;
+                glm::vec3 translation = hitPoint - barycenter;
 
-                // move triangle vertex positions by translation
+                for(auto particle: currentBody->particles()) {
+                    particle->position += translation;
+                }
 
-                t0 += translation;
-                t1 += translation;
-                t2 += translation;
+                pickedMesh->vertexData().computeNormals();
 
-                glm::mat4 invWorldMatrix = glm::inverse(worldMatrix);
-
-                t0 = glm::vec3(invWorldMatrix * glm::vec4(t0, 1.0f));
-                t1 = glm::vec3(invWorldMatrix * glm::vec4(t1, 1.0f));
-                t2 = glm::vec3(invWorldMatrix * glm::vec4(t2, 1.0f));
-
-                positions[index0 * 3] = t0.x;
-                positions[index0 * 3 + 1] = t0.y;
-                positions[index0 * 3 + 2] = t0.z;
-
-                positions[index1 * 3] = t1.x;
-                positions[index1 * 3 + 1] = t1.y;
-                positions[index1 * 3 + 2] = t1.z;
-
-                positions[index2 * 3] = t2.x;
-                positions[index2 * 3 + 1] = t2.y;
-                positions[index2 * 3 + 2] = t2.z;*/
-
-                //pickedMesh->vertexData().computeNormals();
-
-                //pickedMesh->sendVertexDataToGPU();
+                pickedMesh->sendVertexDataToGPU();
             }
         }
 
