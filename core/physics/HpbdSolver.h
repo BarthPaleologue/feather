@@ -90,21 +90,13 @@ public:
                 auto body = _physicsBodies[k_body];
                 if(!body->mesh()->isEnabled()) continue;
 
-                glm::vec3 bodyCenterOfMass = glm::vec3(0.0f);
-                for(const auto &particle: body->particles()) {
-                    bodyCenterOfMass += particle->predictedPosition;
-                }
-                bodyCenterOfMass /= (float) body->particles().size();
+                glm::mat4 bodyWorld = body->mesh()->transform()->computeWorldMatrix();
 
                 for (int k_otherBody = k_body + 1; k_otherBody < _physicsBodies.size(); k_otherBody++) {
                     auto otherBody = _physicsBodies[k_otherBody];
                     if(!otherBody->mesh()->isEnabled()) continue;
 
-                    glm::vec3 otherBodyCenterOfMass = glm::vec3(0.0f);
-                    for(const auto &particle: otherBody->particles()) {
-                        otherBodyCenterOfMass += particle->predictedPosition;
-                    }
-                    otherBodyCenterOfMass /= (float) otherBody->particles().size();
+                    glm::mat4 otherBodyWorld = otherBody->mesh()->transform()->computeWorldMatrix();
 
                     AABB *intersection = AABB::intersection(body->mesh()->aabb(), otherBody->mesh()->aabb());
                     if (intersection == nullptr) continue;
@@ -153,11 +145,15 @@ public:
                     // for each particle in one body, create a collision constraint with each triangle in the other body (if there is a risk of collision)
                     for (const auto &particle: otherBodyParticlesInIntersection) {
                         for (const auto &triangle: bodyTrianglesInIntersection) {
-                            glm::vec3 particleDirection = glm::normalize(particle->predictedPosition - otherBodyCenterOfMass);
+                            glm::vec3 particleNormal = glm::vec3(
+                                    otherBody->mesh()->vertexData().normals[particle->positionIndex],
+                                    otherBody->mesh()->vertexData().normals[particle->positionIndex + 1],
+                                    otherBody->mesh()->vertexData().normals[particle->positionIndex + 2]);
+                            particleNormal = glm::normalize(glm::vec3(otherBodyWorld * glm::vec4(particleNormal, 0.0f)));
 
                             // if the trajectory of the particle does not intersect the triangle, skip this collision constraint
                             float t;
-                            if(particle->mass != 0 && !Utils::rayTriangleIntersection(particle->predictedPosition - particleDirection * 0.1f, particleDirection,
+                            if(particle->mass != 0 && !Utils::rayTriangleIntersection(particle->predictedPosition - particleNormal * 0.1f, particleNormal,
                                                               body->particles()[triangle[0]]->predictedPosition,
                                                               body->particles()[triangle[1]]->predictedPosition,
                                                               body->particles()[triangle[2]]->predictedPosition, t)) continue;
@@ -173,11 +169,15 @@ public:
 
                     for (const auto &particle: bodyParticlesInIntersection) {
                         for (const auto &triangle: otherBodyTrianglesInIntersection) {
-                            glm::vec3 particleDirection = glm::normalize(particle->predictedPosition - bodyCenterOfMass);
+                            glm::vec3 particleNormal = glm::vec3(
+                                    body->mesh()->vertexData().normals[particle->positionIndex],
+                                    body->mesh()->vertexData().normals[particle->positionIndex + 1],
+                                    body->mesh()->vertexData().normals[particle->positionIndex + 2]);
+                            particleNormal = glm::normalize(glm::vec3(bodyWorld * glm::vec4(particleNormal, 0.0f)));
 
                             // if the trajectory of the particle does not intersect the triangle, skip this collision constraint
                             float t;
-                            if(particle->mass != 0 && !Utils::rayTriangleIntersection(particle->predictedPosition - particleDirection * 0.1f, particleDirection,
+                            if(particle->mass != 0 && !Utils::rayTriangleIntersection(particle->predictedPosition - particleNormal * 0.1f, particleNormal,
                                                                otherBody->particles()[triangle[0]]->predictedPosition,
                                                                otherBody->particles()[triangle[1]]->predictedPosition,
                                                                otherBody->particles()[triangle[2]]->predictedPosition, t)) continue;
