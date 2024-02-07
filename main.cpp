@@ -8,6 +8,7 @@
 #include "physics/UniformAccelerationField.h"
 #include "AABBHelper.h"
 
+#include <glm/gtx/norm.hpp>
 #include "imgui/imgui.h"
 
 /*void showNormals(Mesh *mesh, Scene &scene) {
@@ -294,23 +295,15 @@ int main() {
         if (!realTimePhysics && key == GLFW_KEY_ENTER) solver.solve(1.0f / 60.0f);
     });
 
-    int i = 0;
+    bool isDraggingABody = false;
+    std::shared_ptr<PhysicsBody> draggedBody = nullptr;
+    int draggedFace = 0;
+    float dragDistance = 0.0;
+
     scene.onBeforeRenderObservable.add([&]() {
         float deltaTime = engine.getDeltaSeconds();
 
-        /*if(realTimePhysics && i % 150 == 0) {
-            auto cube = MeshBuilder::makeUVCube("cube", scene);
-            cube->transform()->setPosition((float)distribution(gen), 10, (float)distribution(gen));
-            cube->setMaterial(cubeMaterial);
-
-            auto cubeBody = std::make_shared<RigidBody>(cube, 1.0f);
-            solver.addBody(cubeBody);
-            shadowRenderer->addShadowCaster(cube);
-
-            cubeBody->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 20.0f);
-        }
-        if(realTimePhysics) i++;*/
-
+        if (!engine.isMousePressed()) isDraggingABody = false;
         if (engine.isMousePressed() && engine.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
             glm::vec3 rayOrigin = camera.position();
             glm::vec2 mousePos = engine.getMousePosition();
@@ -318,31 +311,36 @@ int main() {
 
             glm::vec3 rayDirection = camera.getRayFromMouse(mousePos.x, mousePos.y, windowSize.x, windowSize.y);
 
-            auto pickResult = scene.pickWithRay(rayOrigin, rayDirection);
+            if (!isDraggingABody) {
+                auto pickResult = scene.pickWithRay(rayOrigin, rayDirection);
 
-            if (pickResult.second.hasHit) {
-                auto pickedMesh = pickResult.first;
+                if (pickResult.second.hasHit) {
+                    auto pickedMesh = pickResult.first;
 
-                // find associated physics body
-                for (const auto &body: solver.physicsBodies()) {
-                    if (body->mesh() == pickedMesh) {
-                        currentBody = body;
-                        if (!currentBody->generalizedVolumeConstraints().empty()) currentBodyPressure = currentBody->generalizedVolumeConstraints()[0]->pressure();
-                        if (!currentBody->distanceConstraints().empty()) stretchCompliance = currentBody->distanceConstraints()[0]->compliance();
-                        if (!currentBody->bendConstraints().empty()) bendCompliance = currentBody->bendConstraints()[0]->compliance();
-                        if (!currentBody->fixedConstraints().empty()) fixedConstraintCompliance = currentBody->fixedConstraints()[0]->compliance();
-                        break;
+                    // find associated physics body
+                    for (const auto &body: solver.physicsBodies()) {
+                        if (body->mesh() == pickedMesh) {
+                            currentBody = body;
+                            if (!currentBody->generalizedVolumeConstraints().empty()) currentBodyPressure = currentBody->generalizedVolumeConstraints()[0]->pressure();
+                            if (!currentBody->distanceConstraints().empty()) stretchCompliance = currentBody->distanceConstraints()[0]->compliance();
+                            if (!currentBody->bendConstraints().empty()) bendCompliance = currentBody->bendConstraints()[0]->compliance();
+                            if (!currentBody->fixedConstraints().empty()) fixedConstraintCompliance = currentBody->fixedConstraints()[0]->compliance();
+                            break;
+                        }
                     }
+
+                    auto hitPoint = pickResult.second.hitPoint;
+                    isDraggingABody = true;
+                    draggedBody = currentBody;
+                    dragDistance = glm::length(hitPoint - rayOrigin);
+                    draggedFace = pickResult.second.faceIndex;
                 }
+            }
 
-                auto hitPoint = pickResult.second.hitPoint;
-                auto faceIndex = pickResult.second.faceIndex;
-
-                int index0 = pickedMesh->vertexData().indices[faceIndex * 3];
-                int index1 = pickedMesh->vertexData().indices[faceIndex * 3 + 1];
-                int index2 = pickedMesh->vertexData().indices[faceIndex * 3 + 2];
-
-                std::vector<GLfloat> &positions = pickedMesh->vertexData().positions;
+            if (isDraggingABody) {
+                int index0 = currentBody->mesh()->vertexData().indices[draggedFace * 3];
+                int index1 = currentBody->mesh()->vertexData().indices[draggedFace * 3 + 1];
+                int index2 = currentBody->mesh()->vertexData().indices[draggedFace * 3 + 2];
 
                 auto particle0 = currentBody->particles()[index0];
                 auto particle1 = currentBody->particles()[index1];
@@ -354,16 +352,20 @@ int main() {
 
                 glm::vec3 barycenter = (t0 + t1 + t2) / 3.0f;
 
+                glm::vec3 hitPoint = rayOrigin + rayDirection * dragDistance;
+
                 glm::vec3 translation = hitPoint - barycenter;
 
-                for(auto particle: currentBody->particles()) {
-                    particle->position += translation;
+                for (const auto& particle: currentBody->particles()) {
+                    float weight = 1.0f / (1.0f + glm::length(particle->position - barycenter));
+                    particle->position += translation * weight;
                 }
 
-                pickedMesh->vertexData().computeNormals();
+                currentBody->mesh()->vertexData().computeNormals();
 
-                pickedMesh->sendVertexDataToGPU();
+                currentBody->mesh()->sendVertexDataToGPU();
             }
+
         }
 
         float theta = 0.1f * engine.getElapsedSeconds() + 3.14f;
