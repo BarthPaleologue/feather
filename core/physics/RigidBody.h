@@ -83,7 +83,7 @@ public:
 
         if(Utils::isMergedTriangulationClosed(mesh->vertexData().indices, mesh->vertexData().positions)) {
             // volume constraints
-            addGeneralizedVolumeConstraint(new GeneralizedVolumeConstraint(_particles, mesh->vertexData().indices, 1.0f, 0.0f));
+            addGlobalVolumeConstraint(new GlobalVolumeConstraint(_particles, mesh->vertexData().indices, 1.0f, 0.0f));
         }
     }
 };

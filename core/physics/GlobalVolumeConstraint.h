@@ -2,18 +2,18 @@
 // Created by barth on 05/02/24.
 //
 
-#ifndef FEATHERGL_GENERALIZEDVOLUMECONSTRAINT_H
-#define FEATHERGL_GENERALIZEDVOLUMECONSTRAINT_H
+#ifndef FEATHERGL_GLOBALVOLUMECONSTRAINT_H
+#define FEATHERGL_GLOBALVOLUMECONSTRAINT_H
 
 #include <glm/geometric.hpp>
 #include <iostream>
 #include "Constraint.h"
 #include "glad/glad.h"
 
-class GeneralizedVolumeConstraint : public Constraint {
+class GlobalVolumeConstraint : public Constraint {
 public:
-    GeneralizedVolumeConstraint(std::vector<std::shared_ptr<Particle>> particles, std::vector<GLint> indices,
-                                float pressure, float compliance) : Constraint(
+    GlobalVolumeConstraint(std::vector<std::shared_ptr<Particle>> particles, std::vector<GLint> indices,
+                           float pressure, float compliance) : Constraint(
             particles, compliance, EQUALITY), _pressure(pressure), _indices(indices) {
 
         float volume = 0;
@@ -85,4 +85,4 @@ private:
     std::vector<GLint> _indices;
 };
 
-#endif //FEATHERGL_GENERALIZEDVOLUMECONSTRAINT_H
+#endif //FEATHERGL_GLOBALVOLUMECONSTRAINT_H

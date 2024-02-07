@@ -159,9 +159,9 @@ int main() {
     shadowRenderer->addShadowCaster(armadillo);
 
     auto armadilloBody = std::make_shared<RigidBody>(armadillo, 1.0f);
-    armadilloBody->addGeneralizedVolumeConstraint(
-            new GeneralizedVolumeConstraint(armadilloBody->particles(), armadillo->vertexData().indices, 0.0001f,
-                                            0.0001f));
+    armadilloBody->addGlobalVolumeConstraint(
+            new GlobalVolumeConstraint(armadilloBody->particles(), armadillo->vertexData().indices, 0.0001f,
+                                       0.0001f));
     solver.addBody(armadilloBody);
 
     auto ground = MeshBuilder::makePlane("ground", scene, 2);
@@ -225,10 +225,10 @@ int main() {
             ImGui::Text("Selected body: %s", currentBody->mesh()->name().c_str());
         }
 
-        if (currentBody != nullptr && !currentBody->generalizedVolumeConstraints().empty()) {
+        if (currentBody != nullptr && !currentBody->globalVolumeConstraints().empty()) {
             // pressure slider
             ImGui::SliderFloat("Pressure", &currentBodyPressure, 0.0001f, 4.0f);
-            currentBody->generalizedVolumeConstraints()[0]->setPressure(currentBodyPressure);
+            currentBody->globalVolumeConstraints()[0]->setPressure(currentBodyPressure);
         }
 
         if (currentBody != nullptr && !currentBody->distanceConstraints().empty()) {
@@ -345,7 +345,7 @@ int main() {
                     for (const auto &body: solver.physicsBodies()) {
                         if (body->mesh() == pickedMesh) {
                             currentBody = body;
-                            if (!currentBody->generalizedVolumeConstraints().empty()) currentBodyPressure = currentBody->generalizedVolumeConstraints()[0]->pressure();
+                            if (!currentBody->globalVolumeConstraints().empty()) currentBodyPressure = currentBody->globalVolumeConstraints()[0]->pressure();
                             if (!currentBody->distanceConstraints().empty()) stretchCompliance = currentBody->distanceConstraints()[0]->compliance();
                             if (!currentBody->bendConstraints().empty()) bendCompliance = currentBody->bendConstraints()[0]->compliance();
                             if (!currentBody->fixedConstraints().empty()) fixedConstraintCompliance = currentBody->fixedConstraints()[0]->compliance();

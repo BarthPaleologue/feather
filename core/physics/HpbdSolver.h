@@ -163,7 +163,7 @@ public:
                                                                                body->particles()[triangle[0]],
                                                                                body->particles()[triangle[1]],
                                                                                body->particles()[triangle[2]]);
-                            otherBody->collisionConstraints().push_back(collisionConstraint);
+                            otherBody->addCollisionConstraint(collisionConstraint);
                         }
                     }
 
@@ -188,7 +188,7 @@ public:
                                                                                otherBody->particles()[triangle[0]],
                                                                                otherBody->particles()[triangle[1]],
                                                                                otherBody->particles()[triangle[2]]);
-                            body->collisionConstraints().push_back(collisionConstraint);
+                            body->addCollisionConstraint(collisionConstraint);
                         }
                     }
 
@@ -209,7 +209,7 @@ public:
                 for (auto bendConstraint: body->bendConstraints()) {
                     bendConstraint->solve(subTimeStep);
                 }
-                for (auto volumeConstraint: body->generalizedVolumeConstraints()) {
+                for (auto volumeConstraint: body->globalVolumeConstraints()) {
                     volumeConstraint->solve(subTimeStep);
                 }
                 for (auto collisionConstraint: body->collisionConstraints()) {

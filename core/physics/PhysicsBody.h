@@ -14,12 +14,11 @@
 #include "BendConstraint.h"
 #include "VolumeConstraint.h"
 #include "DihedralBendConstraint.h"
-#include "GeneralizedVolumeConstraint.h"
+#include "GlobalVolumeConstraint.h"
 
 class PhysicsBody {
 public:
     PhysicsBody(std::shared_ptr<Mesh> mesh, float mass) : _mesh(mesh), _mass(mass) {
-
         _mesh->bakeRotationIntoVertexData();
         _mesh->bakeScalingIntoVertexData();
         auto meshPosition = _mesh->transform()->position();
@@ -145,33 +144,27 @@ public:
     }
 
     void addFixedConstraint(FixedConstraint *constraint) {
-        _nonCollisionConstraints.push_back(constraint);
         _fixedConstraints.push_back(constraint);
     }
 
     void addDistanceConstraint(DistanceConstraint *constraint) {
-        _nonCollisionConstraints.push_back(constraint);
         _distanceConstraints.push_back(constraint);
     }
 
     void addBendConstraint(BendConstraint *constraint) {
-        _nonCollisionConstraints.push_back(constraint);
         _bendConstraints.push_back(constraint);
     }
 
-    void addIsometricBendConstraint(DihedralBendConstraint *constraint) {
-        _nonCollisionConstraints.push_back(constraint);
-        _isometricBendConstraints.push_back(constraint);
+    void addDihedralBendConstraint(DihedralBendConstraint *constraint) {
+        _dihedralBendConstraints.push_back(constraint);
     }
 
     void addVolumeConstraint(VolumeConstraint *constraint) {
-        _nonCollisionConstraints.push_back(constraint);
         _volumeConstraints.push_back(constraint);
     }
 
-    void addGeneralizedVolumeConstraint(GeneralizedVolumeConstraint *constraint) {
-        _nonCollisionConstraints.push_back(constraint);
-        _generalizedVolumeConstraints.push_back(constraint);
+    void addGlobalVolumeConstraint(GlobalVolumeConstraint *constraint) {
+        _globalVolumeConstraints.push_back(constraint);
     }
 
     void addCollisionConstraint(CollisionConstraint *constraint) {
@@ -180,10 +173,6 @@ public:
 
     std::vector<std::vector<DistanceConstraint *>> &distanceConstraintsPerLevel() {
         return _distanceConstraintsPerLevel;
-    }
-
-    std::vector<Constraint *> &nonCollisionConstraints() {
-        return _nonCollisionConstraints;
     }
 
     std::vector<FixedConstraint *> &fixedConstraints() {
@@ -202,8 +191,8 @@ public:
         return _volumeConstraints;
     }
 
-    std::vector<GeneralizedVolumeConstraint *> &generalizedVolumeConstraints() {
-        return _generalizedVolumeConstraints;
+    std::vector<GlobalVolumeConstraint *> &globalVolumeConstraints() {
+        return _globalVolumeConstraints;
     }
 
     std::vector<CollisionConstraint *> &collisionConstraints() {
@@ -212,10 +201,6 @@ public:
 
     float mass() const {
         return _mass;
-    }
-
-    unsigned int nbParticles() const {
-        return _particles.size();
     }
 
     void reset() {
@@ -233,14 +218,12 @@ protected:
 private:
     std::vector<std::vector<DistanceConstraint *>> _distanceConstraintsPerLevel;
 
-    std::vector<Constraint *> _nonCollisionConstraints;
-
     std::vector<FixedConstraint *> _fixedConstraints;
     std::vector<DistanceConstraint *> _distanceConstraints;
     std::vector<BendConstraint *> _bendConstraints;
-    std::vector<DihedralBendConstraint *> _isometricBendConstraints;
+    std::vector<DihedralBendConstraint *> _dihedralBendConstraints;
     std::vector<VolumeConstraint *> _volumeConstraints;
-    std::vector<GeneralizedVolumeConstraint *> _generalizedVolumeConstraints;
+    std::vector<GlobalVolumeConstraint *> _globalVolumeConstraints;
     std::vector<CollisionConstraint *> _collisionConstraints;
 };
 

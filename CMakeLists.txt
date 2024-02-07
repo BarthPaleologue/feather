@@ -24,7 +24,7 @@ add_executable(featherGL ${SRCS} ${IMGUI_SRC}
         core/Renderable.h
         core/AABB.h
         core/AABBHelper.h
-        core/physics/GeneralizedVolumeConstraint.h
+        core/physics/GlobalVolumeConstraint.h
         core/PickResult.h
 )
 
