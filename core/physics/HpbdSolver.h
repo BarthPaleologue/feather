@@ -41,6 +41,7 @@ public:
 
         // apply force fields
         for (const auto &body: _physicsBodies) {
+            if(!body->mesh()->isEnabled()) continue;
             for (const auto &particle: body->particles()) {
                 for (const auto &field: _fields) {
                     particle->forces.push_back(
@@ -55,6 +56,7 @@ public:
         for (unsigned int i = 0; i < _iterations; i++) {
             // apply resultingForce
             for (const auto &body: _physicsBodies) {
+                if(!body->mesh()->isEnabled()) continue;
                 for (const auto &particle: body->particles()) {
                     particle->velocity += subTimeStep * particle->invMass * particle->resultingForce();
 
@@ -65,12 +67,14 @@ public:
 
             // predict positions
             for (const auto &body: _physicsBodies) {
+                if(!body->mesh()->isEnabled()) continue;
                 for (const auto &particle: body->particles()) {
                     particle->predictedPosition = particle->position + subTimeStep * particle->velocity;
                 }
             }
 
             for (const auto &body: _physicsBodies) {
+                if(!body->mesh()->isEnabled()) continue;
                 // delete memory of pointers to collision constraints
                 for (auto collisionConstraint: body->collisionConstraints()) {
                     delete collisionConstraint;
@@ -204,6 +208,8 @@ public:
             // solve nonCollisionConstraints
             //for (unsigned int i = 0; i < _iterations; i++) {
             for (const auto &body: _physicsBodies) {
+                if(!body->mesh()->isEnabled()) continue;
+
                 for (const auto &distanceConstraints: body->distanceConstraintsPerLevel()) {
                     for (auto distanceConstraint: distanceConstraints) {
                         distanceConstraint->solve(subTimeStep);
@@ -245,6 +251,8 @@ public:
             }*/
 
             for (const auto &body: _physicsBodies) {
+                if(!body->mesh()->isEnabled()) continue;
+
                 for (const auto &particle: body->particles()) {
                     particle->velocity = (particle->predictedPosition - particle->position) / subTimeStep;
                     particle->position = particle->predictedPosition;
@@ -254,6 +262,7 @@ public:
 
         // update mesh vertex data at the end of the simulation step
         for (const auto &body: _physicsBodies) {
+            if(!body->mesh()->isEnabled()) continue;
             body->updateVertexData();
         }
 
