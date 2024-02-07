@@ -65,7 +65,7 @@ int main() {
     clothMesh->transform()->setScale(10);
     clothMesh->transform()->setPosition(0, 7, 0);
 
-    auto cloth = std::make_shared<SoftBody>(clothMesh, 1.0f, 0.01f, 0.01f);
+    auto cloth = std::make_shared<SoftBody>(clothMesh, 1.0f, 0.1f, 0.01f);
 
     // fixed particles
     cloth->addFixedConstraint(new FixedConstraint(cloth->particles()[0]));
@@ -111,7 +111,7 @@ int main() {
     shadowRenderer->addShadowCaster(cube2);
 
     auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 2);
-    //sphere->transform()->setScale(2.0);
+    sphere->transform()->setScale(1.5);
     //sphere->transform()->setPosition(4, 5, 10);
     sphere->transform()->setPosition(0, 9, 0);
 
@@ -192,6 +192,12 @@ int main() {
     float armadilloPressure = 1.0f;
     bool wireframe = false;
 
+    bool clothEnabled = true;
+    bool cubeEnabled = true;
+    bool sphereEnabled = true;
+    bool bunnyEnabled = false;
+    bool armadilloEnabled = false;
+
     scene.onRenderGuiObservable.add([&] {
         ImGui::Begin("HPBD Controls");
 
@@ -210,6 +216,22 @@ int main() {
         cubeMaterial->setWireframe(wireframe);
         bunnyMaterial->setWireframe(wireframe);
         groundMaterial->setWireframe(wireframe);
+
+        // set enabled
+        ImGui::Checkbox("Cloth enabled", &clothEnabled);
+        cloth->mesh()->setEnabled(clothEnabled);
+
+        ImGui::Checkbox("Cube enabled", &cubeEnabled);
+        cube->setEnabled(cubeEnabled);
+
+        ImGui::Checkbox("Sphere enabled", &sphereEnabled);
+        sphere->setEnabled(sphereEnabled);
+
+        ImGui::Checkbox("Bunny enabled", &bunnyEnabled);
+        simplifiedBunny->setEnabled(bunnyEnabled);
+
+        ImGui::Checkbox("Armadillo enabled", &armadilloEnabled);
+        armadillo->setEnabled(armadilloEnabled);
 
         // start button
         if (ImGui::Button("Toggle simulation")) {
