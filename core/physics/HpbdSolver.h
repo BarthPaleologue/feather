@@ -156,11 +156,12 @@ public:
                             glm::vec3 particleDirection = glm::normalize(particle->predictedPosition - otherBodyCenterOfMass);
 
                             // if the trajectory of the particle does not intersect the triangle, skip this collision constraint
-                            glm::vec3 result;
-                            if(particle->mass != 0 && !Utils::rayTriangleIntersection(particle->predictedPosition - particleDirection, particleDirection,
+                            float t;
+                            if(particle->mass != 0 && !Utils::rayTriangleIntersection(particle->predictedPosition - particleDirection * 0.1f, particleDirection,
                                                               body->particles()[triangle[0]]->predictedPosition,
                                                               body->particles()[triangle[1]]->predictedPosition,
-                                                              body->particles()[triangle[2]]->predictedPosition, result)) continue;
+                                                              body->particles()[triangle[2]]->predictedPosition, t)) continue;
+                            if(t > 0.2f) continue;
 
                             auto collisionConstraint = new CollisionConstraint(particle,
                                                                                body->particles()[triangle[0]],
@@ -175,11 +176,12 @@ public:
                             glm::vec3 particleDirection = glm::normalize(particle->predictedPosition - bodyCenterOfMass);
 
                             // if the trajectory of the particle does not intersect the triangle, skip this collision constraint
-                            glm::vec3 result;
-                            if(particle->mass != 0 && !Utils::rayTriangleIntersection(particle->predictedPosition - particleDirection, particleDirection,
+                            float t;
+                            if(particle->mass != 0 && !Utils::rayTriangleIntersection(particle->predictedPosition - particleDirection * 0.1f, particleDirection,
                                                                otherBody->particles()[triangle[0]]->predictedPosition,
                                                                otherBody->particles()[triangle[1]]->predictedPosition,
-                                                               otherBody->particles()[triangle[2]]->predictedPosition, result)) continue;
+                                                               otherBody->particles()[triangle[2]]->predictedPosition, t)) continue;
+                            if(t > 0.2f) continue;
 
 
                             auto collisionConstraint = new CollisionConstraint(particle,

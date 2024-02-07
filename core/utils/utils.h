@@ -150,7 +150,7 @@ public:
         }
     }
 
-    static bool rayTriangleIntersection(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3 t0, glm::vec3 t1, glm::vec3 t2, glm::vec3 &result) {
+    static bool rayTriangleIntersection(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3 t0, glm::vec3 t1, glm::vec3 t2, float &t) {
         glm::vec3 edge1 = t1 - t0;
         glm::vec3 edge2 = t2 - t0;
         glm::vec3 h = glm::cross(rayDirection, edge2);
@@ -175,10 +175,9 @@ public:
             return false;
         }
 
-        float t = f * glm::dot(edge2, q);
+        t = f * glm::dot(edge2, q);
 
         if (t > 0.00001f) {
-            result = rayOrigin + rayDirection * t;
             return true;
         }
 
@@ -315,8 +314,8 @@ public:
             glm::vec3 worldV2 = glm::vec3(worldMatrix * glm::vec4(v2, 1.0f));
             glm::vec3 worldV3 = glm::vec3(worldMatrix * glm::vec4(v3, 1.0f));
 
-            glm::vec3 hit;
-            if(rayTriangleIntersection(rayOrigin, rayDirection, worldV1, worldV2, worldV3, hit)) {
+            float t;
+            if(rayTriangleIntersection(rayOrigin, rayDirection, worldV1, worldV2, worldV3, t)) {
                 // if normal point in the same way as the ray direction, then it is a back face, ignore it
                 glm::vec3 normal = glm::cross(worldV2 - worldV1, worldV3 - worldV1);
                 if(glm::dot(normal, rayDirection) >= 0) {
@@ -325,7 +324,7 @@ public:
 
                 PickResult result;
                 result.hasHit = true;
-                result.hitPoint = hit;
+                result.hitPoint = rayOrigin + t * rayDirection;
                 result.faceIndex = i / 3;
                 results.push_back(result);
             }
