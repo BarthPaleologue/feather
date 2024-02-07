@@ -186,7 +186,6 @@ int main() {
         new AABBHelper(mesh->aabb(), scene);
     }*/
 
-
     // Seed the random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -287,6 +286,44 @@ int main() {
 
         ImGui::Checkbox("Armadillo enabled", &armadilloEnabled);
         armadillo->setEnabled(armadilloEnabled);
+
+        // spawn sphere button
+        if (ImGui::Button("Spawn sphere")) {
+            auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 2);
+            sphere->transform()->setScale(1.5);
+            sphere->transform()->setPosition(distribution(gen), 10, distribution(gen));
+            sphere->setMaterial(sphereMaterial);
+            shadowRenderer->addShadowCaster(sphere);
+            auto sphereBody = std::make_shared<SoftBody>(sphere, 1.0f, 0.01f, 0.01f);
+            solver.addBody(sphereBody);
+        }
+        ImGui::SameLine();
+
+        // spawn cube button
+        if (ImGui::Button("Spawn cube")) {
+            auto cube = MeshBuilder::makeUVCube("cube", scene);
+            cube->transform()->setPosition(distribution(gen), 11, distribution(gen));
+            cube->setMaterial(cubeMaterial);
+            auto cubeBody = std::make_shared<RigidBody>(cube, 1.0f);
+            solver.addBody(cubeBody);
+            shadowRenderer->addShadowCaster(cube);
+        }
+        ImGui::SameLine();
+
+        // spawn bunny button
+        if (ImGui::Button("Spawn bunny")) {
+            auto bunny = MeshBuilder::FromObjFile("../assets/models/bunny.obj", scene);
+            auto simplifiedData = bunny->vertexData();
+            for (unsigned int i = 0; i < 3; i++) {
+                simplifiedData = simplifiedData.simplify();
+            }
+            bunny->setVertexData(simplifiedData);
+            bunny->setMaterial(bunnyMaterial);
+            bunny->transform()->setPosition(distribution(gen), 12, distribution(gen));
+            shadowRenderer->addShadowCaster(bunny);
+            auto bunnyBody = std::make_shared<SoftBody>(bunny, 1.0, 0.01f, 0.01f);
+            solver.addBody(bunnyBody);
+        }
 
         // start button
         if (ImGui::Button("Toggle simulation")) {
