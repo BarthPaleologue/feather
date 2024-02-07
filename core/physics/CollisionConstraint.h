@@ -13,7 +13,7 @@ class CollisionConstraint : public Constraint {
 public:
     CollisionConstraint(std::shared_ptr<Particle> q, std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2,
                         std::shared_ptr<Particle> p3) : Constraint(
-            {q, p1, p2, p3}, 0.0f, INEQUALITY), _h(0.01f) {};
+            {q, p1, p2, p3}, 0.0f, INEQUALITY), _h(0.02f) {};
 
 
     float evaluate() const override {
@@ -68,7 +68,7 @@ private:
     }
 
     void recomputeTargetValue() override {
-        _h = 0.01f;
+        _h = 0.02f;
     }
 };
 
