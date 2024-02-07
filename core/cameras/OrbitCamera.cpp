@@ -12,6 +12,7 @@ OrbitCamera::OrbitCamera(Engine *engine) : Camera(engine), _target(0.0f), _radiu
     engine->onMouseScrollObservable.add([this](double xOffset, double yOffset) {
         auto& io = ImGui::GetIO();
         if(io.WantCaptureMouse || io.WantCaptureKeyboard) return;
+        if(_engine->isKeyPressed(GLFW_KEY_LEFT_SHIFT)) return;
         float scrollOffset = (float) yOffset / 5.0f;
         this->zoom(scrollOffset);
     });
@@ -20,11 +21,11 @@ OrbitCamera::OrbitCamera(Engine *engine) : Camera(engine), _target(0.0f), _radiu
         auto& io = ImGui::GetIO();
         if(io.WantCaptureMouse || io.WantCaptureKeyboard) return;
         if (!this->_engine->isMousePressed()) return;
+        if(_engine->isKeyPressed(GLFW_KEY_LEFT_SHIFT)) return;
         if(!_engine->isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
             this->rotatePhi(-(float) mouseDX / 200.0f);
             this->rotateTheta(-(float) mouseDY / 200.0f);
         } else {
-
             glm::vec3 forward = glm::normalize(_target - _position);
             glm::vec3 right = glm::normalize(glm::cross(forward, getUpwardDirection()));
 
