@@ -64,6 +64,30 @@ public:
         return _meshes;
     }
 
+    std::pair<std::shared_ptr<Mesh>, PickResult> pickWithRay(glm::vec3 origin, glm::vec3 direction) {
+        std::vector<std::shared_ptr<Mesh>> meshes;
+        for (const auto& mesh: _meshes) {
+            if(!mesh->isEnabled()) continue;
+            if(!mesh->isPickingEnabled()) continue;
+            if(!mesh->aabb()->intersectsRay(origin, direction)) continue;
+            meshes.push_back(mesh);
+        }
+
+        // sort meshes by distance to the ray origin
+        std::sort(meshes.begin(), meshes.end(), [origin](const std::shared_ptr<Mesh>& a, const std::shared_ptr<Mesh>& b) {
+            return glm::distance(a->aabb()->center(), origin) < glm::distance(b->aabb()->center(), origin);
+        });
+
+        for (const auto& mesh: meshes) {
+            PickResult r = mesh->pickWithRay(origin, direction);
+            if(r.hasHit) {
+                return {mesh, r};
+            }
+        }
+
+        return {};
+    }
+
     Observable<> onBeforeRenderObservable{};
     Observable<> onAfterRenderObservable{};
 

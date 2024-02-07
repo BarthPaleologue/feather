@@ -45,6 +45,30 @@ public:
         return intersects(triangleAABB);
     }
 
+    bool intersectsRay(glm::vec3 rayOrigin, glm::vec3 rayDirection) const {
+        float tmin = (this->_min.x - rayOrigin.x) / rayDirection.x;
+        float tmax = (this->_max.x - rayOrigin.x) / rayDirection.x;
+
+        if (tmin > tmax) std::swap(tmin, tmax);
+
+        float tymin = (this->_min.y - rayOrigin.y) / rayDirection.y;
+        float tymax = (this->_max.y - rayOrigin.y) / rayDirection.y;
+
+        if (tymin > tymax) std::swap(tymin, tymax);
+
+        if ((tmin > tymax) || (tymin > tmax)) return false;
+
+        if (tymin > tmin) tmin = tymin;
+        if (tymax < tmax) tmax = tymax;
+
+        float tzmin = (this->_min.z - rayOrigin.z) / rayDirection.z;
+        float tzmax = (this->_max.z - rayOrigin.z) / rayDirection.z;
+
+        if (tzmin > tzmax) std::swap(tzmin, tzmax);
+
+        return (tmin <= tzmax) && (tzmin <= tmax);
+    }
+
     bool contains(const glm::vec3 &point) const {
         return (point.x >= _min.x && point.x <= _max.x) &&
                (point.y >= _min.y && point.y <= _max.y) &&

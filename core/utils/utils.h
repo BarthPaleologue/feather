@@ -12,8 +12,10 @@
 #include <iostream>
 #include <glm/gtc/random.hpp>
 #include <glm/ext/scalar_constants.hpp>
+#include <glm/glm.hpp>
 #include "glad/glad.h"
 #include "Core"
+#include "PickResult.h"
 
 /**
  * Load file given by filename to the stringBuffer
@@ -148,32 +150,39 @@ public:
         }
     }
 
-    static bool rayTriangleIntersection(glm::vec3 r0, glm::vec3 r1, glm::vec3 t0, glm::vec3 t1, glm::vec3 t2, glm::vec3 &result) {
-        glm::vec3 e1 = t1 - t0;
-        glm::vec3 e2 = t2 - t0;
-        glm::vec3 h = glm::cross(r1, e2);
-        float a = glm::dot(e1, h);
+    static bool rayTriangleIntersection(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3 t0, glm::vec3 t1, glm::vec3 t2, glm::vec3 &result) {
+        glm::vec3 edge1 = t1 - t0;
+        glm::vec3 edge2 = t2 - t0;
+        glm::vec3 h = glm::cross(rayDirection, edge2);
+        float a = glm::dot(edge1, h);
+
         if (a > -0.00001f && a < 0.00001f) {
             return false;
         }
+
         float f = 1.0f / a;
-        glm::vec3 s = r0 - t0;
+        glm::vec3 s = rayOrigin - t0;
         float u = f * glm::dot(s, h);
+
         if (u < 0.0f || u > 1.0f) {
             return false;
         }
-        glm::vec3 q = glm::cross(s, e1);
-        float v = f * glm::dot(r1, q);
+
+        glm::vec3 q = glm::cross(s, edge1);
+        float v = f * glm::dot(rayDirection, q);
+
         if (v < 0.0f || u + v > 1.0f) {
             return false;
         }
-        float t = f * glm::dot(e2, q);
+
+        float t = f * glm::dot(edge2, q);
+
         if (t > 0.00001f) {
-            result = r0 + t * r1;
+            result = rayOrigin + rayDirection * t;
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     static Eigen::MatrixXf crossProdMat(Eigen::VectorXf _p) {
@@ -288,6 +297,53 @@ public:
                 i -= 3;
             }
         }
+    }
+
+    static PickResult PickWithRay(std::vector<int> &indices, std::vector<GLfloat> &positions, glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::mat4 worldMatrix) {
+        std::vector<PickResult> results{};
+
+        for(int i = 0; i < indices.size(); i += 3) {
+            int index1 = indices[i];
+            int index2 = indices[i + 1];
+            int index3 = indices[i + 2];
+
+            glm::vec3 v1 = glm::vec3(positions[index1 * 3], positions[index1 * 3 + 1], positions[index1 * 3 + 2]);
+            glm::vec3 v2 = glm::vec3(positions[index2 * 3], positions[index2 * 3 + 1], positions[index2 * 3 + 2]);
+            glm::vec3 v3 = glm::vec3(positions[index3 * 3], positions[index3 * 3 + 1], positions[index3 * 3 + 2]);
+
+            glm::vec3 worldV1 = glm::vec3(worldMatrix * glm::vec4(v1, 1.0f));
+            glm::vec3 worldV2 = glm::vec3(worldMatrix * glm::vec4(v2, 1.0f));
+            glm::vec3 worldV3 = glm::vec3(worldMatrix * glm::vec4(v3, 1.0f));
+
+            glm::vec3 hit;
+            if(rayTriangleIntersection(rayOrigin, rayDirection, worldV1, worldV2, worldV3, hit)) {
+                // if normal point in the same way as the ray direction, then it is a back face, ignore it
+                glm::vec3 normal = glm::cross(worldV2 - worldV1, worldV3 - worldV1);
+                if(glm::dot(normal, rayDirection) >= 0) {
+                    continue;
+                }
+
+                PickResult result;
+                result.hasHit = true;
+                result.hitPoint = hit;
+                result.faceIndex = i / 3;
+                results.push_back(result);
+            }
+        }
+
+        // find the closest hitPoint
+        if(results.empty()) {
+            return {};
+        }
+
+        auto closestResult = results[0];
+        for(int i = 1; i < results.size(); i++) {
+            if(glm::distance(rayOrigin, results[i].hitPoint) < glm::distance(rayOrigin, closestResult.hitPoint)) {
+                closestResult = results[i];
+            }
+        }
+
+        return closestResult;
     }
 };
 

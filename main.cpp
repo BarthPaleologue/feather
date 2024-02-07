@@ -161,6 +161,7 @@ int main() {
     auto ground = MeshBuilder::makePlane("ground", scene, 2);
     ground->transform()->setPosition(0, 0, 0);
     ground->transform()->setScale(40);
+    ground->setPickingEnabled(false);
 
     auto groundMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     groundMaterial->setAlbedoColor(0.5, 0.5, 0.5);
@@ -259,15 +260,89 @@ int main() {
         }
         if(realTimePhysics) i++;*/
 
-        glm::vec3 rayOrigin = camera.position();
-        glm::vec2 mousePos = engine.getMousePosition();
-        glm::vec2 windowSize = engine.getWindowSize();
+        if(engine.isMousePressed() && engine.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
+            glm::vec3 rayOrigin = camera.position();
+            glm::vec2 mousePos = engine.getMousePosition();
+            glm::vec2 windowSize = engine.getWindowSize();
 
-        glm::vec3 rayDirection = camera.getRayFromMouse(mousePos.x, mousePos.y, windowSize.x, windowSize.y);
+            glm::vec3 rayDirection = camera.getRayFromMouse(mousePos.x, mousePos.y, windowSize.x, windowSize.y);
 
-        float t = rayOrigin.y / -rayDirection.y;
-        glm::vec3 hitPoint = rayOrigin + t * rayDirection;
-        sphere->transform()->setPosition(hitPoint);
+            auto pickResult = scene.pickWithRay(rayOrigin, rayDirection);
+
+            if (pickResult.second.hasHit) {
+                auto pickedMesh = pickResult.first;
+                auto hitPoint = pickResult.second.hitPoint;
+                auto index0 = pickResult.second.faceIndex * 3;
+                auto index1 = pickResult.second.faceIndex * 3 + 1;
+                auto index2 = pickResult.second.faceIndex * 3 + 2;
+
+                std::vector<GLfloat> &positions = pickedMesh->vertexData().positions;
+
+                /*if(index0 < positions.size() / 3) {
+                    std::cout << "index0: " << index0 << std::endl;
+                }
+                if(index1 < positions.size() / 3) {
+                    std::cout << "index1: " << index1 << std::endl;
+                }
+                if(index2 < positions.size() / 3) {
+                    std::cout << "index2: " << index2 << std::endl;
+                }
+
+                positions[index0 * 3] += 0.1f;
+                positions[index0 * 3 + 1] += 0.1f;
+                positions[index0 * 3 + 2] += 0.1f;
+
+                positions[index1 * 3] += 0.1f;
+                positions[index1 * 3 + 1] += 0.1f;
+                positions[index1 * 3 + 2] += 0.1f;
+
+                positions[index2 * 3] += 0.1f;
+                positions[index2 * 3 + 1] += 0.1f;
+                positions[index2 * 3 + 2] += 0.1f;*/
+
+                /*glm::vec3 t0 = glm::vec3(positions[index0 * 3], positions[index0 * 3 + 1], positions[index0 * 3 + 2]);
+                glm::vec3 t1 = glm::vec3(positions[index1 * 3], positions[index1 * 3 + 1], positions[index1 * 3 + 2]);
+                glm::vec3 t2 = glm::vec3(positions[index2 * 3], positions[index2 * 3 + 1], positions[index2 * 3 + 2]);
+
+                glm::mat4 worldMatrix = pickedMesh->transform()->computeWorldMatrix();
+
+                t0 = glm::vec3(worldMatrix * glm::vec4(t0, 1.0f));
+                t1 = glm::vec3(worldMatrix * glm::vec4(t1, 1.0f));
+                t2 = glm::vec3(worldMatrix * glm::vec4(t2, 1.0f));
+
+                glm::vec3 barycenter = (t0 + t1 + t2) / 3.0f;
+
+                glm::vec3 translation = glm::vec3(0.0, 1.0, 0.0); //hitPoint - barycenter;
+
+                // move triangle vertex positions by translation
+
+                t0 += translation;
+                t1 += translation;
+                t2 += translation;
+
+                glm::mat4 invWorldMatrix = glm::inverse(worldMatrix);
+
+                t0 = glm::vec3(invWorldMatrix * glm::vec4(t0, 1.0f));
+                t1 = glm::vec3(invWorldMatrix * glm::vec4(t1, 1.0f));
+                t2 = glm::vec3(invWorldMatrix * glm::vec4(t2, 1.0f));
+
+                positions[index0 * 3] = t0.x;
+                positions[index0 * 3 + 1] = t0.y;
+                positions[index0 * 3 + 2] = t0.z;
+
+                positions[index1 * 3] = t1.x;
+                positions[index1 * 3 + 1] = t1.y;
+                positions[index1 * 3 + 2] = t1.z;
+
+                positions[index2 * 3] = t2.x;
+                positions[index2 * 3 + 1] = t2.y;
+                positions[index2 * 3 + 2] = t2.z;*/
+
+                //pickedMesh->vertexData().computeNormals();
+
+                //pickedMesh->sendVertexDataToGPU();
+            }
+        }
 
         float theta = 0.1f * engine.getElapsedSeconds() + 3.14f;
         glm::vec3 newLightDirection = glm::normalize(glm::vec3(cosf(theta), 1.0f, sinf(theta)));

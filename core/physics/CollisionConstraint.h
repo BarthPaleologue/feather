@@ -30,13 +30,6 @@ public:
         }
         n = glm::normalize(n);
 
-        glm::vec3 intersection;
-        bool doesIntersect = Utils::rayTriangleIntersection(oldQ, q, p1, p2, p3, intersection);
-
-        if(doesIntersect) {
-            return glm::dot(q - intersection, n) - _h;
-        }
-
         return glm::dot(q - p1, n) - _h;
     }
 
@@ -67,11 +60,6 @@ private:
         Eigen::MatrixXf gradP3 = Utils::crossProdGrad_p2(p21, p31);
 
         Eigen::Vector3f _qEigen = Eigen::Vector3f(q.x - p1.x, q.y - p1.y, q.z - p1.z);
-        glm::vec3 intersection;
-        bool doesIntersect = Utils::rayTriangleIntersection(oldQ, q, p1, p2, p3, intersection);
-        if(doesIntersect) {
-            _qEigen = Eigen::Vector3f(q.x - intersection.x, q.y - intersection.y, q.z - intersection.z);
-        }
 
         _gradient.col(0) = Eigen::Vector3f(n.x, n.y, n.z);
         _gradient.col(1) = gradP2 * _qEigen;

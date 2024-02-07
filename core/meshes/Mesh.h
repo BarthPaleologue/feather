@@ -13,6 +13,7 @@
 #include "../utils/Uuid.h"
 #include "Renderable.h"
 #include "AABB.h"
+#include "PickResult.h"
 
 class Mesh : public Transformable, public Renderable {
 public:
@@ -59,7 +60,21 @@ public:
         return _vertexData;
     }
 
+    PickResult pickWithRay(glm::vec3 rayOrigin, glm::vec3 rayDirection) {
+        if (!_pickingEnabled) return PickResult{};
+        glm::mat4 worldMatrix = transform()->computeWorldMatrix();
+        return Utils::PickWithRay(vertexData().indices, vertexData().positions, rayOrigin, rayDirection, worldMatrix);
+    }
+
     void render(glm::mat4 projectionViewMatrix, Shader* shaderOverride = nullptr);
+
+    void setPickingEnabled(bool enabled) {
+        _pickingEnabled = enabled;
+    }
+
+    bool isPickingEnabled() {
+        return _pickingEnabled;
+    }
 
     void setEnabled(bool enabled) {
         _enabled = enabled;
@@ -84,6 +99,7 @@ private:
     GLuint _uvVbo{};
     GLuint _colVbo{};
 
+    bool _pickingEnabled = true;
     bool _enabled = true;
 protected:
     std::shared_ptr<Material> _material;
