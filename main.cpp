@@ -65,7 +65,7 @@ int main() {
     clothMesh->transform()->setScale(10);
     clothMesh->transform()->setPosition(0, 7, 0);
 
-    auto cloth = std::make_shared<SoftBody>(clothMesh, 1.0f, 0.001f, 0.001f);
+    auto cloth = std::make_shared<SoftBody>(clothMesh, 1.0f, 0.01f, 0.01f);
 
     // fixed particles
     cloth->addFixedConstraint(new FixedConstraint(cloth->particles()[0]));
@@ -82,6 +82,7 @@ int main() {
     clothMaterial->setNormalTexture(new Texture("./assets/textures/carpet_normal.png"));
     clothMaterial->setMetallic(0.0f);
     clothMaterial->setBackFaceCullingEnabled(false);
+    clothMaterial->receiveShadows(shadowRenderer);
     cloth->mesh()->setMaterial(clothMaterial);
 
     shadowRenderer->addShadowCaster(cloth->mesh());
