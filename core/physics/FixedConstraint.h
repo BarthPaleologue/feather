@@ -13,8 +13,8 @@
 class FixedConstraint : public Constraint {
 public:
     FixedConstraint(std::shared_ptr<Particle> p) : Constraint({p}, 0.0f, EQUALITY), _targetPosition(p->position) {
-        p->mass = 0.0f;
-        p->invMass = 0.0f;
+        /*p->mass = 0.0f;
+        p->invMass = 0.0f;*/
     };
 
     float evaluate() const override {
