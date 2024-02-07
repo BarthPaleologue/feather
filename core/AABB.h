@@ -116,7 +116,7 @@ public:
             expand(glm::vec3(transformedPosition));
         }
 
-        expand(0.3f);
+        expand(0.05f);
     }
 
     float volume() const {

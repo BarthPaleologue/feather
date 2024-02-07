@@ -10,7 +10,7 @@
 
 class DistanceConstraint : public Constraint {
 public:
-    DistanceConstraint(std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2, float stiffness) : Constraint({p1, p2}, stiffness, EQUALITY) {
+    DistanceConstraint(std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2, float compliance) : Constraint({p1, p2}, compliance, EQUALITY) {
         _restLength = glm::length(p1->position - p2->position);
     }
 

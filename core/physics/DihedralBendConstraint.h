@@ -12,8 +12,8 @@
 
 class DihedralBendConstraint: public Constraint {
 public:
-    DihedralBendConstraint(std::shared_ptr<Particle> p0, std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2, std::shared_ptr<Particle> p3, float stiffness) : Constraint(
-    {p0, p1, p2, p3}, stiffness, EQUALITY) {
+    DihedralBendConstraint(std::shared_ptr<Particle> p0, std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2, std::shared_ptr<Particle> p3, float compliance) : Constraint(
+    {p0, p1, p2, p3}, compliance, EQUALITY) {
 
             glm::vec3 p_0 = _particles[0]->position;
             glm::vec3 p_1 = _particles[1]->position;

@@ -11,8 +11,8 @@
 class VolumeConstraint : public Constraint {
 public:
     VolumeConstraint(std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2, std::shared_ptr<Particle> p3,
-                     std::shared_ptr<Particle> p4, float restVolume, float stiffness) : Constraint(
-            {p1, p2, p3, p4}, stiffness, EQUALITY), _restVolume(restVolume) {};
+                     std::shared_ptr<Particle> p4, float restVolume, float compliance) : Constraint(
+            {p1, p2, p3, p4}, compliance, EQUALITY), _restVolume(restVolume) {};
 
     float evaluate() const override {
         glm::vec3 p1 = _particles[0]->predictedPosition;

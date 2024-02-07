@@ -18,13 +18,13 @@ enum ConstraintType {
 
 class Constraint {
 public:
-    Constraint(std::vector<std::shared_ptr<Particle>> particles, float stiffness, ConstraintType type) : _particles(
-            std::move(particles)), _stiffness(stiffness), _type(type) {
+    Constraint(std::vector<std::shared_ptr<Particle>> particles, float compliance, ConstraintType type) : _particles(
+            std::move(particles)), _compliance(compliance), _type(type) {
         _cardinality = _particles.size();
         _gradient = Eigen::MatrixXf::Zero(3, _cardinality);
     }
 
-    Constraint(const Constraint &other) : _particles(other._particles), _stiffness(other._stiffness), _type(other._type) {
+    Constraint(const Constraint &other) : _particles(other._particles), _compliance(other._compliance), _type(other._type) {
         _cardinality = _particles.size();
         _gradient = Eigen::MatrixXf::Zero(3, _cardinality);
     }
@@ -32,18 +32,43 @@ public:
     /**
      * Updates the predicted position of the particles according to the constraint
      */
-    void solve() {
+    void solve(float deltaTime) {
         // If the constraint is already satisfied, no need to solve it
         if (isSatisfied()) return;
 
         computeGradient();
-        computeLambda();
-        float correctedStiffness = (1 - powf(1 - _stiffness, 1.0f / 8.0f));
+
+        // compute delta lambda
+        float xpbdFactor = _compliance / (deltaTime * deltaTime);
+        float constraintValue = evaluate();
+        float numerator = -constraintValue - xpbdFactor * _lambda;
+        float denominator = xpbdFactor;
 
         for (unsigned int i = 0; i < _particles.size(); i++) {
-            glm::vec3 gradient = glm::vec3(_gradient.col(i).x(), _gradient.col(i).y(), _gradient.col(i).z());
-            _particles[i]->predictedPosition += _lambda * _particles[i]->invMass * gradient * correctedStiffness;
+            denominator += _particles[i]->invMass * _gradient.col(i).dot(_gradient.col(i));
         }
+
+        float deltaLambda = 0.0;
+        if (denominator < 1e-6) {
+            deltaLambda = 0.0;
+        } else {
+            deltaLambda = numerator / denominator;
+        }
+
+        if(std::isnan(deltaLambda)) {
+            std::cout << "S is NAN" << std::endl;
+            deltaLambda = 0.0;
+        }
+
+        for (unsigned int i = 0; i < _particles.size(); i++) {
+            if(denominator < 1e-6) {
+                continue;
+            }
+            glm::vec3 gradient = glm::vec3(_gradient.col(i).x(), _gradient.col(i).y(), _gradient.col(i).z());
+            _particles[i]->predictedPosition += (-constraintValue / denominator) * _particles[i]->invMass * gradient;
+        }
+
+        _lambda += deltaLambda;
     }
 
     std::vector<std::shared_ptr<Particle>> particles() const {
@@ -54,8 +79,8 @@ public:
         _particles = std::move(particles);
     }
 
-    void setStiffness(float stiffness) {
-        _stiffness = stiffness;
+    void setCompliance(float compliance) {
+        _compliance = compliance;
     }
 
     void replaceParticle(std::shared_ptr<Particle> oldParticle, std::shared_ptr<Particle> newParticle) {
@@ -82,27 +107,27 @@ protected:
     /**
      * Computes the s factor used to solve the constraint according to PBD paper
      */
-    void computeLambda() {
-        float numerator = -evaluate();
-        float denominator = 0;
-        if (_particles.size() != _gradient.cols()) {
-            throw std::runtime_error("Gradient and particles size mismatch");
-        }
+    float getDeltaLambda(float deltaTime) {
+        float xpbdFactor = _compliance / (deltaTime * deltaTime);
+        float numerator = -evaluate() - xpbdFactor * _lambda;
+        float denominator = xpbdFactor;
+
         for (unsigned int i = 0; i < _particles.size(); i++) {
             denominator += _particles[i]->invMass * _gradient.col(i).dot(_gradient.col(i));
         }
 
         if (denominator < 1e-6) {
-            _lambda = 0;
-            return;
+            return 0.0;
         }
 
-        _lambda = numerator / denominator;
+        float deltaLambda = numerator / denominator;
 
-        if(std::isnan(_lambda)) {
+        if(std::isnan(deltaLambda)) {
             std::cout << "S is NAN" << std::endl;
-            _lambda = 0.0;
+            return 0.0;
         }
+
+        return deltaLambda;
     }
 
     /**
@@ -130,8 +155,7 @@ protected:
     /// Particles involved in the constraint
     std::vector<std::shared_ptr<Particle>> _particles;
 
-    /// Stiffness of the constraint (between 0 and 1)
-    float _stiffness{};
+    float _compliance = 0.0f;
 
     /// s factor used to solve the constraint
     float _lambda{};

@@ -65,7 +65,7 @@ int main() {
     clothMesh->transform()->setScale(10);
     clothMesh->transform()->setPosition(0, 7, 0);
 
-    auto cloth = std::make_shared<SoftBody>(clothMesh, 1.0f, 0.8f, 0.8f);
+    auto cloth = std::make_shared<SoftBody>(clothMesh, 1.0f, 0.001f, 0.001f);
 
     // fixed particles
     cloth->addFixedConstraint(new FixedConstraint(cloth->particles()[0]));
@@ -105,7 +105,7 @@ int main() {
     auto cube2 = MeshBuilder::makeUVCube("cube2", scene);
     cube2->transform()->setPosition(-10.0, 4, 0.0);
     cube2->setMaterial(cubeMaterial);
-    auto cube2Body = std::make_shared<SoftBody>(cube2, 1.0f, 0.0005f, 0.8f);
+    auto cube2Body = std::make_shared<SoftBody>(cube2, 1.0f, 0.0001f, 0.0001f);
     solver.addBody(cube2Body);
     shadowRenderer->addShadowCaster(cube2);
 
@@ -121,7 +121,7 @@ int main() {
     sphere->setMaterial(sphereMaterial);
 
     shadowRenderer->addShadowCaster(sphere);
-    auto sphereBody = std::make_shared<SoftBody>(sphere, 1.0f, 1.0f, 1.0f);
+    auto sphereBody = std::make_shared<SoftBody>(sphere, 1.0f, 0.0001f, 0.0001f);
     solver.addBody(sphereBody);
 
     auto bunnyMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
@@ -137,9 +137,7 @@ int main() {
     simplifiedBunny->transform()->translate(glm::vec3(10, 3.0, -8));
     shadowRenderer->addShadowCaster(simplifiedBunny);
 
-    auto softBunny = std::make_shared<SoftBody>(simplifiedBunny, 1.0, 1.0f, 1.0f);
-    softBunny->generalizedVolumeConstraints()[0]->setPressure(1.2f);
-
+    auto softBunny = std::make_shared<SoftBody>(simplifiedBunny, 1.0, 0.0001f, 0.0001f);
     solver.addBody(softBunny);
 
     auto armadillo = MeshBuilder::FromObjFile("../assets/models/armadillo.obj", scene);
@@ -155,7 +153,7 @@ int main() {
 
     auto armadilloBody = std::make_shared<RigidBody>(armadillo, 1.0f);
     armadilloBody->addGeneralizedVolumeConstraint(
-            new GeneralizedVolumeConstraint(armadilloBody->particles(), armadillo->vertexData().indices, 1.0f, 1.0f));
+            new GeneralizedVolumeConstraint(armadilloBody->particles(), armadillo->vertexData().indices, 0.0001f, 0.0001f));
     solver.addBody(armadilloBody);
 
     auto ground = MeshBuilder::makePlane("ground", scene, 2);

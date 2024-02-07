@@ -13,8 +13,8 @@
 class GeneralizedVolumeConstraint : public Constraint {
 public:
     GeneralizedVolumeConstraint(std::vector<std::shared_ptr<Particle>> particles, std::vector<GLint> indices,
-                                float pressure, float stiffness) : Constraint(
-            particles, stiffness, EQUALITY), _pressure(pressure), _indices(indices) {
+                                float pressure, float compliance) : Constraint(
+            particles, compliance, EQUALITY), _pressure(pressure), _indices(indices) {
 
         float volume = 0;
         for(int i = 0; i < _indices.size(); i+=3) {

@@ -12,7 +12,7 @@
 
 class SoftBody : public PhysicsBody {
 public:
-    SoftBody(std::shared_ptr<Mesh> mesh, float mass, float stretchStiffness = 0.5f, float bendStiffness = 0.2f) : PhysicsBody(mesh, mass) {
+    SoftBody(std::shared_ptr<Mesh> mesh, float mass, float stretchCompliance = 0.0001f, float bendCompliance = 0.2f) : PhysicsBody(mesh, mass) {
         // iterate over all triangles and create distance constraints
         for (unsigned int i = 0; i < mesh->vertexData().indices.size(); i += 3) {
             auto index1 = mesh->vertexData().indices[i];
@@ -21,16 +21,16 @@ public:
             auto p1 = _particles[index1];
             auto p2 = _particles[index2];
             auto p3 = _particles[index3];
-            addDistanceConstraint(new DistanceConstraint(p1, p2, stretchStiffness));
-            addDistanceConstraint(new DistanceConstraint(p2, p3, stretchStiffness));
-            addDistanceConstraint(new DistanceConstraint(p3, p1, stretchStiffness));
+            addDistanceConstraint(new DistanceConstraint(p1, p2, stretchCompliance));
+            addDistanceConstraint(new DistanceConstraint(p2, p3, stretchCompliance));
+            addDistanceConstraint(new DistanceConstraint(p3, p1, stretchCompliance));
         }
 
         // find particles that share their positions and create distance constraints
         for (unsigned int i = 0; i < _particles.size(); i++) {
             for (unsigned int j = i + 1; j < _particles.size(); j++) {
                 if (glm::distance(_particles[i]->position, _particles[j]->position) < 0.001f) {
-                    addDistanceConstraint(new DistanceConstraint(_particles[i], _particles[j], 1.0f));
+                    addDistanceConstraint(new DistanceConstraint(_particles[i], _particles[j], 0.0f));
                 }
             }
         }
@@ -77,12 +77,12 @@ public:
 
             if(notSharedVertices.size() != 2) continue;
 
-            addBendConstraint(new BendConstraint(_particles[edge.first], _particles[edge.second], _particles[notSharedVertices[0]], _particles[notSharedVertices[1]], bendStiffness));
+            addBendConstraint(new BendConstraint(_particles[edge.first], _particles[edge.second], _particles[notSharedVertices[0]], _particles[notSharedVertices[1]], bendCompliance));
         }
 
         if(Utils::isMergedTriangulationClosed(mesh->vertexData().indices, mesh->vertexData().positions)) {
             // volume constraints
-            addGeneralizedVolumeConstraint(new GeneralizedVolumeConstraint(_particles, mesh->vertexData().indices, 1.0f, 1.0f));
+            addGeneralizedVolumeConstraint(new GeneralizedVolumeConstraint(_particles, mesh->vertexData().indices, 1.0f, 0.0f));
         }
     }
 };

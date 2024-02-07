@@ -15,8 +15,8 @@
 class BendConstraint : public DistanceConstraint {
 public:
     BendConstraint(std::shared_ptr<Particle> p0, std::shared_ptr<Particle> p1, std::shared_ptr<Particle> p2,
-                   std::shared_ptr<Particle> p3, float stiffness)
-            : DistanceConstraint(p2, p3, stiffness) {
+                   std::shared_ptr<Particle> p3, float compliance)
+            : DistanceConstraint(p2, p3, compliance) {
     };
 };
 

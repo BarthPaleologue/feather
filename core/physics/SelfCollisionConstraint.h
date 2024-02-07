@@ -11,7 +11,7 @@
 class SelfCollisionConstraint : public Constraint {
 public:
     SelfCollisionConstraint(std::shared_ptr< Particle> q, std::shared_ptr< Particle> p1, std::shared_ptr< Particle> p2, std::shared_ptr< Particle> p3, float thickness) : Constraint(
-            {q, p1, p2, p3}, 1, INEQUALITY) {
+            {q, p1, p2, p3}, 0.0f, INEQUALITY) {
         _thickness = thickness;
     }
 
