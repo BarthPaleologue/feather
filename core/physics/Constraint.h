@@ -56,7 +56,7 @@ public:
         }
 
         if(std::isnan(deltaLambda)) {
-            std::cout << "S is NAN" << std::endl;
+            std::cout << "deltaLambda is NAN" << std::endl;
             deltaLambda = 0.0;
         }
 
@@ -103,32 +103,6 @@ protected:
      * Computes the gradient of the constraint
      */
     virtual void computeGradient() = 0;
-
-    /**
-     * Computes the s factor used to solve the constraint according to PBD paper
-     */
-    float getDeltaLambda(float deltaTime) {
-        float xpbdFactor = _compliance / (deltaTime * deltaTime);
-        float numerator = -evaluate() - xpbdFactor * _lambda;
-        float denominator = xpbdFactor;
-
-        for (unsigned int i = 0; i < _particles.size(); i++) {
-            denominator += _particles[i]->invMass * _gradient.col(i).dot(_gradient.col(i));
-        }
-
-        if (denominator < 1e-6) {
-            return 0.0;
-        }
-
-        float deltaLambda = numerator / denominator;
-
-        if(std::isnan(deltaLambda)) {
-            std::cout << "S is NAN" << std::endl;
-            return 0.0;
-        }
-
-        return deltaLambda;
-    }
 
     /**
      * Checks if the constraint is satisfied
