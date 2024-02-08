@@ -30,6 +30,7 @@ The entire code for the physics engine is available in the `core/physics` direct
 - Tetrahedral volume constraints
 - Global volume constraints
 - Collision constraints with friction
+- Collision LoD using HPBD
 - Constraints and bounding boxes helpers
 
 ### How to build
