@@ -11,7 +11,7 @@
 #include "DistanceConstraint.h"
 #include "FixedConstraint.h"
 #include "CollisionConstraint.h"
-#include "BendConstraint.h"
+#include "FastBendConstraint.h"
 #include "VolumeConstraint.h"
 #include "DihedralBendConstraint.h"
 #include "GlobalVolumeConstraint.h"
@@ -154,8 +154,8 @@ public:
         _distanceConstraints.push_back(constraint);
     }
 
-    void addBendConstraint(BendConstraint *constraint) {
-        _bendConstraints.push_back(constraint);
+    void addBendConstraint(FastBendConstraint *constraint) {
+        _fastBendConstraints.push_back(constraint);
     }
 
     void addDihedralBendConstraint(DihedralBendConstraint *constraint) {
@@ -186,8 +186,12 @@ public:
         return _distanceConstraints;
     }
 
-    std::vector<BendConstraint *> &bendConstraints() {
-        return _bendConstraints;
+    std::vector<FastBendConstraint *> &fastBendConstraints() {
+        return _fastBendConstraints;
+    }
+
+    std::vector<DihedralBendConstraint *> &dihedralBendConstraints() {
+        return _dihedralBendConstraints;
     }
 
     std::vector<VolumeConstraint *> &volumeConstraints() {
@@ -223,7 +227,7 @@ private:
 
     std::vector<FixedConstraint *> _fixedConstraints;
     std::vector<DistanceConstraint *> _distanceConstraints;
-    std::vector<BendConstraint *> _bendConstraints;
+    std::vector<FastBendConstraint *> _fastBendConstraints;
     std::vector<DihedralBendConstraint *> _dihedralBendConstraints;
     std::vector<VolumeConstraint *> _volumeConstraints;
     std::vector<GlobalVolumeConstraint *> _globalVolumeConstraints;

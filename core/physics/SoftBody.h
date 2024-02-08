@@ -77,7 +77,7 @@ public:
 
             if(notSharedVertices.size() != 2) continue;
 
-            addBendConstraint(new BendConstraint(_particles[edge.first], _particles[edge.second], _particles[notSharedVertices[0]], _particles[notSharedVertices[1]], bendCompliance));
+            addBendConstraint(new FastBendConstraint(_particles[edge.first], _particles[edge.second], _particles[notSharedVertices[0]], _particles[notSharedVertices[1]], bendCompliance));
         }
 
         if(Utils::isMergedTriangulationClosed(mesh->vertexData().indices, mesh->vertexData().positions)) {

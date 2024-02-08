@@ -275,10 +275,10 @@ int main() {
             }
         }
 
-        if (currentBody != nullptr && !currentBody->bendConstraints().empty()) {
+        if (currentBody != nullptr && !currentBody->fastBendConstraints().empty()) {
             // bend compliance slider
             ImGui::SliderFloat("Bend compliance", &bendCompliance, 0.0001f, 2.0f, "%.4f");
-            for (const auto &constraint: currentBody->bendConstraints()) {
+            for (const auto &constraint: currentBody->fastBendConstraints()) {
                 constraint->setCompliance(bendCompliance);
             }
         }
@@ -423,7 +423,7 @@ int main() {
                             currentBody = body;
                             if (!currentBody->globalVolumeConstraints().empty()) currentBodyPressure = currentBody->globalVolumeConstraints()[0]->pressure();
                             if (!currentBody->distanceConstraints().empty()) stretchCompliance = currentBody->distanceConstraints()[0]->compliance();
-                            if (!currentBody->bendConstraints().empty()) bendCompliance = currentBody->bendConstraints()[0]->compliance();
+                            if (!currentBody->fastBendConstraints().empty()) bendCompliance = currentBody->fastBendConstraints()[0]->compliance();
                             if (!currentBody->fixedConstraints().empty()) fixedConstraintCompliance = currentBody->fixedConstraints()[0]->compliance();
                             break;
                         }

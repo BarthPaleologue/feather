@@ -234,8 +234,14 @@ public:
                         distanceConstraint->solve(subTimeStep);
                     }
                 }
-                for (auto bendConstraint: body->bendConstraints()) {
-                    bendConstraint->solve(subTimeStep);
+                for (auto fastBendConstraint: body->fastBendConstraints()) {
+                    fastBendConstraint->solve(subTimeStep);
+                }
+                for(auto diheralConstraint: body->dihedralBendConstraints()) {
+                    diheralConstraint->solve(subTimeStep);
+                }
+                for(auto volumeConstraint: body->volumeConstraints()) {
+                    volumeConstraint->solve(subTimeStep);
                 }
                 for (auto volumeConstraint: body->globalVolumeConstraints()) {
                     volumeConstraint->solve(subTimeStep);
