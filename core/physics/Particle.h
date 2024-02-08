@@ -23,9 +23,9 @@ struct Particle {
         this->positionIndex = positionIndex;
     }
 
-    glm::vec3 resultingForce() {
+    glm::vec3 resultingExternalForce() {
         glm::vec3 result = glm::vec3(0, 0, 0);
-        for (auto force: forces) {
+        for (auto force: externalForces) {
             result += force;
         }
         return result;
@@ -38,17 +38,33 @@ struct Particle {
 
     float mass;
     float invMass;
+
+    /**
+     * Initial position of particle in world space
+     */
     glm::vec3 initialPosition{};
+
+    /**
+     * Current position of particle in world space
+     */
     glm::vec3 position{};
+
+    /**
+     * Predicted next position of particle in world space
+     */
     glm::vec3 predictedPosition{};
+
+    /**
+     * Current velocity of particle
+     */
     glm::vec3 velocity{};
 
     /**
-     * @brief The first index of the particle position in the vertex data array of the mesh
+     * The first index of the particle position in the vertex data array of the mesh
      */
     unsigned long positionIndex;
 
-    std::vector<glm::vec3> forces{};
+    std::vector<glm::vec3> externalForces{};
 };
 
 #endif //FEATHERGL_PARTICLE_H

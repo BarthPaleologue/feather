@@ -118,8 +118,6 @@ public:
 
     void updateVertexData() {
         for (const auto &particle: _particles) {
-            particle->forces.clear();
-
             auto particleLocalPosition = particle->position - transform()->position();
 
             // update actual mesh vertex data

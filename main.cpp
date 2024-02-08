@@ -114,7 +114,7 @@ int main() {
     shadowRenderer->addShadowCaster(cube);
 
     solver.onBeforeSolveObservable.addOnce(
-            [&] { cubeBody->particles()[0]->forces.emplace_back(Utils::RandomDirection() * 500.0f); });
+            [&] { cubeBody->particles()[0]->externalForces.emplace_back(Utils::RandomDirection() * 500.0f); });
 
     auto sphere = MeshBuilder::makeIcoSphere("sphere", scene, 2);
     sphere->transform()->setScale(1.5);
@@ -194,6 +194,7 @@ int main() {
     std::uniform_real_distribution<> distribution(-10.0, 10.0);
 
     bool realTimePhysics = false;
+    bool fixedTimeStep = true;
     bool wireframe = false;
 
     bool clothEnabled = true;
@@ -263,6 +264,9 @@ int main() {
             }
         }
 
+        // fixed time step
+        ImGui::Checkbox("Fixed time step", &fixedTimeStep);
+
         // set wireframe
         ImGui::Checkbox("Wireframe", &wireframe);
         clothMaterial->setWireframe(wireframe);
@@ -310,6 +314,9 @@ int main() {
             auto cubeBody = std::make_shared<RigidBody>(cube, 1.0f);
             solver.addBody(cubeBody);
             shadowRenderer->addShadowCaster(cube);
+
+            solver.onBeforeSolveObservable.addOnce(
+                [cubeBody] { cubeBody->particles()[0]->externalForces.emplace_back(Utils::RandomDirection() * 50.0f); });
         }
         ImGui::SameLine();
 
@@ -436,7 +443,7 @@ int main() {
         glm::vec3 newLightDirection = glm::normalize(glm::vec3(cosf(theta), 1.0f, sinf(theta)));
         light.setDirection(newLightDirection);
 
-        if (realTimePhysics) solver.solve(1.0 / 60.0f); // fixed time step of 60 fps
+        if (realTimePhysics) solver.solve(fixedTimeStep ? 1.0f / 60.0f : deltaTime); // fixed time step of 60 fps
 
         camera.update();
     });

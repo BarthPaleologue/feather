@@ -51,33 +51,48 @@ public:
     void solve(float deltaTime) {
         onBeforeSolveObservable.notifyObservers();
 
-        // apply force fields
+        // register force fields (externalForces are cleared at the end of each full simulation step)
         for (const auto &body: _physicsBodies) {
             if(!body->mesh()->isEnabled()) continue;
             for (const auto &particle: body->particles()) {
                 for (const auto &field: _fields) {
-                    particle->forces.push_back(
+                    // F = m * a
+                    particle->externalForces.push_back(
                             field->computeAcceleration() * particle->mass);
                 }
             }
         }
 
-        // this is coming from XPBD where the time step is divided into sub time steps at the top level
-        //float subTimeStep = deltaTime;
+        // this is coming from XPBD where the time step is divided into sub time steps instead of solving constraints multiple times
         float subTimeStep = deltaTime / (float) _iterations;
         for (unsigned int i = 0; i < _iterations; i++) {
-            // apply resultingForce
+            // apply externalForces to particles
             for (const auto &body: _physicsBodies) {
                 if(!body->mesh()->isEnabled()) continue;
                 for (const auto &particle: body->particles()) {
-                    particle->velocity += subTimeStep * particle->invMass * particle->resultingForce();
+                    // a = F / m and v = a * t => v = t * F / m
+                    particle->velocity += subTimeStep * particle->invMass * particle->resultingExternalForce();
 
                     // velocity damping
                     particle->velocity *= 0.999;
                 }
             }
 
-            // predict positions
+            // friction velocity damping: for each collision constraint, damp velocity in the tangent direction to the triangle
+            for(const auto &body: _physicsBodies) {
+                for (const auto &collisionConstraint: body->collisionConstraints()) {
+                    glm::vec3 t1 = collisionConstraint->particles()[1]->position;
+                    glm::vec3 t2 = collisionConstraint->particles()[2]->position;
+                    glm::vec3 t3 = collisionConstraint->particles()[3]->position;
+                    glm::vec3 normal = glm::normalize(glm::cross(t2 - t1, t3 - t1));
+                    for (const auto &particle: collisionConstraint->particles()) {
+                        glm::vec3 tangent = particle->velocity - glm::dot(particle->velocity, normal) * normal;
+                        particle->velocity = particle->velocity - 0.05f * tangent;
+                    }
+                }
+            }
+
+            // predict positions using simple Euler integration
             for (const auto &body: _physicsBodies) {
                 if(!body->mesh()->isEnabled()) continue;
                 for (const auto &particle: body->particles()) {
@@ -85,6 +100,7 @@ public:
                 }
             }
 
+            // remove last update's collision constraints
             for (const auto &body: _physicsBodies) {
                 if(!body->mesh()->isEnabled()) continue;
                 // delete memory of pointers to collision constraints
@@ -94,6 +110,10 @@ public:
                 body->collisionConstraints().clear();
             }
 
+            // generate new collision constraint for the current time step
+            // for each pair of bodies O(n2), find their bounding box intersections
+            // for each intersection, find the particles and triangles that are in the intersection
+            // create a collision constraint for each particle/triangle pair that is susceptible to collide
             for (int k_body = 0; k_body < _physicsBodies.size(); k_body++) {
                 auto body = _physicsBodies[k_body];
                 if(!body->mesh()->isEnabled()) continue;
@@ -124,7 +144,6 @@ public:
 
                     // find triangles from both bodies that are in the intersection
                     std::vector<std::vector<GLint>> bodyTrianglesInIntersection;
-                    std::vector<GLfloat> bodyPositions = body->mesh()->vertexData().positions;
                     std::vector<GLint> bodyIndices = body->mesh()->vertexData().indices;
                     for (unsigned int k = 0; k < bodyIndices.size(); k += 3) {
                         glm::vec3 t0 = body->particles()[bodyIndices[k]]->predictedPosition;
@@ -137,7 +156,6 @@ public:
                     }
 
                     std::vector<std::vector<GLint>> otherBodyTrianglesInIntersection;
-                    std::vector<GLfloat> otherBodyPositions = otherBody->mesh()->vertexData().positions;
                     std::vector<GLint> otherBodyIndices = otherBody->mesh()->vertexData().indices;
                     for (unsigned int k = 0; k < otherBodyIndices.size(); k += 3) {
                         glm::vec3 t0 = otherBody->particles()[otherBodyIndices[k]]->predictedPosition;
@@ -151,6 +169,8 @@ public:
                     }
 
                     // for each particle in one body, create a collision constraint with each triangle in the other body (if there is a risk of collision)
+                    // for each particle / triangle pair, shoot a short finite ray from the particle in the direction of the vertex normal
+                    // if the ray intersects the triangle, create a collision constraint
                     for (const auto &particle: otherBodyParticlesInIntersection) {
                         for (const auto &triangle: bodyTrianglesInIntersection) {
                             glm::vec3 particleNormal = glm::vec3(
@@ -204,11 +224,11 @@ public:
                 }
             }
 
-            // solve nonCollisionConstraints
-            //for (unsigned int i = 0; i < _iterations; i++) {
+            // solve constraints
             for (const auto &body: _physicsBodies) {
                 if(!body->mesh()->isEnabled()) continue;
 
+                // solve hierarchy of distance constraints
                 for (const auto &distanceConstraints: body->distanceConstraintsPerLevel()) {
                     for (auto distanceConstraint: distanceConstraints) {
                         distanceConstraint->solve(subTimeStep);
@@ -227,7 +247,6 @@ public:
                     fixedConstraint->solve(subTimeStep);
                 }
             }
-            //}
 
             // tear edges apart when distance constraints are violated too much
             /*for (const auto &body: _physicsBodies) {
@@ -249,6 +268,7 @@ public:
                 }
             }*/
 
+            // update the position and velocity of the particles
             for (const auto &body: _physicsBodies) {
                 if(!body->mesh()->isEnabled()) continue;
 
@@ -259,9 +279,12 @@ public:
             }
         }
 
-        // update mesh vertex data at the end of the simulation step
+        // update mesh vertex data at the end of the full simulation step
         for (const auto &body: _physicsBodies) {
             if(!body->mesh()->isEnabled()) continue;
+            for(const auto &particle: body->particles()) {
+                particle->externalForces.clear();
+            }
             body->updateVertexData();
         }
 
