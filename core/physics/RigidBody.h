@@ -21,16 +21,16 @@ public:
             auto p1 = _particles[index1];
             auto p2 = _particles[index2];
             auto p3 = _particles[index3];
-            addDistanceConstraint(new DistanceConstraint(p1, p2, 0.0f));
-            addDistanceConstraint(new DistanceConstraint(p2, p3, 0.0f));
-            addDistanceConstraint(new DistanceConstraint(p3, p1, 0.0f));
+            addDistanceConstraint(std::make_shared<DistanceConstraint>(p1, p2, 0.0f));
+            addDistanceConstraint(std::make_shared<DistanceConstraint>(p2, p3, 0.0f));
+            addDistanceConstraint(std::make_shared<DistanceConstraint>(p3, p1, 0.0f));
         }
 
         // find particles that share their positions and create distance constraints
         for(unsigned int i = 0; i < _particles.size(); i++) {
             for(unsigned int j = i + 1; j < _particles.size(); j++) {
                 if (glm::distance(_particles[i]->position, _particles[j]->position) < 0.001f) {
-                    addDistanceConstraint(new DistanceConstraint(_particles[i], _particles[j], 0.0f));
+                    addDistanceConstraint(std::make_shared<DistanceConstraint>(_particles[i], _particles[j], 0.0f));
                 }
             }
         }
@@ -78,12 +78,12 @@ public:
 
             if(notSharedVertices.size() != 2) continue;
 
-            addBendConstraint(new FastBendConstraint(_particles[edge.first], _particles[edge.second], _particles[notSharedVertices[0]], _particles[notSharedVertices[1]], 0.0f));
+            addBendConstraint(std::make_shared<FastBendConstraint>(_particles[edge.first], _particles[edge.second], _particles[notSharedVertices[0]], _particles[notSharedVertices[1]], 0.0f));
         }
 
         if(Utils::isMergedTriangulationClosed(mesh->vertexData().indices, mesh->vertexData().positions)) {
             // volume constraints
-            addGlobalVolumeConstraint(new GlobalVolumeConstraint(_particles, mesh->vertexData().indices, 1.0f, 0.0f));
+            addGlobalVolumeConstraint(std::make_shared<GlobalVolumeConstraint>(_particles, mesh->vertexData().indices, 1.0f, 0.0f));
         }
     }
 };

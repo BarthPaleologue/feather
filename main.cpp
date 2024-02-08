@@ -72,10 +72,10 @@ int main() {
     auto cloth = std::make_shared<SoftBody>(clothMesh, 1.0f, 0.1f, 0.01f);
 
     // fixed particles
-    cloth->addFixedConstraint(new FixedConstraint(cloth->particles()[0]));
-    cloth->addFixedConstraint(new FixedConstraint(cloth->particles()[clothResolution - 1]));
-    cloth->addFixedConstraint(new FixedConstraint(cloth->particles()[clothResolution * (clothResolution - 1)]));
-    cloth->addFixedConstraint(new FixedConstraint(cloth->particles()[clothResolution * clothResolution - 1]));
+    cloth->addFixedConstraint(std::make_shared<FixedConstraint>(cloth->particles()[0]));
+    cloth->addFixedConstraint(std::make_shared<FixedConstraint>(cloth->particles()[clothResolution - 1]));
+    cloth->addFixedConstraint(std::make_shared<FixedConstraint>(cloth->particles()[clothResolution * (clothResolution - 1)]));
+    cloth->addFixedConstraint(std::make_shared<FixedConstraint>(cloth->particles()[clothResolution * clothResolution - 1]));
 
     solver.addBody(cloth);
 
@@ -104,9 +104,9 @@ int main() {
     bodyHelpers.insert({cloth2, new PhysicsBodyHelper(cloth2, std::shared_ptr<Scene>(&scene))});
 
     // fixed particles
-    cloth2->addFixedConstraint(new FixedConstraint(cloth2->particles()[0]));
+    cloth2->addFixedConstraint(std::make_shared<FixedConstraint>(cloth2->particles()[0]));
     cloth2->addFixedConstraint(
-            new FixedConstraint(cloth2->particles()[clothResolution * clothResolution / 2 + clothResolution / 2]));
+            std::make_shared<FixedConstraint>(cloth2->particles()[clothResolution * clothResolution / 2 + clothResolution / 2]));
 
     auto cubeMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     cubeMaterial->setAlbedoColor(1.0, 0.6, 0.0);
@@ -174,7 +174,7 @@ int main() {
 
     auto armadilloBody = std::make_shared<RigidBody>(armadillo, 1.0f);
     armadilloBody->addGlobalVolumeConstraint(
-            new GlobalVolumeConstraint(armadilloBody->particles(), armadillo->vertexData().indices, 0.0001f,
+            std::make_shared<GlobalVolumeConstraint>(armadilloBody->particles(), armadillo->vertexData().indices, 0.0001f,
                                        0.0001f));
     solver.addBody(armadilloBody);
 
@@ -196,11 +196,6 @@ int main() {
 
     auto groundBody = std::make_shared<RigidBody>(ground, 0.0f);
     solver.addBody(groundBody);
-
-    // display bounding boxes
-    /*for(const auto& mesh: scene.meshes()) {
-        new AABBHelper(mesh->aabb(), scene);
-    }*/
 
     // for all bodyHelpers, set enabled to false
     for (const auto &bodyHelper: bodyHelpers) {

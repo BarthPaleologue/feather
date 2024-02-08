@@ -66,13 +66,13 @@ public:
 
             _distanceConstraintsPerLevel.emplace_back(_distanceConstraintsPerLevel[level - 1]);
 
-            std::vector<DistanceConstraint *> filteredConstraints{};
+            std::vector<std::shared_ptr<DistanceConstraint>> filteredConstraints{};
 
             // for each constraint, if a particle is not in the current level, change to constraint to use the closest particle in the current level
             for (auto &constraint: _distanceConstraintsPerLevel[level]) {
                 bool shouldBeKept = true;
 
-                auto constraintCopy = new DistanceConstraint(*constraint);
+                auto constraintCopy = std::make_shared<DistanceConstraint>(*constraint);
 
                 for (auto &particle: constraintCopy->particles()) {
                     unsigned long particleIndex = particle->positionIndex / 3;
@@ -146,63 +146,63 @@ public:
         return (int) _particles.size();
     }
 
-    void addFixedConstraint(FixedConstraint *constraint) {
+    void addFixedConstraint(std::shared_ptr<FixedConstraint> constraint) {
         _fixedConstraints.push_back(constraint);
     }
 
-    void addDistanceConstraint(DistanceConstraint *constraint) {
+    void addDistanceConstraint(std::shared_ptr<DistanceConstraint> constraint) {
         _distanceConstraints.push_back(constraint);
     }
 
-    void addBendConstraint(FastBendConstraint *constraint) {
+    void addBendConstraint(std::shared_ptr<FastBendConstraint> constraint) {
         _fastBendConstraints.push_back(constraint);
     }
 
-    void addDihedralBendConstraint(DihedralBendConstraint *constraint) {
+    void addDihedralBendConstraint(std::shared_ptr<DihedralBendConstraint> constraint) {
         _dihedralBendConstraints.push_back(constraint);
     }
 
-    void addVolumeConstraint(VolumeConstraint *constraint) {
+    void addVolumeConstraint(std::shared_ptr<VolumeConstraint> constraint) {
         _volumeConstraints.push_back(constraint);
     }
 
-    void addGlobalVolumeConstraint(GlobalVolumeConstraint *constraint) {
+    void addGlobalVolumeConstraint(std::shared_ptr<GlobalVolumeConstraint> constraint) {
         _globalVolumeConstraints.push_back(constraint);
     }
 
-    void addCollisionConstraint(CollisionConstraint *constraint) {
+    void addCollisionConstraint(std::shared_ptr<CollisionConstraint> constraint) {
         _collisionConstraints.push_back(constraint);
     }
 
-    std::vector<std::vector<DistanceConstraint *>> &distanceConstraintsPerLevel() {
+    std::vector<std::vector<std::shared_ptr<DistanceConstraint>>> &distanceConstraintsPerLevel() {
         return _distanceConstraintsPerLevel;
     }
 
-    std::vector<FixedConstraint *> &fixedConstraints() {
+    std::vector<std::shared_ptr<FixedConstraint>> &fixedConstraints() {
         return _fixedConstraints;
     }
 
-    std::vector<DistanceConstraint *> &distanceConstraints() {
+    std::vector<std::shared_ptr<DistanceConstraint>> &distanceConstraints() {
         return _distanceConstraints;
     }
 
-    std::vector<FastBendConstraint *> &fastBendConstraints() {
+    std::vector<std::shared_ptr<FastBendConstraint>> &fastBendConstraints() {
         return _fastBendConstraints;
     }
 
-    std::vector<DihedralBendConstraint *> &dihedralBendConstraints() {
+    std::vector<std::shared_ptr<DihedralBendConstraint>> &dihedralBendConstraints() {
         return _dihedralBendConstraints;
     }
 
-    std::vector<VolumeConstraint *> &volumeConstraints() {
+    std::vector<std::shared_ptr<VolumeConstraint>> &volumeConstraints() {
         return _volumeConstraints;
     }
 
-    std::vector<GlobalVolumeConstraint *> &globalVolumeConstraints() {
+    std::vector<std::shared_ptr<GlobalVolumeConstraint>> &globalVolumeConstraints() {
         return _globalVolumeConstraints;
     }
 
-    std::vector<CollisionConstraint *> &collisionConstraints() {
+    std::vector<std::shared_ptr<CollisionConstraint>> &collisionConstraints() {
         return _collisionConstraints;
     }
 
@@ -223,15 +223,15 @@ protected:
     std::vector<std::shared_ptr<Particle>> _particles;
 
 private:
-    std::vector<std::vector<DistanceConstraint *>> _distanceConstraintsPerLevel;
+    std::vector<std::vector<std::shared_ptr<DistanceConstraint>>> _distanceConstraintsPerLevel;
 
-    std::vector<FixedConstraint *> _fixedConstraints;
-    std::vector<DistanceConstraint *> _distanceConstraints;
-    std::vector<FastBendConstraint *> _fastBendConstraints;
-    std::vector<DihedralBendConstraint *> _dihedralBendConstraints;
-    std::vector<VolumeConstraint *> _volumeConstraints;
-    std::vector<GlobalVolumeConstraint *> _globalVolumeConstraints;
-    std::vector<CollisionConstraint *> _collisionConstraints;
+    std::vector<std::shared_ptr<FixedConstraint>> _fixedConstraints;
+    std::vector<std::shared_ptr<DistanceConstraint>> _distanceConstraints;
+    std::vector<std::shared_ptr<FastBendConstraint>> _fastBendConstraints;
+    std::vector<std::shared_ptr<DihedralBendConstraint>> _dihedralBendConstraints;
+    std::vector<std::shared_ptr<VolumeConstraint>> _volumeConstraints;
+    std::vector<std::shared_ptr<GlobalVolumeConstraint>> _globalVolumeConstraints;
+    std::vector<std::shared_ptr<CollisionConstraint>> _collisionConstraints;
 };
 
 #endif //FEATHERGL_PHYSICSBODY_H

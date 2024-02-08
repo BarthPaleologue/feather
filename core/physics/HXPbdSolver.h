@@ -103,10 +103,6 @@ public:
             // remove last update's collision constraints
             for (const auto &body: _physicsBodies) {
                 if(!body->mesh()->isEnabled()) continue;
-                // delete memory of pointers to collision constraints
-                for (auto collisionConstraint: body->collisionConstraints()) {
-                    delete collisionConstraint;
-                }
                 body->collisionConstraints().clear();
             }
 
@@ -187,7 +183,7 @@ public:
                                                               body->particles()[triangle[2]]->predictedPosition, t)) continue;
                             if(t > 0.2f) continue;
 
-                            auto collisionConstraint = new CollisionConstraint(particle,
+                            auto collisionConstraint = std::make_shared<CollisionConstraint>(particle,
                                                                                body->particles()[triangle[0]],
                                                                                body->particles()[triangle[1]],
                                                                                body->particles()[triangle[2]]);
@@ -212,7 +208,7 @@ public:
                             if(t > 0.2f) continue;
 
 
-                            auto collisionConstraint = new CollisionConstraint(particle,
+                            auto collisionConstraint = std::make_shared<CollisionConstraint>(particle,
                                                                                otherBody->particles()[triangle[0]],
                                                                                otherBody->particles()[triangle[1]],
                                                                                otherBody->particles()[triangle[2]]);

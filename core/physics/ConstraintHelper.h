@@ -10,7 +10,7 @@
 
 class ConstraintHelper {
 public:
-    ConstraintHelper(Constraint *constraint, Scene &scene) : _mesh(
+    ConstraintHelper(std::shared_ptr<Constraint> constraint, Scene &scene) : _mesh(
             MeshBuilder::makeLine("ConstraintHelper", scene, constraint->particles()[0]->initialPosition,
                                   constraint->particles()[1]->initialPosition)), _constraint(constraint) {
         scene.onBeforeRenderObservable.add([this] {
@@ -35,7 +35,7 @@ public:
 
 private:
     std::shared_ptr<Mesh> _mesh;
-    Constraint *_constraint;
+    std::shared_ptr<Constraint> _constraint;
 };
 
 #endif //FEATHERGL_CONSTRAINTHELPER_H
