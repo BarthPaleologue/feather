@@ -25,6 +25,8 @@ public:
 
     void addMesh(std::shared_ptr<Mesh> mesh);
 
+    void removeMesh(std::shared_ptr<Mesh> mesh);
+
     void addPointLight(std::shared_ptr<PointLight> light) {
         _pointLights.push_back(light);
     }

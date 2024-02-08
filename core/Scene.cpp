@@ -12,6 +12,10 @@ void Scene::addMesh(std::shared_ptr<Mesh> mesh) {
     _meshes.push_back(mesh);
 }
 
+void Scene::removeMesh(std::shared_ptr<Mesh> mesh) {
+    _meshes.erase(std::remove(_meshes.begin(), _meshes.end(), mesh), _meshes.end());
+}
+
 void Scene::render() {
     onBeforeRenderObservable.notifyObservers();
 

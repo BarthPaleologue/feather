@@ -228,6 +228,8 @@ int main() {
     float bendCompliance = 0.0001f;
     float fixedConstraintCompliance = 0.0f;
 
+    std::vector<std::shared_ptr<PhysicsBody>> additionalBodies;
+
     scene.onRenderGuiObservable.add([&] {
         ImGui::Begin("HPBD Controls");
 
@@ -325,6 +327,7 @@ int main() {
             shadowRenderer->addShadowCaster(sphere);
             auto sphereBody = std::make_shared<SoftBody>(sphere, 1.0f, 0.01f, 0.01f);
             solver.addBody(sphereBody);
+            additionalBodies.push_back(sphereBody);
         }
         ImGui::SameLine();
 
@@ -336,6 +339,7 @@ int main() {
             auto cubeBody = std::make_shared<RigidBody>(cube, 1.0f);
             solver.addBody(cubeBody);
             shadowRenderer->addShadowCaster(cube);
+            additionalBodies.push_back(cubeBody);
 
             solver.onBeforeSolveObservable.addOnce(
                     [cubeBody] {
@@ -357,6 +361,8 @@ int main() {
             shadowRenderer->addShadowCaster(bunny);
             auto bunnyBody = std::make_shared<SoftBody>(bunny, 1.0, 0.01f, 0.01f);
             solver.addBody(bunnyBody);
+
+            additionalBodies.push_back(bunnyBody);
         }
 
         // start button
@@ -375,6 +381,12 @@ int main() {
         // reset button
         if (ImGui::Button("Reset simulation")) {
             solver.reset();
+            for(const auto& body: additionalBodies) {
+                solver.removeBody(body);
+                scene.removeMesh(body->mesh());
+                shadowRenderer->removeShadowCaster(body->mesh());
+            }
+            additionalBodies.clear();
         }
 
         ImGui::End();
@@ -385,7 +397,6 @@ int main() {
         if (key == GLFW_KEY_W) {
             wireframe = !wireframe;
         }
-        if (key == GLFW_KEY_R) solver.reset();
         if (key == GLFW_KEY_SPACE) realTimePhysics = !realTimePhysics;
         if (!realTimePhysics && key == GLFW_KEY_ENTER) solver.solve(1.0f / 60.0f);
     });

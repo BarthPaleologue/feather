@@ -26,6 +26,10 @@ public:
         _physicsBodies.push_back(pBody);
     }
 
+    void removeBody(std::shared_ptr<PhysicsBody> pBody) {
+        _physicsBodies.erase(std::remove(_physicsBodies.begin(), _physicsBodies.end(), pBody), _physicsBodies.end());
+    }
+
     void addField(std::shared_ptr<UniformAccelerationField> field) {
         _fields.push_back(field);
     }

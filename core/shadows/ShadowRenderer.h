@@ -81,6 +81,10 @@ public:
         _shadowCasters.push_back(mesh);
     }
 
+    void removeShadowCaster(std::shared_ptr<Mesh> mesh) {
+        _shadowCasters.erase(std::remove(_shadowCasters.begin(), _shadowCasters.end(), mesh), _shadowCasters.end());
+    }
+
 private:
     std::shared_ptr<DirectionalLight> _directionalLight;
     glm::mat4 _projectionViewMatrix;
