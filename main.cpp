@@ -79,6 +79,8 @@ int main() {
 
     solver.addBody(cloth);
 
+    cloth->setCollisionLevel(1);
+
     auto clothMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     clothMaterial->setAlbedoColor(2.0, 2.0, 2.0);
     clothMaterial->setAlbedoTexture(new Texture("./assets/textures/carpet.jpg"));

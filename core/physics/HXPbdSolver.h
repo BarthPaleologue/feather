@@ -126,25 +126,31 @@ public:
 
                     glm::mat4 otherBodyWorld = otherBody->mesh()->transform()->computeWorldMatrix();
 
+                    // If there is no AABB intersection, skip this pair of bodies
                     AABB *intersection = AABB::intersection(body->mesh()->aabb(), otherBody->mesh()->aabb());
                     if (intersection == nullptr) continue;
 
-                    // find particles from both bodies that are in the intersection
+                    // find particles from both bodies that are in the intersection.
+                    // Only consider particles that are in the collision level of the hierarchy
+                    // Level 0 means all particles are considered. Higher levels means less particles are considered
+                    // This can make the simulation faster at the expense of precision
                     std::vector<std::shared_ptr<Particle>> bodyParticlesInIntersection;
-                    for (const auto &particle: body->particles()) {
+                    for(const auto particleIndex: body->particleIndicesPerLevel()[body->collisionLevel()]) {
+                        auto particle = body->particles()[particleIndex];
                         if (!intersection->contains(particle->predictedPosition)) continue;
                         bodyParticlesInIntersection.push_back(particle);
                     }
 
                     std::vector<std::shared_ptr<Particle>> otherBodyParticlesInIntersection;
-                    for (const auto &particle: otherBody->particles()) {
+                    for(const auto particleIndex: otherBody->particleIndicesPerLevel()[otherBody->collisionLevel()]) {
+                        auto particle = otherBody->particles()[particleIndex];
                         if (!intersection->contains(particle->predictedPosition)) continue;
                         otherBodyParticlesInIntersection.push_back(particle);
                     }
 
                     // find triangles from both bodies that are in the intersection
                     std::vector<std::vector<GLint>> bodyTrianglesInIntersection;
-                    std::vector<GLint> bodyIndices = body->mesh()->vertexData().indices;
+                    std::vector<GLint> bodyIndices = body->trianglesPerLevel()[body->collisionLevel()];
                     for (unsigned int k = 0; k < bodyIndices.size(); k += 3) {
                         glm::vec3 t0 = body->particles()[bodyIndices[k]]->predictedPosition;
                         glm::vec3 t1 = body->particles()[bodyIndices[k + 1]]->predictedPosition;
@@ -156,7 +162,7 @@ public:
                     }
 
                     std::vector<std::vector<GLint>> otherBodyTrianglesInIntersection;
-                    std::vector<GLint> otherBodyIndices = otherBody->mesh()->vertexData().indices;
+                    std::vector<GLint> otherBodyIndices = otherBody->trianglesPerLevel()[otherBody->collisionLevel()];
                     for (unsigned int k = 0; k < otherBodyIndices.size(); k += 3) {
                         glm::vec3 t0 = otherBody->particles()[otherBodyIndices[k]]->predictedPosition;
                         glm::vec3 t1 = otherBody->particles()[otherBodyIndices[k + 1]]->predictedPosition;

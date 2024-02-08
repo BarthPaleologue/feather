@@ -38,6 +38,12 @@ public:
         std::vector<std::vector<GLint>> triangulations;
         triangulations.push_back(mesh()->vertexData().indices);
 
+        std::vector<std::vector<GLint>> particleIndicesPerLevel;
+        particleIndicesPerLevel.push_back(std::vector<GLint>());
+        for (int i = 0; i < _particles.size(); i++) {
+            particleIndicesPerLevel[0].push_back(i);
+        }
+
         std::vector<std::vector<GLint>> closestCoarseVertexIndicesPerLevel;
         closestCoarseVertexIndicesPerLevel.push_back(std::vector<GLint>());
         for (int i = 0; i < _particles.size(); i++) {
@@ -55,6 +61,7 @@ public:
                                         newTriangulation);
 
             triangulations.push_back(newTriangulation);
+            particleIndicesPerLevel.push_back(coarseVertexIndices);
             closestCoarseVertexIndicesPerLevel.push_back(closestCoarseVertexIndices);
         }
 
@@ -106,6 +113,9 @@ public:
 
             _distanceConstraintsPerLevel[level] = filteredConstraints;
         }
+
+        _trianglesPerLevel = triangulations;
+        _particleIndicesPerLevel = particleIndicesPerLevel;
 
         // how many levels
         std::cout << "There are " << _distanceConstraintsPerLevel.size() << " levels" << std::endl;
@@ -216,6 +226,33 @@ public:
         }
     }
 
+    std::vector<std::vector<GLint>> &trianglesPerLevel() {
+        return _trianglesPerLevel;
+    }
+
+    std::vector<std::vector<GLint>> &particleIndicesPerLevel() {
+        return _particleIndicesPerLevel;
+    }
+
+    /**
+     * Set the current collision level (the level for which collision constraints are generated)
+     * @param level The level for which collision constraints are generated
+     */
+    void setCollisionLevel(int level) {
+        if(level < 0 || level >= _distanceConstraintsPerLevel.size()) {
+            throw std::runtime_error("Invalid collision level. Must be between 0 and " + std::to_string(_distanceConstraintsPerLevel.size() - 1) + ".");
+        }
+        _collisionLevel = level;
+    }
+
+    /**
+     * Returns the current collision level (the level for which collision constraints are generated)
+     * @return
+     */
+    int collisionLevel() {
+        return _collisionLevel;
+    }
+
 protected:
     float _mass;
 
@@ -223,7 +260,11 @@ protected:
     std::vector<std::shared_ptr<Particle>> _particles;
 
 private:
+    // HPBD
     std::vector<std::vector<std::shared_ptr<DistanceConstraint>>> _distanceConstraintsPerLevel;
+    std::vector<std::vector<GLint>> _trianglesPerLevel;
+    std::vector<std::vector<GLint>> _particleIndicesPerLevel;
+    int _collisionLevel = 0;
 
     std::vector<std::shared_ptr<FixedConstraint>> _fixedConstraints;
     std::vector<std::shared_ptr<DistanceConstraint>> _distanceConstraints;
