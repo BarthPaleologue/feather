@@ -74,8 +74,10 @@ int main() {
     // fixed particles
     cloth->addFixedConstraint(std::make_shared<FixedConstraint>(cloth->particles()[0]));
     cloth->addFixedConstraint(std::make_shared<FixedConstraint>(cloth->particles()[clothResolution - 1]));
-    cloth->addFixedConstraint(std::make_shared<FixedConstraint>(cloth->particles()[clothResolution * (clothResolution - 1)]));
-    cloth->addFixedConstraint(std::make_shared<FixedConstraint>(cloth->particles()[clothResolution * clothResolution - 1]));
+    cloth->addFixedConstraint(
+            std::make_shared<FixedConstraint>(cloth->particles()[clothResolution * (clothResolution - 1)]));
+    cloth->addFixedConstraint(
+            std::make_shared<FixedConstraint>(cloth->particles()[clothResolution * clothResolution - 1]));
 
     solver.addBody(cloth);
 
@@ -108,7 +110,8 @@ int main() {
     // fixed particles
     cloth2->addFixedConstraint(std::make_shared<FixedConstraint>(cloth2->particles()[0]));
     cloth2->addFixedConstraint(
-            std::make_shared<FixedConstraint>(cloth2->particles()[clothResolution * clothResolution / 2 + clothResolution / 2]));
+            std::make_shared<FixedConstraint>(
+                    cloth2->particles()[clothResolution * clothResolution / 2 + clothResolution / 2]));
 
     auto cubeMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     cubeMaterial->setAlbedoColor(1.0, 0.6, 0.0);
@@ -161,6 +164,8 @@ int main() {
     auto softBunny = std::make_shared<SoftBody>(simplifiedBunny, 1.0, 0.0001f, 0.0001f);
     solver.addBody(softBunny);
 
+    softBunny->setCollisionLevel(1);
+
     //bodyHelpers.insert({softBunny, new PhysicsBodyHelper(softBunny, std::shared_ptr<Scene>(&scene))});
 
     auto armadillo = MeshBuilder::FromObjFile("../assets/models/armadillo.obj", scene);
@@ -176,9 +181,12 @@ int main() {
 
     auto armadilloBody = std::make_shared<RigidBody>(armadillo, 1.0f);
     armadilloBody->addGlobalVolumeConstraint(
-            std::make_shared<GlobalVolumeConstraint>(armadilloBody->particles(), armadillo->vertexData().indices, 0.0001f,
-                                       0.0001f));
+            std::make_shared<GlobalVolumeConstraint>(armadilloBody->particles(), armadillo->vertexData().indices,
+                                                     0.0001f,
+                                                     0.0001f));
     solver.addBody(armadilloBody);
+
+    armadilloBody->setCollisionLevel(1);
 
     bodyHelpers.insert({armadilloBody, new PhysicsBodyHelper(armadilloBody, std::shared_ptr<Scene>(&scene))});
 
@@ -225,6 +233,7 @@ int main() {
     int nbIterations = 4;
 
     std::shared_ptr<PhysicsBody> currentBody = softBunny;
+    int currentBodyCollisionLevel = currentBody->collisionLevel();
     float currentBodyPressure = 1.0f;
     float stretchCompliance = 0.0001f;
     float bendCompliance = 0.0001f;
@@ -259,6 +268,12 @@ int main() {
         if (currentBody != nullptr && bodyHelpers.find(currentBody) != bodyHelpers.end()) {
             ImGui::Checkbox("Show helper", &bodyHelperEnabled);
             bodyHelpers[currentBody]->setEnabled(bodyHelperEnabled);
+        }
+
+        if (currentBody != nullptr) {
+            ImGui::SliderInt("Collision level", &currentBodyCollisionLevel, 0,
+                             (int) currentBody->trianglesPerLevel().size() - 2);
+            currentBody->setCollisionLevel(currentBodyCollisionLevel);
         }
 
         if (currentBody != nullptr && !currentBody->globalVolumeConstraints().empty()) {
@@ -390,7 +405,7 @@ int main() {
         // reset button
         if (ImGui::Button("Reset simulation")) {
             solver.reset();
-            for(const auto& body: additionalBodies) {
+            for (const auto &body: additionalBodies) {
                 solver.removeBody(body);
                 scene.removeMesh(body->mesh());
                 shadowRenderer->removeShadowCaster(body->mesh());
@@ -436,6 +451,7 @@ int main() {
                     for (const auto &body: solver.physicsBodies()) {
                         if (body->mesh() == pickedMesh) {
                             currentBody = body;
+                            currentBodyCollisionLevel = currentBody->collisionLevel();
                             if (!currentBody->globalVolumeConstraints().empty()) currentBodyPressure = currentBody->globalVolumeConstraints()[0]->pressure();
                             if (!currentBody->distanceConstraints().empty()) stretchCompliance = currentBody->distanceConstraints()[0]->compliance();
                             if (!currentBody->fastBendConstraints().empty()) bendCompliance = currentBody->fastBendConstraints()[0]->compliance();
