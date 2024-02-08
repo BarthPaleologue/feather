@@ -5,6 +5,13 @@
 #include "Mesh.h"
 #include <iostream>
 
+std::shared_ptr<Material> Mesh::defaultMaterial = std::make_shared<DefaultMaterial>();
+
+Mesh::Mesh(const char *name) : Transformable(), Renderable(), _name(name) {
+    _id = UUID::generate_uuid_v4();
+    _material = Mesh::defaultMaterial;
+}
+
 void Mesh::setVertexData(VertexData &vertexData) {
     _vertexData = vertexData;
 

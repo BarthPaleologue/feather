@@ -17,10 +17,7 @@
 
 class Mesh : public Transformable, public Renderable {
 public:
-    explicit Mesh(const char *name) : Transformable(), Renderable(), _name(name) {
-        _id = UUID::generate_uuid_v4();
-        _material = std::make_shared<DefaultMaterial>();
-    }
+    explicit Mesh(const char *name);
 
     bool operator==(const Mesh &other) const {
         return _id == other._id;
@@ -72,7 +69,7 @@ public:
         _pickingEnabled = enabled;
     }
 
-    bool isPickingEnabled() {
+    bool isPickingEnabled() const {
         return _pickingEnabled;
     }
 
@@ -83,6 +80,9 @@ public:
     bool isEnabled() {
         return _enabled;
     }
+
+
+    static std::shared_ptr<Material> defaultMaterial;
 
 private:
     std::string _name;
