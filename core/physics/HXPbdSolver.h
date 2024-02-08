@@ -2,8 +2,8 @@
 // Created by barth on 11/10/23.
 //
 
-#ifndef FEATHERGL_HPBDSOLVER_H
-#define FEATHERGL_HPBDSOLVER_H
+#ifndef FEATHERGL_HXPBDSOLVER_H
+#define FEATHERGL_HXPBDSOLVER_H
 
 #include <vector>
 #include "Mesh.h"
@@ -14,11 +14,11 @@
 #include "UniformAccelerationField.h"
 #include "AABBHelper.h"
 
-class HpbdSolver {
+class HXPbdSolver {
 public:
-    HpbdSolver() = default;
+    HXPbdSolver() = default;
 
-    ~HpbdSolver() = default;
+    ~HXPbdSolver() = default;
 
     void addBody(std::shared_ptr<PhysicsBody> pBody) {
         if (pBody->mass() > 0) pBody->buildParticleHierarchy(3);
@@ -273,4 +273,4 @@ private:
     std::vector<std::shared_ptr<UniformAccelerationField>> _fields;
 };
 
-#endif //FEATHERGL_HPBDSOLVER_H
+#endif //FEATHERGL_HXPBDSOLVER_H

@@ -1,7 +1,7 @@
 #include "Scene.h"
 #include "cameras/OrbitCamera.h"
 #include "Engine.h"
-#include "physics/HpbdSolver.h"
+#include "physics/HXPbdSolver.h"
 #include "PbrMaterial.h"
 #include "physics/RigidBody.h"
 #include "physics/SoftBody.h"
@@ -55,7 +55,7 @@ int main() {
 
     scene.addPostProcess(std::shared_ptr<PostProcessing>(&colorCorrection));
 
-    HpbdSolver solver;
+    HXPbdSolver solver;
 
     auto gravity = std::make_shared<UniformAccelerationField>(glm::vec3(0.0, -9.81, 0.0));
     solver.addField(gravity);
