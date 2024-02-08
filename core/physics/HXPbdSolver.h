@@ -35,7 +35,7 @@ public:
     }
 
     void reset() {
-        for (auto body: _physicsBodies) {
+        for (const auto& body: _physicsBodies) {
             body->reset();
         }
     }
@@ -230,26 +230,26 @@ public:
 
                 // solve hierarchy of distance constraints
                 for (const auto &distanceConstraints: body->distanceConstraintsPerLevel()) {
-                    for (auto distanceConstraint: distanceConstraints) {
+                    for (const auto& distanceConstraint: distanceConstraints) {
                         distanceConstraint->solve(subTimeStep);
                     }
                 }
-                for (auto fastBendConstraint: body->fastBendConstraints()) {
+                for (const auto& fastBendConstraint: body->fastBendConstraints()) {
                     fastBendConstraint->solve(subTimeStep);
                 }
-                for(auto diheralConstraint: body->dihedralBendConstraints()) {
+                for(const auto& diheralConstraint: body->dihedralBendConstraints()) {
                     diheralConstraint->solve(subTimeStep);
                 }
-                for(auto volumeConstraint: body->volumeConstraints()) {
+                for(const auto& volumeConstraint: body->volumeConstraints()) {
                     volumeConstraint->solve(subTimeStep);
                 }
-                for (auto volumeConstraint: body->globalVolumeConstraints()) {
+                for (const auto& volumeConstraint: body->globalVolumeConstraints()) {
                     volumeConstraint->solve(subTimeStep);
                 }
-                for (auto collisionConstraint: body->collisionConstraints()) {
+                for (const auto& collisionConstraint: body->collisionConstraints()) {
                     collisionConstraint->solve(subTimeStep);
                 }
-                for (auto fixedConstraint: body->fixedConstraints()) {
+                for (const auto& fixedConstraint: body->fixedConstraints()) {
                     fixedConstraint->solve(subTimeStep);
                 }
             }
