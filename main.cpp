@@ -139,7 +139,7 @@ int main() {
     auto bunny = MeshBuilder::FromObjFile("../assets/models/bunny.obj", scene);
     bunny->setEnabled(false);
 
-    auto simplifiedBunny = MeshBuilder::Simplify("simpleBunny", bunny.get(), 3, scene);
+    auto simplifiedBunny = MeshBuilder::Simplify("simpleBunny", bunny.get(), 2, scene);
     simplifiedBunny->setMaterial(bunnyMaterial);
     simplifiedBunny->transform()->translate(glm::vec3(10, 3.0, -8));
     shadowRenderer->addShadowCaster(simplifiedBunny);
@@ -314,7 +314,7 @@ int main() {
         if (ImGui::Button("Spawn bunny")) {
             auto bunny = MeshBuilder::FromObjFile("../assets/models/bunny.obj", scene);
             auto simplifiedData = bunny->vertexData();
-            for (unsigned int i = 0; i < 3; i++) {
+            for (unsigned int i = 0; i < 2; i++) {
                 simplifiedData = simplifiedData.simplify();
             }
             bunny->setVertexData(simplifiedData);
