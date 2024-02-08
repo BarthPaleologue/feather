@@ -239,6 +239,13 @@ int main() {
         // show number of particles
         ImGui::Text("Nb particles: %d", solver.nbParticles());
 
+        // show number of collision constraints
+        int nbCollisionConstraints = 0;
+        for (const auto &body: solver.physicsBodies()) {
+            nbCollisionConstraints += body->collisionConstraints().size();
+        }
+        ImGui::Text("Nb collision constraints: %d", nbCollisionConstraints);
+
         // set solver nb iterations
         ImGui::SliderInt("Solver iterations", &nbIterations, 1, 20);
         solver.setIterations(nbIterations);
