@@ -10,6 +10,7 @@
 
 #include <glm/gtx/norm.hpp>
 #include "imgui/imgui.h"
+#include "physics/PhysicsBodyHelper.h"
 
 /*void showNormals(Mesh *mesh, Scene &scene) {
     for (unsigned int i = 0; i < mesh->vertexData().positions.size(); i += 3) {
@@ -60,6 +61,8 @@ int main() {
     auto gravity = std::make_shared<UniformAccelerationField>(glm::vec3(0.0, -9.81, 0.0));
     solver.addField(gravity);
 
+    std::map<std::shared_ptr<PhysicsBody>, PhysicsBodyHelper *> bodyHelpers;
+
     const int clothResolution = 32;
 
     auto clothMesh = MeshBuilder::makePlane("cloth", scene, clothResolution);
@@ -88,6 +91,8 @@ int main() {
 
     shadowRenderer->addShadowCaster(cloth->mesh());
 
+    bodyHelpers.insert({cloth, new PhysicsBodyHelper(cloth, std::shared_ptr<Scene>(&scene))});
+
     auto cloth2Mesh = MeshBuilder::makePlane("cloth2", scene, clothResolution);
     cloth2Mesh->transform()->setScale(10);
     cloth2Mesh->transform()->setPosition(0, 7, 0);
@@ -96,9 +101,12 @@ int main() {
     auto cloth2 = std::make_shared<SoftBody>(cloth2Mesh, 1.0f, 0.1f, 0.01f);
     solver.addBody(cloth2);
 
+    bodyHelpers.insert({cloth2, new PhysicsBodyHelper(cloth2, std::shared_ptr<Scene>(&scene))});
+
     // fixed particles
     cloth2->addFixedConstraint(new FixedConstraint(cloth2->particles()[0]));
-    cloth2->addFixedConstraint(new FixedConstraint(cloth2->particles()[clothResolution * clothResolution / 2 + clothResolution / 2]));
+    cloth2->addFixedConstraint(
+            new FixedConstraint(cloth2->particles()[clothResolution * clothResolution / 2 + clothResolution / 2]));
 
     auto cubeMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     cubeMaterial->setAlbedoColor(1.0, 0.6, 0.0);
@@ -112,6 +120,8 @@ int main() {
     auto cubeBody = std::make_shared<RigidBody>(cube, 1.0f);
     solver.addBody(cubeBody);
     shadowRenderer->addShadowCaster(cube);
+
+    bodyHelpers.insert({cubeBody, new PhysicsBodyHelper(cubeBody, std::shared_ptr<Scene>(&scene))});
 
     solver.onBeforeSolveObservable.addOnce(
             [&] { cubeBody->particles()[0]->externalForces.emplace_back(Utils::RandomDirection() * 500.0f); });
@@ -131,6 +141,8 @@ int main() {
     auto sphereBody = std::make_shared<SoftBody>(sphere, 1.0f, 0.0001f, 0.0001f);
     solver.addBody(sphereBody);
 
+    bodyHelpers.insert({sphereBody, new PhysicsBodyHelper(sphereBody, std::shared_ptr<Scene>(&scene))});
+
     auto bunnyMaterial = std::make_shared<PbrMaterial>(std::shared_ptr<Scene>(&scene));
     bunnyMaterial->setAlbedoColor(0.4, 0.4, 1.0);
     bunnyMaterial->setMetallic(0.1);
@@ -146,6 +158,8 @@ int main() {
 
     auto softBunny = std::make_shared<SoftBody>(simplifiedBunny, 1.0, 0.0001f, 0.0001f);
     solver.addBody(softBunny);
+
+    //bodyHelpers.insert({softBunny, new PhysicsBodyHelper(softBunny, std::shared_ptr<Scene>(&scene))});
 
     auto armadillo = MeshBuilder::FromObjFile("../assets/models/armadillo.obj", scene);
     auto simplifiedData = armadillo->vertexData();
@@ -163,6 +177,8 @@ int main() {
             new GlobalVolumeConstraint(armadilloBody->particles(), armadillo->vertexData().indices, 0.0001f,
                                        0.0001f));
     solver.addBody(armadilloBody);
+
+    bodyHelpers.insert({armadilloBody, new PhysicsBodyHelper(armadilloBody, std::shared_ptr<Scene>(&scene))});
 
     auto ground = MeshBuilder::makePlane("ground", scene, 2);
     ground->transform()->setPosition(0, 0, 0);
@@ -186,6 +202,11 @@ int main() {
         new AABBHelper(mesh->aabb(), scene);
     }*/
 
+    // for all bodyHelpers, set enabled to false
+    for (const auto &bodyHelper: bodyHelpers) {
+        bodyHelper.second->setEnabled(false);
+    }
+
     // Seed the random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -196,6 +217,7 @@ int main() {
     bool realTimePhysics = false;
     bool fixedTimeStep = true;
     bool wireframe = false;
+    bool bodyHelperEnabled = false;
 
     bool clothEnabled = true;
     bool cloth2Enabled = false;
@@ -226,6 +248,11 @@ int main() {
 
         if (currentBody != nullptr) {
             ImGui::Text("Selected body: %s", currentBody->mesh()->name().c_str());
+        }
+
+        if (currentBody != nullptr && bodyHelpers.find(currentBody) != bodyHelpers.end()) {
+            ImGui::Checkbox("Show helper", &bodyHelperEnabled);
+            bodyHelpers[currentBody]->setEnabled(bodyHelperEnabled);
         }
 
         if (currentBody != nullptr && !currentBody->globalVolumeConstraints().empty()) {
@@ -316,7 +343,9 @@ int main() {
             shadowRenderer->addShadowCaster(cube);
 
             solver.onBeforeSolveObservable.addOnce(
-                [cubeBody] { cubeBody->particles()[0]->externalForces.emplace_back(Utils::RandomDirection() * 50.0f); });
+                    [cubeBody] {
+                        cubeBody->particles()[0]->externalForces.emplace_back(Utils::RandomDirection() * 50.0f);
+                    });
         }
         ImGui::SameLine();
 
@@ -427,7 +456,7 @@ int main() {
 
                 glm::vec3 translation = hitPoint - barycenter;
 
-                for (const auto& particle: currentBody->particles()) {
+                for (const auto &particle: currentBody->particles()) {
                     float weight = 1.0f / (1.0f + glm::length(particle->position - barycenter));
                     particle->position += translation * weight;
                 }

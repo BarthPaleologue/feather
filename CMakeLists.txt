@@ -26,6 +26,7 @@ add_executable(featherGL ${SRCS} ${IMGUI_SRC}
         core/AABBHelper.h
         core/physics/GlobalVolumeConstraint.h
         core/PickResult.h
+        core/physics/PhysicsBodyHelper.h
 )
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})

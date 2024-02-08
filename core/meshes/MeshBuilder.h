@@ -513,6 +513,7 @@ public:
         };
 
         auto mesh = Mesh::FromVertexData(name, vertexData);
+        mesh->setPickingEnabled(false);
         scene.addMesh(mesh);
         return mesh;
     }
@@ -542,7 +543,9 @@ public:
                 0.0f, 0.0f, -1.0f
         };
 
-        return Mesh::FromVertexData(name, vertexData);
+        auto mesh = Mesh::FromVertexData(name, vertexData);
+        mesh->setPickingEnabled(false);
+        return mesh;
     }
 
     static std::shared_ptr<Mesh>

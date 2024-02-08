@@ -14,6 +14,8 @@ public:
             MeshBuilder::makeLine("ConstraintHelper", scene, constraint->particles()[0]->initialPosition,
                                   constraint->particles()[1]->initialPosition)), _constraint(constraint) {
         scene.onBeforeRenderObservable.add([this] {
+            if(!_mesh->isEnabled()) return;
+
             // update the line positions
             _mesh->vertexData().positions[0] = _constraint->particles()[0]->position.x;
             _mesh->vertexData().positions[1] = _constraint->particles()[0]->position.y;
@@ -25,6 +27,10 @@ public:
 
             _mesh->sendVertexDataToGPU();
         });
+    }
+
+    std::shared_ptr<Mesh> mesh() {
+        return _mesh;
     }
 
 private:

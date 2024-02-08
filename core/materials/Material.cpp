@@ -2,7 +2,6 @@
 // Created by barth on 19/09/2022.
 //
 
-#include "glm/ext.hpp"
 #include "Material.h"
 #include "glad/glad.h"
 

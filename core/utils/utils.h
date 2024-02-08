@@ -56,6 +56,10 @@ public:
         return {glm::sin(phi) * glm::cos(theta), glm::cos(phi), glm::sin(phi) * glm::sin(theta)};
     }
 
+    static glm::vec3 RandomColor() {
+        return {glm::linearRand(0.f, 1.f), glm::linearRand(0.f, 1.f), glm::linearRand(0.f, 1.f)};
+    }
+
     static void Subdivide(std::vector<float>& positions, std::vector<int>& indices) {
         std::vector<int> newIndices;
 

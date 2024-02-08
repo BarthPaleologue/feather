@@ -13,10 +13,15 @@ class AABBHelper {
 public:
     AABBHelper(AABB* aabb, Scene &scene): _mesh(MeshBuilder::makeCube("aabb", scene)), _aabb(aabb) {
         _mesh->material()->setWireframe(true);
+        _mesh->setPickingEnabled(false);
         scene.onBeforeRenderObservable.add([&] {
             _mesh->transform()->setScaling(_aabb->size() * 0.5f);
             _mesh->transform()->setPosition(_aabb->center());
         });
+    }
+
+    std::shared_ptr<Mesh> mesh() {
+        return _mesh;
     }
 
 private:
