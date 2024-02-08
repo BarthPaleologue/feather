@@ -386,6 +386,8 @@ int main() {
             auto bunnyBody = std::make_shared<SoftBody>(bunny, 1.0, 0.01f, 0.01f);
             solver.addBody(bunnyBody);
 
+            bunnyBody->setCollisionLevel(1);
+
             additionalBodies.push_back(bunnyBody);
         }
 
