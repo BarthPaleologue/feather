@@ -216,6 +216,9 @@ int main() {
         // show number of FPS
         ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 
+        // show number of particles
+        ImGui::Text("Nb particles: %d", solver.nbParticles());
+
         // set solver nb iterations
         ImGui::SliderInt("Solver iterations", &nbIterations, 1, 20);
         solver.setIterations(nbIterations);

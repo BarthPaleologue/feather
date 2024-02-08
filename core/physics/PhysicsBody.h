@@ -40,7 +40,7 @@ public:
 
         std::vector<std::vector<GLint>> closestCoarseVertexIndicesPerLevel;
         closestCoarseVertexIndicesPerLevel.push_back(std::vector<GLint>());
-        for(int i = 0; i < _particles.size(); i++) {
+        for (int i = 0; i < _particles.size(); i++) {
             closestCoarseVertexIndicesPerLevel[0].push_back(i);
         }
 
@@ -86,7 +86,7 @@ public:
 
                     // find the closest particle in the current level
                     GLint closestParticleIndex = closestCoarseVertexIndicesPerLevel[level][particleIndex];
-                    if(closestParticleIndex == -1) {
+                    if (closestParticleIndex == -1) {
                         shouldBeKept = false;
                         continue;
                     }
@@ -95,11 +95,11 @@ public:
                     constraintCopy->replaceParticle(particle, _particles[closestParticleIndex]);
                 }
 
-                if(constraintCopy->particles()[0] == constraintCopy->particles()[1]) {
+                if (constraintCopy->particles()[0] == constraintCopy->particles()[1]) {
                     shouldBeKept = false;
                 }
 
-                if(shouldBeKept) {
+                if (shouldBeKept) {
                     filteredConstraints.push_back(constraintCopy);
                 }
             }
@@ -109,9 +109,10 @@ public:
 
         // how many levels
         std::cout << "There are " << _distanceConstraintsPerLevel.size() << " levels" << std::endl;
-        for(int i = 0; i < _distanceConstraintsPerLevel.size(); i++) {
+        for (int i = 0; i < _distanceConstraintsPerLevel.size(); i++) {
             // how many constraints are there in this level
-            std::cout << "Level " << i << " has " << _distanceConstraintsPerLevel[i].size() << " constraints" << std::endl;
+            std::cout << "Level " << i << " has " << _distanceConstraintsPerLevel[i].size() << " constraints"
+                      << std::endl;
         }
     }
 
@@ -141,6 +142,10 @@ public:
 
     Transform *transform() {
         return _mesh->transform();
+    }
+
+    int nbParticles() {
+        return (int) _particles.size();
     }
 
     void addFixedConstraint(FixedConstraint *constraint) {

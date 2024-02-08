@@ -40,6 +40,14 @@ public:
         return _physicsBodies;
     }
 
+    int nbParticles() {
+        int nbParticles = 0;
+        for (const auto &body: _physicsBodies) {
+            nbParticles += body->nbParticles();
+        }
+        return nbParticles;
+    }
+
     void solve(float deltaTime) {
         onBeforeSolveObservable.notifyObservers();
 
