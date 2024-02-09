@@ -12,33 +12,38 @@ file(GLOB SRCS ./*.h ./*.cpp
         core/materials/*.cpp core/materials/*.h
         core/utils/*.cpp core/utils/*.h
         core/physics/*.cpp core/physics/*.h
+        core/shadows/*.cpp core/shadows/*.h
+        imgui/*.cpp imgui/*.h
 )
-add_executable(featherGL ${SRCS}
-        core/physics/DistanceConstraint.h
-        core/physics/BendConstraint.h
-        core/physics/SelfCollisionConstraint.h
-        core/physics/ClothBalloonConstraint.h
-        core/physics/Cloth.h
-        core/physics/PhysicsBody.h
-        core/physics/FixedConstraint.h
-        core/utils/ComputeShader.h
-        core/shadows/ShadowRenderer.h
-        core/materials/DepthMaterial.h
-        core/meshes/ScreenQuad.h
-        core/materials/PbrMaterial.h
+
+
+add_executable(featherGL ${SRCS} ${IMGUI_SRC}
+        core/physics/UniformAccelerationField.h
+        core/physics/DihedralBendConstraint.h
+        core/physics/ConstraintHelper.h
+        core/Renderable.h
+        core/AABB.h
+        core/AABBHelper.h
+        core/physics/GlobalVolumeConstraint.h
+        core/PickResult.h
+        core/physics/PhysicsBodyHelper.h
 )
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
 find_package(glfw3 REQUIRED)
 message(STATUS "Found GLFW3")
-target_link_libraries(${PROJECT_NAME} glfw)
 
 find_package(glm REQUIRED)
 message(STATUS "GLM included")
+
+target_link_libraries(${PROJECT_NAME} glfw glm::glm)
 
 target_sources(${PROJECT_NAME} PRIVATE glad/src/glad.c)
 target_include_directories(${PROJECT_NAME} PRIVATE glad/include/)
 
 target_sources(${PROJECT_NAME} PRIVATE Eigen/Dense)
 target_include_directories(${PROJECT_NAME} PRIVATE Eigen/)
+
+# Set optimization level to -O3
+target_compile_options(${PROJECT_NAME} PRIVATE -O3)

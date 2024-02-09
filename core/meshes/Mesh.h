@@ -11,17 +11,28 @@
 #include "VertexData.h"
 #include "DefaultMaterial.h"
 #include "../utils/Uuid.h"
+#include "Renderable.h"
+#include "AABB.h"
+#include "PickResult.h"
 
-class Mesh : public Transformable {
+class Mesh : public Transformable, public Renderable {
 public:
-    explicit Mesh(const char *name) : Transformable(), _name(name), _vao(0), _vbo(0) {
-        _id = UUID::generate_uuid_v4();
-        _material = std::make_shared<DefaultMaterial>();
-        std::cout << "Mesh " << _name << " _handle: " << _id << " created" << std::endl;
-    }
+    explicit Mesh(const char *name);
 
     bool operator==(const Mesh &other) const {
         return _id == other._id;
+    }
+
+    const std::string &name() const {
+        return _name;
+    }
+
+    Transform *transform() override {
+        return &_transform;
+    }
+
+    AABB *aabb() {
+        return &_aabb;
     }
 
     static std::shared_ptr<Mesh> FromVertexData(const char *name, VertexData &vertexData);
@@ -34,27 +45,62 @@ public:
 
     void bakeTransformIntoVertexData();
 
+    void bakeRotationIntoVertexData();
+
+    void bakeScalingIntoVertexData();
+
     void setVertexData(VertexData &vertexData);
 
-    void updateVertexData();
+    void sendVertexDataToGPU();
 
     VertexData &vertexData() {
         return _vertexData;
     }
 
+    PickResult pickWithRay(glm::vec3 rayOrigin, glm::vec3 rayDirection) {
+        if (!_pickingEnabled) return PickResult{};
+        glm::mat4 worldMatrix = transform()->computeWorldMatrix();
+        return Utils::PickWithRay(vertexData().indices, vertexData().positions, rayOrigin, rayDirection, worldMatrix);
+    }
+
     void render(glm::mat4 projectionViewMatrix, Shader* shaderOverride = nullptr);
+
+    void setPickingEnabled(bool enabled) {
+        _pickingEnabled = enabled;
+    }
+
+    bool isPickingEnabled() const {
+        return _pickingEnabled;
+    }
+
+    void setEnabled(bool enabled) {
+        _enabled = enabled;
+    }
+
+    bool isEnabled() {
+        return _enabled;
+    }
+
+
+    static std::shared_ptr<Material> defaultMaterial;
 
 private:
     std::string _name;
     std::string _id;
     VertexData _vertexData;
 
-    GLuint _vao;
-    GLuint _vbo;
-    GLuint _ibo;
-    GLuint _normalVbo;
-    GLuint _uvVbo;
-    GLuint _colVbo;
+    Transform _transform;
+    AABB _aabb;
+
+    GLuint _vao{};
+    GLuint _vbo{};
+    GLuint _ibo{};
+    GLuint _normalVbo{};
+    GLuint _uvVbo{};
+    GLuint _colVbo{};
+
+    bool _pickingEnabled = true;
+    bool _enabled = true;
 protected:
     std::shared_ptr<Material> _material;
 };

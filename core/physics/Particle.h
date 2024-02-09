@@ -12,31 +12,59 @@ struct Particle {
     /**
      * @brief Construct a new Particle object
      * @param mass The mass of the particle. (0 for static particles)
-     * @param positions
-     * @param startIndex
+     * @param initialPosition The initial position of the particle in world space
+     * @param positionIndex
      */
-    Particle(float mass, std::vector<float> &positions, unsigned long startIndex) {
+    Particle(float mass, glm::vec3 initialPosition, unsigned long positionIndex) {
         this->mass = mass;
         this->invMass = mass == 0 ? 0 : 1 / mass;
-        position = glm::vec3(positions[startIndex], positions[startIndex + 1], positions[startIndex + 2]);
-        this->startIndex = startIndex;
+        this->initialPosition = initialPosition;
+        position = initialPosition;
+        this->positionIndex = positionIndex;
     }
 
-    glm::vec3 forces() {
+    glm::vec3 resultingExternalForce() {
         glm::vec3 result = glm::vec3(0, 0, 0);
-        for (auto force: _forces) {
+        for (auto force: externalForces) {
             result += force;
         }
         return result;
     }
 
+    void reset() {
+        position = initialPosition;
+        velocity = glm::vec3(0, 0, 0);
+    }
+
     float mass;
     float invMass;
+
+    /**
+     * Initial position of particle in world space
+     */
+    glm::vec3 initialPosition{};
+
+    /**
+     * Current position of particle in world space
+     */
     glm::vec3 position{};
+
+    /**
+     * Predicted next position of particle in world space
+     */
     glm::vec3 predictedPosition{};
+
+    /**
+     * Current velocity of particle
+     */
     glm::vec3 velocity{};
-    unsigned long startIndex;
-    std::vector<glm::vec3> _forces{};
+
+    /**
+     * The first index of the particle position in the vertex data array of the mesh
+     */
+    unsigned long positionIndex;
+
+    std::vector<glm::vec3> externalForces{};
 };
 
 #endif //FEATHERGL_PARTICLE_H

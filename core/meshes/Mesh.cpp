@@ -5,6 +5,13 @@
 #include "Mesh.h"
 #include <iostream>
 
+std::shared_ptr<Material> Mesh::defaultMaterial = std::make_shared<DefaultMaterial>();
+
+Mesh::Mesh(const char *name) : Transformable(), Renderable(), _name(name) {
+    _id = UUID::generate_uuid_v4();
+    _material = Mesh::defaultMaterial;
+}
+
 void Mesh::setVertexData(VertexData &vertexData) {
     _vertexData = vertexData;
 
@@ -49,7 +56,7 @@ void Mesh::setVertexData(VertexData &vertexData) {
     glEnableVertexAttribArray(colorLayoutIndex);
 }
 
-void Mesh::updateVertexData() {
+void Mesh::sendVertexDataToGPU() {
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
     glBufferData(GL_ARRAY_BUFFER, _vertexData.positions.size() * sizeof(float), _vertexData.positions.data(),
                  GL_DYNAMIC_READ);
@@ -78,13 +85,17 @@ void Mesh::setMaterial(std::shared_ptr<Material> material) {
 }
 
 void Mesh::render(glm::mat4 projectionViewMatrix, Shader *shaderOverride) {
+    if(!_enabled) return;
+
+    const glm::mat4 world = transform()->computeWorldMatrix();
+    const glm::mat4 normalMatrix = transform()->computeNormalMatrix();
+
+    _aabb.updateWithVertexData(vertexData(), world);
+
     auto shader = shaderOverride == nullptr ? _material->shader() : shaderOverride;
 
     if (shaderOverride == nullptr) _material->bind();
     else shader->bind();
-
-    const glm::mat4 world = transform()->computeWorldMatrix();
-    const glm::mat4 normalMatrix = transform()->computeNormalMatrix();
 
     shader->setMat4("projectionView", &projectionViewMatrix);
     shader->setMat4("world", &world);
@@ -92,7 +103,8 @@ void Mesh::render(glm::mat4 projectionViewMatrix, Shader *shaderOverride) {
 
     glBindVertexArray(_vao);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo);
-    glDrawElements(GL_TRIANGLES, _vertexData.indices.size(), GL_UNSIGNED_INT, nullptr);
+    auto drawMode = _vertexData.positions.size() == 6 ? GL_LINES : GL_TRIANGLES;
+    glDrawElements(drawMode, _vertexData.indices.size(), GL_UNSIGNED_INT, nullptr);
 
     if (shaderOverride == nullptr) _material->unbind();
     else shader->unbind();
@@ -118,13 +130,64 @@ void Mesh::bakeTransformIntoVertexData() {
         glm::vec4 normal = glm::vec4(_vertexData.normals[i], _vertexData.normals[i + 1],
                                      _vertexData.normals[i + 2], 1.0f);
         glm::vec4 transformedNormal = normalMatrix * normal;
-        _vertexData.normals[i] = transformedNormal.x;
-        _vertexData.normals[i + 1] = transformedNormal.y;
-        _vertexData.normals[i + 2] = transformedNormal.z;
+        glm::vec3 normalizedTransformedNormal = glm::normalize(glm::vec3(transformedNormal.x, transformedNormal.y, transformedNormal.z));
+        _vertexData.normals[i] = normalizedTransformedNormal.x;
+        _vertexData.normals[i + 1] = normalizedTransformedNormal.y;
+        _vertexData.normals[i + 2] = normalizedTransformedNormal.z;
     }
 
-    updateVertexData();
+    sendVertexDataToGPU();
 
     transform()->reset();
+}
+
+void Mesh::bakeRotationIntoVertexData() {
+    auto rotationMatrix = transform()->computeRotationMatrix();
+    auto normalMatrix = transform()->computeNormalMatrix();
+    for (int i = 0; i < _vertexData.positions.size(); i += 3) {
+        glm::vec4 position = glm::vec4(_vertexData.positions[i], _vertexData.positions[i + 1],
+                                       _vertexData.positions[i + 2], 1.0f);
+        glm::vec4 transformedPosition = rotationMatrix * position;
+        _vertexData.positions[i] = transformedPosition.x;
+        _vertexData.positions[i + 1] = transformedPosition.y;
+        _vertexData.positions[i + 2] = transformedPosition.z;
+
+        glm::vec4 normal = glm::vec4(_vertexData.normals[i], _vertexData.normals[i + 1],
+                                     _vertexData.normals[i + 2], 1.0f);
+        glm::vec4 transformedNormal = normalMatrix * normal;
+        glm::vec3 normalizedTransformedNormal = glm::normalize(glm::vec3(transformedNormal.x, transformedNormal.y, transformedNormal.z));
+        _vertexData.normals[i] = normalizedTransformedNormal.x;
+        _vertexData.normals[i + 1] = normalizedTransformedNormal.y;
+        _vertexData.normals[i + 2] = normalizedTransformedNormal.z;
+    }
+
+    sendVertexDataToGPU();
+
+    transform()->setRotation(0, 0, 0);
+}
+
+void Mesh::bakeScalingIntoVertexData() {
+    auto scalingMatrix = glm::scale(glm::mat4(1.0f), transform()->scaling());
+    auto normalMatrix = transform()->computeNormalMatrix();
+    for (int i = 0; i < _vertexData.positions.size(); i += 3) {
+        glm::vec4 position = glm::vec4(_vertexData.positions[i], _vertexData.positions[i + 1],
+                                       _vertexData.positions[i + 2], 1.0f);
+        glm::vec4 transformedPosition = scalingMatrix * position;
+        _vertexData.positions[i] = transformedPosition.x;
+        _vertexData.positions[i + 1] = transformedPosition.y;
+        _vertexData.positions[i + 2] = transformedPosition.z;
+
+        glm::vec4 normal = glm::vec4(_vertexData.normals[i], _vertexData.normals[i + 1],
+                                     _vertexData.normals[i + 2], 1.0f);
+        glm::vec4 transformedNormal = normalMatrix * normal;
+        glm::vec3 normalizedTransformedNormal = glm::normalize(glm::vec3(transformedNormal.x, transformedNormal.y, transformedNormal.z));
+        _vertexData.normals[i] = normalizedTransformedNormal.x;
+        _vertexData.normals[i + 1] = normalizedTransformedNormal.y;
+        _vertexData.normals[i + 2] = normalizedTransformedNormal.z;
+    }
+
+    sendVertexDataToGPU();
+
+    transform()->setScale(1);
 }
 

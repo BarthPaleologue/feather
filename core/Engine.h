@@ -6,14 +6,22 @@
 #define FEATHERGL_ENGINE_H
 
 #include "Observable.h"
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_impl_glfw.h"
+#include "../imgui/imgui_impl_opengl3.h"
 #include <GLFW/glfw3.h>
 #include <map>
+#include <glm/vec2.hpp>
 
 class Engine {
 public:
     Engine(int windowWidth, int windowHeight, const char *name);
 
     ~Engine() {
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
+
         glfwDestroyWindow(window);
     }
 
@@ -37,11 +45,11 @@ public:
         glfwGetWindowSize(window, width, height);
     }
 
-    float getElapsedTime() const {
+    float getElapsedSeconds() const {
         return (float) glfwGetTime();
     }
 
-    float getDeltaTime() const {
+    float getDeltaSeconds() const {
         return deltaTime;
     }
 
@@ -55,7 +63,7 @@ public:
         onWindowResizeObservable.notifyObservers(width, height);
 
         while (!glfwWindowShouldClose(window)) {
-            float newFrameTime = getElapsedTime();
+            float newFrameTime = getElapsedSeconds();
             deltaTime = newFrameTime - lastFrameTime;
             lastFrameTime = newFrameTime;
 
@@ -65,6 +73,18 @@ public:
         }
 
         glfwTerminate();
+    }
+
+    glm::vec2 getMousePosition() {
+        double x, y;
+        glfwGetCursorPos(window, &x, &y);
+        return {x, y};
+    }
+
+    glm::vec2 getWindowSize() {
+        int width, height;
+        glfwGetWindowSize(window, &width, &height);
+        return {width, height};
     }
 
     Observable<> onExecuteLoopObservable{};

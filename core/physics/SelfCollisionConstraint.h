@@ -10,16 +10,9 @@
 
 class SelfCollisionConstraint : public Constraint {
 public:
-    SelfCollisionConstraint(Particle *q, Particle *p1, Particle *p2, Particle *p3, float thickness) : Constraint(
-            {q, p1, p2, p3}, 1, INEQUALITY) {
+    SelfCollisionConstraint(std::shared_ptr< Particle> q, std::shared_ptr< Particle> p1, std::shared_ptr< Particle> p2, std::shared_ptr< Particle> p3, float thickness) : Constraint(
+            {q, p1, p2, p3}, 0.0f, INEQUALITY) {
         _thickness = thickness;
-    }
-
-private:
-    float _thickness;
-
-    void computeGradient() override {
-        //TODO: implement
     }
 
     float evaluate() const override {
@@ -32,6 +25,17 @@ private:
         glm::vec3 v = q - p1;
 
         return glm::dot(v, n) - _thickness;
+    }
+
+private:
+    float _thickness;
+
+    void computeGradient() override {
+        //TODO: implement
+    }
+
+    void recomputeTargetValue() override {
+        _thickness = 0.01f;
     }
 };
 

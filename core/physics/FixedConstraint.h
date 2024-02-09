@@ -12,20 +12,17 @@
 
 class FixedConstraint : public Constraint {
 public:
-    FixedConstraint(Particle *p, glm::vec3 position) : Constraint({p}, 1.0, EQUALITY), _targetPosition(position) {};
+    FixedConstraint(std::shared_ptr<Particle> p) : Constraint({p}, 0.0f, EQUALITY), _targetPosition(p->position) {
+        /*p->mass = 0.0f;
+        p->invMass = 0.0f;*/
+    };
 
-    void setTargetPosition(glm::vec3 position) {
-        _targetPosition = position;
-    }
-
-    glm::vec3 targetPosition() {
-        return _targetPosition;
+    float evaluate() const override {
+        return glm::length(_particles[0]->predictedPosition - _targetPosition);
     }
 
 private:
-    glm::vec3 _targetPosition;
-
-    void computeGradient() {
+    void computeGradient() override {
         glm::vec3 p1 = _particles[0]->predictedPosition;
         glm::vec3 p2 = _targetPosition;
 
@@ -34,9 +31,11 @@ private:
         _gradient.col(0) = Eigen::Vector3f(g1.x, g1.y, g1.z);
     }
 
-    float evaluate() const override {
-        return glm::length(_particles[0]->predictedPosition - _targetPosition);
+    void recomputeTargetValue() override {
+        _targetPosition = _particles[0]->predictedPosition;
     }
+
+    glm::vec3 _targetPosition;
 };
 
 #endif //FEATHERGL_FIXEDCONSTRAINT_H

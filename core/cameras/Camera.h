@@ -44,6 +44,18 @@ public:
 
     glm::mat4 projectionViewMatrix() { return _projectionViewMatrix; }
 
+    glm::vec3 getRayFromMouse(float mouseX, float mouseY, float windowWidth, float windowHeight) {
+        glm::vec3 rayOrigin = position();
+
+        glm::vec4 mouseClipPosition = glm::vec4((mouseX / windowWidth) * 2.0f - 1.0f,
+                                                (1.0f - mouseY / windowHeight) * 2.0f - 1.0f, 0.0f, 1.0f);
+        glm::vec4 mouseWorldPosition = glm::inverse(viewMatrix()) * glm::inverse(projectionMatrix()) *
+                                       mouseClipPosition;
+        mouseWorldPosition /= mouseWorldPosition.w;
+
+        return glm::normalize(glm::vec3(mouseWorldPosition) - rayOrigin);
+    }
+
     virtual void update();
 
 protected:

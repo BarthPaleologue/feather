@@ -11,6 +11,7 @@ out vec3 vPositionW;
 out vec3 vNormal;
 out vec3 vNormalW;
 out vec2 vUV;
+out mat4 vNormalMatrix;
 
 uniform mat4 projectionView;
 uniform mat4 world;
@@ -28,6 +29,7 @@ void main() {
     vNormal = normal;
     vNormalW = normalize(vec3(mat4(normalMatrix) * vec4(normal, 1.0)));
     vUV = uv;
+    vNormalMatrix = normalMatrix;
 
     #ifdef SHADOW_MAP
     vPositionShadow = lightSpaceMatrix * world * vec4(position, 1.0);
