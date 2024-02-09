@@ -235,7 +235,8 @@ public:
                 if(!body->mesh()->isEnabled()) continue;
 
                 // solve hierarchy of distance constraints
-                for (const auto &distanceConstraints: body->distanceConstraintsPerLevel()) {
+                for (int level = body->distanceConstraintsPerLevel().size() - 1; level >= 0; level--) {
+                    auto distanceConstraints = body->distanceConstraintsPerLevel()[level];
                     for (const auto& distanceConstraint: distanceConstraints) {
                         distanceConstraint->solve(subTimeStep);
                     }
