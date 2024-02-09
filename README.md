@@ -33,6 +33,8 @@ The entire code for the physics engine is available in the `core/physics` direct
 - Collision LoD using HPBD
 - Constraints and bounding boxes helpers
 
+A detailed report is available in the root directory of the project.
+
 ## Main controls
 
 - Mouse drag: Rotate the camera
